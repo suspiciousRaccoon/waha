@@ -150,6 +150,7 @@ import { WAJSPresenceChatStateType, WebJSPresence } from './types';
 import {
   isJidGroup,
   isJidStatusBroadcast,
+  normalizeJid,
   toCusFormat,
 } from '@waha/core/utils/jids';
 
@@ -1731,7 +1732,7 @@ export class WhatsappSessionWebJSCore extends WhatsappSession {
     const source = this.getMessageSource(reaction.id.id);
     return {
       id: reaction.id._serialized,
-      from: reaction.senderId,
+      from: normalizeJid(reaction.senderId),
       fromMe: reaction.id.fromMe,
       source: source,
       participant: reaction.senderId,

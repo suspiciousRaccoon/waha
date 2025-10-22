@@ -36,7 +36,7 @@ export function isPnUser(jid: string) {
   );
 }
 
-function normalizeJid(jid: string): string {
+export function normalizeJid(jid: string): string {
   return jid.replace(/:\d+(?=@)/, '');
 }
 
