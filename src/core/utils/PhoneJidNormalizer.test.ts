@@ -7,6 +7,14 @@ describe('E164Parser.fromJid', () => {
     );
   });
 
+  it('parses basic JID @c.us to +number', () => {
+    expect(E164Parser.fromJid('14155552671@c.us')).toBe('+14155552671');
+  });
+
+  it('parses JID with device id +number', () => {
+    expect(E164Parser.fromJid('14155552671:123@c.us')).toBe('+14155552671');
+  });
+
   it('returns null for empty or missing local part', () => {
     expect(E164Parser.fromJid('')).toBeNull();
     expect(E164Parser.fromJid('@s.whatsapp.net')).toBeNull();

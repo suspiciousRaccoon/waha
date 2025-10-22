@@ -1,3 +1,5 @@
+import { normalizeJid } from '@waha/core/utils/jids';
+
 type RewriteRule = {
   name: string;
   re: RegExp;
@@ -18,6 +20,7 @@ export class PhoneJidNormalizer {
     if (!jid) {
       return null;
     }
+    jid = normalizeJid(jid);
     const local = jid.split('@', 1)[0] ?? '';
     if (!local) {
       return null;
