@@ -18,6 +18,9 @@ import { WAHAWebhookMessageAck } from '@waha/structures/webhooks.dto';
 import { Job } from 'bullmq';
 import { PinoLogger } from 'nestjs-pino';
 import { ShouldMarkAsReadInChatWoot } from '@waha/apps/chatwoot/consumers/waha/message.ack.utils';
+import { toCusFormat } from '@waha/core/utils/jids';
+import { parseMessageIdSerialized } from '@waha/core/utils/ids';
+import { MessageMappingService } from '@waha/apps/chatwoot/storage';
 
 @Processor(QueueName.WAHA_MESSAGE_ACK, { concurrency: JOB_CONCURRENCY })
 export class WAHAMessageAckConsumer extends ChatWootWAHABaseConsumer {
@@ -46,6 +49,7 @@ export class WAHAMessageAckConsumer extends ChatWootWAHABaseConsumer {
     const session = new WAHASessionAPI(event.session, container.WAHASelf());
     const handler = new MessageAckHandler(
       container.ContactConversationService(),
+      container.MessageMappingService(),
       container.Logger(),
       info,
       session,
@@ -64,6 +68,7 @@ export class WAHAMessageAckConsumer extends ChatWootWAHABaseConsumer {
 class MessageAckHandler {
   constructor(
     private readonly contactConversationService: ContactConversationService,
+    protected mappingService: MessageMappingService,
     private readonly logger: ILogger,
     private readonly info: IMessageInfo,
     private readonly session: WAHASessionAPI,
@@ -72,6 +77,18 @@ class MessageAckHandler {
 
   async handle(event: WAHAWebhookMessageAck): Promise<void> {
     const payload = event.payload;
+
+    const key = parseMessageIdSerialized(payload.id);
+    const chatwoot = await this.mappingService.getChatWootMessage({
+      chat_id: null,
+      message_id: key.id,
+    });
+    // No chatwoot message found, so we don't mark it as read
+    // Filters out old messages and some service ack messages
+    if (!chatwoot) {
+      return;
+    }
+
     const contactInfo = WhatsAppContactInfo(
       this.session,
       payload.from,
