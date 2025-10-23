@@ -12,6 +12,12 @@ import {
 import { SessionInfo } from '@waha/structures/sessions.dto';
 import axios, { AxiosInstance } from 'axios';
 import { Auth } from '@waha/core/auth/config';
+import { ContactSortField } from '@waha/structures/contacts.dto';
+import { PaginationParams } from '@waha/structures/pagination.dto';
+
+export interface RequestOptions {
+  signal?: AbortSignal;
+}
 
 export class WAHASelf {
   public client: AxiosInstance;
@@ -33,57 +39,78 @@ export class WAHASelf {
     });
   }
 
-  async fetch(url: string): Promise<Buffer> {
+  async fetch(url: string, opts?: RequestOptions): Promise<Buffer> {
     const response = await this.client.get(url, {
       responseType: 'arraybuffer',
+      signal: opts?.signal,
     });
     return Buffer.from(response.data);
   }
 
-  async qr(session: string): Promise<Buffer> {
+  async qr(session: string, opts?: RequestOptions): Promise<Buffer> {
     const url = `/api/${session}/auth/qr`;
-    return await this.fetch(url);
+    return await this.fetch(url, opts);
   }
 
-  async screenshot(session: string): Promise<Buffer> {
+  async screenshot(session: string, opts?: RequestOptions): Promise<Buffer> {
     const url = `/api/screenshot?session=${session}`;
-    return await this.fetch(url);
+    return await this.fetch(url, opts);
   }
 
-  async restart(session: string): Promise<any> {
+  async restart(session: string, opts?: RequestOptions): Promise<any> {
     const url = `/api/sessions/${session}/restart`;
-    return await this.client.post(url);
+    return await this.client.post(url, undefined, { signal: opts?.signal });
   }
 
-  async logout(session: string): Promise<any> {
+  async logout(session: string, opts?: RequestOptions): Promise<any> {
     const url = `/api/sessions/${session}/logout`;
-    return await this.client.post(url);
+    return await this.client.post(url, undefined, { signal: opts?.signal });
   }
 
-  async stop(session: string): Promise<any> {
+  async stop(session: string, opts?: RequestOptions): Promise<any> {
     const url = `/api/sessions/${session}/stop`;
-    return await this.client.post(url);
+    return await this.client.post(url, undefined, { signal: opts?.signal });
   }
 
-  async get(session: string): Promise<SessionInfo> {
+  async get(session: string, opts?: RequestOptions): Promise<SessionInfo> {
     const url = `/api/sessions/${session}/`;
-    return await this.client.get(url).then((response) => response.data);
+    return await this.client
+      .get(url, { signal: opts?.signal })
+      .then((response) => response.data);
   }
 
-  async getContact(session: string, contactId: string) {
+  async getContacts(
+    session: string,
+    page: PaginationParams,
+    opts?: RequestOptions,
+  ) {
+    const url = `/api/contacts/all`;
+    const params = {
+      session: session,
+      ...page,
+      sortBy: ContactSortField.ID,
+      sortOrder: ContactSortField.ID,
+    };
+    return await this.client
+      .get(url, { params: params, signal: opts?.signal })
+      .then((response) => response.data);
+  }
+
+  async getContact(session: string, contactId: string, opts?: RequestOptions) {
     const url = `/api/contacts`;
     const params = {
       session: session,
       contactId: contactId,
     };
     return await this.client
-      .get(url, { params: params })
+      .get(url, { params: params, signal: opts?.signal })
       .then((response) => response.data);
   }
 
   async contactCheckExists(
     session: string,
     phone: string,
+    opts?: RequestOptions,
   ): Promise<WANumberExistResult> {
     const url = `/api/contacts/check-exists`;
     const params = {
@@ -91,99 +118,162 @@ export class WAHASelf {
       session: session,
     };
     return await this.client
-      .get(url, { params: params })
+      .get(url, { params: params, signal: opts?.signal })
       .then((response) => response.data);
   }
 
-  async getGroup(session: string, groupId: string) {
+  async getGroup(session: string, groupId: string, opts?: RequestOptions) {
     const url = `/api/${session}/groups/${groupId}`;
-    return await this.client.get(url).then((response) => response.data);
+    return await this.client
+      .get(url, { signal: opts?.signal })
+      .then((response) => response.data);
   }
 
-  async getChannel(session: string, channelId: string): Promise<Channel> {
+  async getChannel(
+    session: string,
+    channelId: string,
+    opts?: RequestOptions,
+  ): Promise<Channel> {
     const url = `/api/${session}/channels/${channelId}`;
-    return await this.client.get(url).then((response) => response.data);
+    return await this.client
+      .get(url, { signal: opts?.signal })
+      .then((response) => response.data);
   }
 
   async getChatPicture(
     session: string,
     chatId: string,
+    opts?: RequestOptions,
   ): Promise<string | null> {
     const url = `/api/${session}/chats/${chatId}/picture`;
-    return await this.client.get(url).then((response) => response.data?.url);
+    return await this.client
+      .get(url, { signal: opts?.signal })
+      .then((response) => response.data?.url);
   }
 
-  async sendText(body: MessageTextRequest): Promise<any> {
+  async sendText(
+    body: MessageTextRequest,
+    opts?: RequestOptions,
+  ): Promise<any> {
     const url = `/api/sendText`;
-    return await this.client.post(url, body).then((response) => response.data);
+    return await this.client
+      .post(url, body, { signal: opts?.signal })
+      .then((response) => response.data);
   }
 
-  async sendImage(body: MessageImageRequest): Promise<any> {
+  async sendImage(
+    body: MessageImageRequest,
+    opts?: RequestOptions,
+  ): Promise<any> {
     const url = `/api/sendImage`;
-    return await this.client.post(url, body).then((response) => response.data);
+    return await this.client
+      .post(url, body, { signal: opts?.signal })
+      .then((response) => response.data);
   }
 
-  async sendVideo(body: MessageVideoRequest): Promise<any> {
+  async sendVideo(
+    body: MessageVideoRequest,
+    opts?: RequestOptions,
+  ): Promise<any> {
     const url = `/api/sendVideo`;
-    return await this.client.post(url, body).then((response) => response.data);
+    return await this.client
+      .post(url, body, { signal: opts?.signal })
+      .then((response) => response.data);
   }
 
-  async sendVoice(body: MessageVoiceRequest): Promise<any> {
+  async sendVoice(
+    body: MessageVoiceRequest,
+    opts?: RequestOptions,
+  ): Promise<any> {
     const url = `/api/sendVoice`;
-    return await this.client.post(url, body).then((response) => response.data);
+    return await this.client
+      .post(url, body, { signal: opts?.signal })
+      .then((response) => response.data);
   }
 
-  async sendFile(body: MessageFileRequest): Promise<any> {
+  async sendFile(
+    body: MessageFileRequest,
+    opts?: RequestOptions,
+  ): Promise<any> {
     const url = `/api/sendFile`;
-    return await this.client.post(url, body).then((response) => response.data);
+    return await this.client
+      .post(url, body, { signal: opts?.signal })
+      .then((response) => response.data);
   }
 
-  async deleteMessage(session: string, chatId: string, messageId: string) {
+  async deleteMessage(
+    session: string,
+    chatId: string,
+    messageId: string,
+    opts?: RequestOptions,
+  ) {
     const url = `/api/${session}/chats/${chatId}/messages/${messageId}`;
-    return await this.client.delete(url).then((response) => response.data);
+    return await this.client
+      .delete(url, { signal: opts?.signal })
+      .then((response) => response.data);
   }
 
-  async startTyping(body: ChatRequest) {
+  async startTyping(body: ChatRequest, opts?: RequestOptions) {
     const url = `/api/startTyping`;
-    return await this.client.post(url, body).then((response) => response.data);
+    return await this.client
+      .post(url, body, { signal: opts?.signal })
+      .then((response) => response.data);
   }
 
-  async stopTyping(body: ChatRequest) {
+  async stopTyping(body: ChatRequest, opts?: RequestOptions) {
     const url = `/api/stopTyping`;
-    return await this.client.post(url, body);
+    return await this.client.post(url, body, { signal: opts?.signal });
   }
 
-  async readMessages(session: string, chatId: string) {
+  async readMessages(session: string, chatId: string, opts?: RequestOptions) {
     const url = `/api/${session}/chats/${chatId}/messages/read`;
-    return await this.client.post(url).then((response) => response.data);
+    return await this.client
+      .post(url, undefined, { signal: opts?.signal })
+      .then((response) => response.data);
   }
 
-  async findPNByLid(session: string, lid: string): Promise<string | null> {
+  async findPNByLid(
+    session: string,
+    lid: string,
+    opts?: RequestOptions,
+  ): Promise<string | null> {
     const url = `/api/${session}/lids/${lid}`;
-    return await this.client.get(url).then((response) => response.data.pn);
+    return await this.client
+      .get(url, { signal: opts?.signal })
+      .then((response) => response.data.pn);
   }
 
-  async findLIDByPN(session: string, pn: string): Promise<string | null> {
+  async findLIDByPN(
+    session: string,
+    pn: string,
+    opts?: RequestOptions,
+  ): Promise<string | null> {
     const url = `/api/${session}/lids/pn/${pn}`;
-    return await this.client.get(url).then((response) => response.data.lid);
+    return await this.client
+      .get(url, { signal: opts?.signal })
+      .then((response) => response.data.lid);
   }
 
   /**
    * Get the server version
    * @returns Server version information
    */
-  async serverVersion(): Promise<any> {
+  async serverVersion(opts?: RequestOptions): Promise<any> {
     const url = `/api/server/version`;
-    return await this.client.get(url).then((response) => response.data);
+    return await this.client
+      .get(url, { signal: opts?.signal })
+      .then((response) => response.data);
   }
 
   /**
    * Get the server status
    * @returns Server status information
    */
-  async serverStatus(): Promise<any> {
+  async serverStatus(opts?: RequestOptions): Promise<any> {
     const url = `/api/server/status`;
-    return await this.client.get(url).then((response) => response.data);
+    return await this.client
+      .get(url, { signal: opts?.signal })
+      .then((response) => response.data);
   }
 
   /**
@@ -191,10 +281,13 @@ export class WAHASelf {
    * @param force Whether to force reboot (true) or gracefully reboot (false)
    * @returns Server stop response
    */
-  async serverReboot(force: boolean = false): Promise<any> {
+  async serverReboot(
+    force: boolean = false,
+    opts?: RequestOptions,
+  ): Promise<any> {
     const url = `/api/server/stop`;
     return await this.client
-      .post(url, { force })
+      .post(url, { force }, { signal: opts?.signal })
       .then((response) => response.data);
   }
 }
@@ -205,77 +298,87 @@ export class WAHASessionAPI {
     private api: WAHASelf,
   ) {}
 
-  getContact(contactId: string): Promise<any> {
-    return this.api.getContact(this.session, contactId);
+  getContacts(page: PaginationParams, opts?: RequestOptions): Promise<any> {
+    return this.api.getContacts(this.session, page, opts);
   }
 
-  contactCheckExists(phone: string): Promise<WANumberExistResult> {
-    return this.api.contactCheckExists(this.session, phone);
+  getContact(contactId: string, opts?: RequestOptions): Promise<any> {
+    return this.api.getContact(this.session, contactId, opts);
   }
 
-  getGroup(groupId: string): Promise<any> {
-    return this.api.getGroup(this.session, groupId);
+  contactCheckExists(
+    phone: string,
+    opts?: RequestOptions,
+  ): Promise<WANumberExistResult> {
+    return this.api.contactCheckExists(this.session, phone, opts);
   }
 
-  getChannel(channelId: string): Promise<Channel> {
-    return this.api.getChannel(this.session, channelId);
+  getGroup(groupId: string, opts?: RequestOptions): Promise<any> {
+    return this.api.getGroup(this.session, groupId, opts);
   }
 
-  getChatPicture(chatId: string): Promise<string | null> {
-    return this.api.getChatPicture(this.session, chatId);
+  getChannel(channelId: string, opts?: RequestOptions): Promise<Channel> {
+    return this.api.getChannel(this.session, channelId, opts);
   }
 
-  sendText(body: MessageTextRequest): Promise<any> {
+  getChatPicture(
+    chatId: string,
+    opts?: RequestOptions,
+  ): Promise<string | null> {
+    return this.api.getChatPicture(this.session, chatId, opts);
+  }
+
+  sendText(body: MessageTextRequest, opts?: RequestOptions): Promise<any> {
     body.session = this.session;
-    return this.api.sendText(body);
+    return this.api.sendText(body, opts);
   }
 
-  sendImage(body: MessageImageRequest): Promise<any> {
+  sendImage(body: MessageImageRequest, opts?: RequestOptions): Promise<any> {
     body.session = this.session;
-    return this.api.sendImage(body);
+    return this.api.sendImage(body, opts);
   }
 
-  sendVideo(body: MessageVideoRequest): Promise<any> {
+  sendVideo(body: MessageVideoRequest, opts?: RequestOptions): Promise<any> {
     body.session = this.session;
-    return this.api.sendVideo(body);
+    return this.api.sendVideo(body, opts);
   }
 
-  sendVoice(body: MessageVoiceRequest): Promise<any> {
+  sendVoice(body: MessageVoiceRequest, opts?: RequestOptions): Promise<any> {
     body.session = this.session;
-    return this.api.sendVoice(body);
+    return this.api.sendVoice(body, opts);
   }
 
-  sendFile(body: MessageFileRequest): Promise<any> {
+  sendFile(body: MessageFileRequest, opts?: RequestOptions): Promise<any> {
     body.session = this.session;
-    return this.api.sendFile(body);
+    return this.api.sendFile(body, opts);
   }
 
-  deleteMessage(chatId: string, messageId: string) {
-    return this.api.deleteMessage(this.session, chatId, messageId);
+  deleteMessage(chatId: string, messageId: string, opts?: RequestOptions) {
+    return this.api.deleteMessage(this.session, chatId, messageId, opts);
   }
 
-  startTyping(body: ChatRequest) {
+  startTyping(body: ChatRequest, opts?: RequestOptions) {
     body.session = this.session;
-    return this.api.startTyping(body);
+    return this.api.startTyping(body, opts);
   }
 
-  stopTyping(body: ChatRequest) {
+  stopTyping(body: ChatRequest, opts?: RequestOptions) {
     body.session = this.session;
-    return this.api.stopTyping(body);
+    return this.api.stopTyping(body, opts);
   }
 
-  readMessages(chatId: string) {
-    return this.api.readMessages(this.session, chatId);
+  readMessages(chatId: string, opts?: RequestOptions) {
+    return this.api.readMessages(this.session, chatId, opts);
   }
 
   //
   // Lids
   //
-  findPNByLid(lid: string) {
-    return this.api.findPNByLid(this.session, lid);
+  findPNByLid(lid: string, opts?: RequestOptions) {
+    return this.api.findPNByLid(this.session, lid, opts);
   }
 
-  findLIDByPN(pn: string) {
-    return this.api.findLIDByPN(this.session, pn);
+  findLIDByPN(pn: string, opts?: RequestOptions) {
+    return this.api.findLIDByPN(this.session, pn, opts);
   }
 }

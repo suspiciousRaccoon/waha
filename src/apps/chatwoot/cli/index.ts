@@ -1,7 +1,21 @@
-import { Command, CommanderError, OutputConfiguration } from 'commander';
+import {
+  Argument,
+  Command,
+  CommanderError,
+  Option,
+  OutputConfiguration,
+} from 'commander';
 import argvSplit from 'string-argv';
-import { BufferedOutput } from '@waha/apps/chatwoot/cli/BufferedOutput';
-import { buildFormatHelp, fullCommandPath } from '@waha/apps/chatwoot/cli/help';
+import { BufferedOutput } from '@waha/apps/chatwoot/cli/utils/BufferedOutput';
+import {
+  buildFormatHelp,
+  fullCommandPath,
+} from '@waha/apps/chatwoot/cli/utils/help';
+import {
+  JobAttemptsOption,
+  JobTimeoutOption,
+  ParseMS,
+} from '@waha/apps/chatwoot/cli/utils/options';
 import { CommandContext } from '@waha/apps/chatwoot/cli/types';
 import {
   SessionLogout,
@@ -15,6 +29,13 @@ import {
 import { ServerReboot, ServerStatus } from '@waha/apps/chatwoot/cli/cmd.server';
 import { ChatWootCommandsConfig } from '@waha/apps/chatwoot/dto/config.dto';
 import { CommandDisabled } from '@waha/apps/chatwoot/cli/cmd.disabled';
+import {
+  ContactsPullStart,
+  ContactsPullStatus,
+} from '@waha/apps/chatwoot/cli/cmd.contacts';
+import { ContactsPullOptions } from '@waha/apps/chatwoot/consumers/task/contacts.pull';
+import { JobsOptions } from 'bullmq';
+import { JobDataTimeout } from '@waha/apps/app_sdk/AppConsumer';
 
 function BuildProgram(
   commands: ChatWootCommandsConfig,
@@ -24,6 +45,7 @@ function BuildProgram(
   const l = ctx.l;
   const SessionGroup = l.r('cli.cmd.root.sub.session');
   const ServerGroup = l.r('cli.cmd.root.sub.server');
+  const SyncGroup = l.r('cli.cmd.root.sub.sync');
 
   const program = new Command();
   program
@@ -31,12 +53,17 @@ function BuildProgram(
     .description(l.r('cli.cmd.root.description'))
     .exitOverride()
     .configureOutput(output)
+    .showSuggestionAfterError(true)
     .commandsGroup(SessionGroup)
     .commandsGroup(ServerGroup)
+    .commandsGroup(SyncGroup)
     .configureHelp({
       helpWidth: 200,
       styleOptionTerm(str: string) {
         return `- \`${str}\``;
+      },
+      styleArgumentTerm(str: string) {
+        return `- **${str}**`;
       },
       styleUsage(str) {
         return `**${str}**`;
@@ -108,6 +135,88 @@ function BuildProgram(
     .description(l.r('cli.cmd.session.screenshot.description'))
     .helpGroup(SessionGroup)
     .action(() => SessionScreenshot(ctx));
+
+  //
+  // Pull Contacts
+  //
+  program
+    .command('contacts')
+    .alias('/contacts')
+    .summary(l.r('cli.cmd.contacts.summary'))
+    .description(l.r('cli.cmd.contacts.description'))
+    .helpGroup(SyncGroup)
+    .addArgument(
+      new Argument(
+        '[action]',
+        l.r('cli.cmd.contacts.action.description'),
+      ).choices(['pull', 'status']),
+    )
+    .addOption(
+      new Option('--avatar <mode>', l.r('cli.cmd.contacts.pull.option.avatar'))
+        .choices(['skip', 'if-missing', 'update'])
+        .default('if-missing'),
+    )
+    .option('--groups', l.r('cli.cmd.contacts.pull.option.groups'))
+    .option('--no-lids', l.r('cli.cmd.contacts.pull.option.no-lids'))
+    .option(
+      '--no-attributes',
+      l.r('cli.cmd.contacts.pull.option.no-attributes'),
+    )
+    .option(
+      '--batch <number>',
+      l.r('cli.cmd.contacts.pull.option.batch'),
+      100 as any,
+    )
+    .addOption(new JobAttemptsOption(l, 6))
+    .addOption(new JobTimeoutOption(l, '10m'))
+    .addOption(
+      new Option(
+        '--delay-contact <duration>',
+        l.r('cli.cmd.contacts.pull.option.delay-contact'),
+      )
+        .argParser(ParseMS)
+        .default(ParseMS('0.1s'), '0.1s'),
+    )
+    .addOption(
+      new Option(
+        '--delay-batch <duration>',
+        l.r('cli.cmd.contacts.pull.option.delay-batch'),
+      )
+        .argParser(ParseMS)
+        .default(ParseMS('1s'), '1s'),
+    )
+    .action(async (action, opts, cmd: Command) => {
+      if (!action) {
+        cmd.outputHelp();
+        return;
+      }
+
+      if (action === 'status') {
+        await ContactsPullStatus(ctx);
+        return;
+      }
+
+      const options: ContactsPullOptions = {
+        batch: opts.batch,
+        avatar: opts.avatar,
+        attributes: opts.attributes,
+        contacts: {
+          lids: opts.lids,
+          groups: opts.groups,
+        },
+        delay: {
+          contact: opts.delayContact,
+          batch: opts.delayBatch,
+        },
+      };
+      const jobOptions: JobsOptions & JobDataTimeout = {
+        attempts: opts.attempts,
+        timeout: {
+          job: opts.timeout,
+        },
+      };
+      await ContactsPullStart(ctx, options, jobOptions);
+    });
 
   //
   // Server

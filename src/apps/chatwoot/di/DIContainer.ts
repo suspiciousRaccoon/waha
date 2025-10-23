@@ -109,7 +109,7 @@ export class DIContainer {
    * @returns ContactService instance
    */
   @CacheSync()
-  private ContactService(): ContactService {
+  public ContactService(): ContactService {
     return new ContactService(
       this.config,
       this.AccountAPI(),

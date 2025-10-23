@@ -117,6 +117,9 @@ app.updated.message: |-
 
   ✅ WhatsApp oturumu **{{{name}}}** için ayarlar güncellendi.
 
+cli.usage.arguments: |-
+  [eylem]
+
 cli.usage.command: |-
   [komut]
 
@@ -138,6 +141,9 @@ cli.cmd.root.sub.session: |-
 cli.cmd.root.sub.server: |-
   🖥️ **Sunucu**:
 
+cli.cmd.root.sub.sync: |-
+  🔄️ **Eşitleme**:
+
 cli.cmd.session.status.description: |-
   Geçerli oturum durumunu alın.
 
@@ -158,6 +164,62 @@ cli.cmd.session.qr.description: |-
 
 cli.cmd.session.screenshot.description: |-
   Oturumun ekran görüntüsünü alın (yalnızca **WEBJS** motoru ile kullanılabilir).
+
+cli.cmd.contacts.summary: |-
+  WhatsApp kişilerini içe aktarın.
+
+cli.cmd.contacts.description: |-
+  👤 `contacts pull` komutunu çalıştırarak bir eşitleme başlatın veya `contacts status` ile ilerlemeyi kontrol edin.
+
+cli.cmd.contacts.action.description: |-
+  `start` ile kişi çekmeyi başlatın veya `status` ile etkin görevi kontrol edin.
+
+cli.cmd.contacts.pull.description: |-
+  WhatsApp kişilerini ChatWoot'a çekmeye başlayın.
+
+cli.cmd.contacts.pull.option.batch: |-
+  Her partide çekilecek kişi sayısı.
+
+cli.cmd.contacts.pull.option.delay-contact: |-
+  Avatarları çekerken limitlere takılmamak için her kişi arasında bekleme süresi.
+
+cli.cmd.contacts.pull.option.delay-batch: |-
+  Kişi partileri arasındaki bekleme süresi.
+
+cli.cmd.contacts.pull.option.avatar: |-
+  Kişi avatarlarının nasıl çekileceğini seçin: `skip`, `if-missing` veya `update`.
+
+cli.cmd.contacts.pull.option.groups: |-
+  WhatsApp grup kişilerini senkronizasyona dahil et.
+
+cli.cmd.contacts.pull.option.no-lids: |-
+  WhatsApp LID kişilerini (bağlı cihaz JID'leri) senkronizasyonda atla.
+
+cli.cmd.contacts.pull.option.no-attributes: |-
+  Kişi zaten varsa özelliklerini çekmeyin (süreci hızlandırır).
+
+cli.cmd.contacts.pull.already-running: |-
+  ⏳ **Pull Contacts** görevi zaten çalışıyor. Bitmesini bekleyin veya yenisini başlatmadan önce durdurun.
+
+  Ayrıntılar için `contacts status` gönderin.
+
+cli.cmd.contacts.pull.queued: |-
+  👥 **Pull Contacts** görevi sıraya alındı.
+
+  Her **{{batch}}** kişide bir ilerleme güncellemesi paylaşacağız.
+  Kişileri çekmek zaman alabilir — en güncel durumu istediğiniz zaman `contacts status` ile kontrol edin.
+
+cli.cmd.options.job.attempts: |-
+  Görevi başarısız saymadan önce yapılacak yeniden deneme sayısı.
+
+cli.cmd.options.job.timeout: |-
+  Görev yeniden denenmeden önce çalışmasına izin verilen en uzun süre (`30s`, `5m`, `1h` gibi değerleri destekler).
+
+cli.cmd.contacts.status.description: |-
+  Devam eden kişi çekme görevinin durumunu gösterin.
+
+cli.cmd.contacts.status.not-found: |-
+  ℹ️ Aktif bir **Pull Contacts** görevi bulunamadı. `contacts pull` ile bir tane başlatın.
 
 cli.cmd.server.description: |-
   Sunucuyu yönetin.
@@ -185,6 +247,34 @@ cli.help.options.defaultGroup: |-
 
 cli.help.globalOptions.title: |-
   **Genel seçenekler:**
+
+task.contacts.status: |-
+  👤 Kişi çekme: **{{state}}**
+  - ✅ Başarılı: {{{progress.ok}}} kişi
+  - ⚪ Atlanan: {{{progress.skipped}}} kişi
+  - ⚠️ Hatalar: {{{progress.errors}}} kişi
+
+  {{#job}}
+  ⌛ Zaman çizelgesi:
+  - Sıraya alındı: {{{timestamp}}}
+  {{#processedOn}}
+  - Başladı: {{{processedOn}}}
+  {{/processedOn}}
+  {{#finishedOn}}
+  - Bitti: {{{finishedOn}}}
+  {{/finishedOn}}
+  {{/job}}
+
+  {{#error}}
+  Ayrıntılar:
+  [{{{details.text}}}]({{{details.url}}})
+  {{/error}}
+
+task.contacts.started: |-
+  Kişiler çekiliyor...
+
+task.contacts.progress: |-
+  Kişi çekme: ✅ {{progress.ok}}, ⚪ {{progress.skipped}}, ⚠️ {{progress.errors}}
 
 app.help.reminder: |-
   Kullanılabilir komutların listesini almak için **help** gönderin.

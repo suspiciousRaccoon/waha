@@ -7,6 +7,12 @@ import { DelayedError } from 'bullmq';
 import { PinoLogger } from 'nestjs-pino';
 import { Logger } from 'pino';
 
+export interface JobDataTimeout {
+  timeout?: {
+    job?: number;
+  };
+}
+
 /**
  * Base class for app consumers that provides common functionality
  * like mutex locking, logging setup, and error handling.
@@ -25,6 +31,14 @@ export abstract class AppConsumer extends BaseWorkerHost {
       app: appName,
       component: componentName,
     });
+  }
+
+  protected signal(job) {
+    if (job.data?.timeout?.job != null) {
+      return AbortSignal.timeout(job.data?.timeout?.job);
+    }
+    // Aka never abort
+    return new AbortController().signal;
   }
 
   /**

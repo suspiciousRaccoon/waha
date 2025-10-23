@@ -60,8 +60,8 @@ base = base.replace(/\/+$/, '');
 
 export function JobLink(job: Job): { text: string; url: string } {
   const text = `${job.queueName} => ${job.id}`;
-  const url = `${base}/jobs/queue/${encodeURIComponent(job.queueName)}/${
-    job.id
-  }`;
+  const queue = encodeURIComponent(job.queueName);
+  const id = encodeURIComponent(job.id);
+  const url = `${base}/jobs/queue/${queue}/${id}`;
   return { text: text, url: url };
 }

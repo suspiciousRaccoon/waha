@@ -14,10 +14,16 @@ import * as lodash from 'lodash';
 
 import { AttributeKey } from '../const';
 import { E164Parser } from '@waha/core/utils/PhoneJidNormalizer';
+import { ContactInfo } from '@waha/apps/chatwoot/client/ContactConversationService';
 
 export interface ContactResponse {
   data: generic_id & contact;
   sourceId: string;
+}
+
+export enum AvatarUpdateMode {
+  IF_MISSING,
+  ALWAYS,
 }
 
 export class ContactService {
@@ -27,6 +33,16 @@ export class ContactService {
     protected inboxAPI: ChatWootInboxAPI,
     private logger: ILogger,
   ) {}
+
+  async findOrCreateContact(contactInfo: ContactInfo) {
+    const chatId = contactInfo.ChatId();
+    let contact = await this.searchByAnyID(chatId);
+    if (!contact) {
+      const request = await contactInfo.PublicContactCreate();
+      contact = await this.create(chatId, request);
+    }
+    return contact;
+  }
 
   async searchByAnyID(chatId: string): Promise<ContactResponse | null> {
     const payload: any[] = [
@@ -134,6 +150,28 @@ export class ContactService {
       data: response.payload,
       sourceId: contact.source_id,
     };
+  }
+
+  public async updateAvatar(
+    contact: ContactResponse,
+    contactInfo: ContactInfo,
+    mode: AvatarUpdateMode,
+  ) {
+    // Update Avatar if nothing, but keep the original one if any
+    if (contact.data.thumbnail && mode == AvatarUpdateMode.IF_MISSING) {
+      return;
+    }
+    const chatId = contactInfo.ChatId();
+    const avatarUrl = await contactInfo.AvatarUrl().catch((err) => {
+      this.logger.warn(
+        `Error getting avatar for chat.id from WhatsApp: ${chatId}`,
+      );
+      this.logger.warn(err);
+      return null;
+    });
+    if (avatarUrl) {
+      this.updateAvatarUrlSafe(contact.data.id, avatarUrl);
+    }
   }
 
   public updateAvatarUrlSafe(contactId, avatarUrl: string) {

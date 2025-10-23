@@ -117,6 +117,9 @@ app.updated.message: |-
 
   ✅ Pengaturan untuk sesi WhatsApp **{{{name}}}** telah diperbarui.
 
+cli.usage.arguments: |-
+  [aksi]
+
 cli.usage.command: |-
   [perintah]
 
@@ -138,6 +141,9 @@ cli.cmd.root.sub.session: |-
 cli.cmd.root.sub.server: |-
   🖥️ **Server**:
 
+cli.cmd.root.sub.sync: |-
+  🔄️ **Sinkronisasi**:
+
 cli.cmd.session.status.description: |-
   Dapatkan status sesi saat ini.
 
@@ -158,6 +164,62 @@ cli.cmd.session.qr.description: |-
 
 cli.cmd.session.screenshot.description: |-
   Ambil tangkapan layar sesi (hanya tersedia dengan mesin **WEBJS**).
+
+cli.cmd.contacts.summary: |-
+  Tarik kontak WhatsApp.
+
+cli.cmd.contacts.description: |-
+  👤 Jalankan `contacts pull` untuk memulai sinkronisasi atau `contacts status` untuk melihat progres.
+
+cli.cmd.contacts.action.description: |-
+  Gunakan `start` untuk mulai menarik kontak atau `status` untuk memeriksa pekerjaan aktif.
+
+cli.cmd.contacts.pull.description: |-
+  Mulai menarik kontak WhatsApp ke ChatWoot.
+
+cli.cmd.contacts.pull.option.batch: |-
+  Jumlah kontak yang ditarik di setiap batch.
+
+cli.cmd.contacts.pull.option.delay-contact: |-
+  Jeda antar tiap kontak untuk menghindari pembatasan saat mengambil avatar.
+
+cli.cmd.contacts.pull.option.delay-batch: |-
+  Jeda antar batch kontak.
+
+cli.cmd.contacts.pull.option.avatar: |-
+  Pilih cara mengambil avatar kontak: `skip`, `if-missing`, atau `update`.
+
+cli.cmd.contacts.pull.option.groups: |-
+  Sertakan kontak grup WhatsApp dalam sinkronisasi.
+
+cli.cmd.contacts.pull.option.no-lids: |-
+  Lewati kontak LID WhatsApp (JID perangkat terhubung) saat sinkronisasi.
+
+cli.cmd.contacts.pull.option.no-attributes: |-
+  Jangan ambil atribut kontak jika kontak sudah ada (mempercepat proses).
+
+cli.cmd.contacts.pull.already-running: |-
+  ⏳ Pekerjaan **Pull Contacts** sudah berjalan. Tunggu hingga selesai atau hentikan sebelum memulai yang baru.
+
+  Kirim `contacts status` untuk detail.
+
+cli.cmd.contacts.pull.queued: |-
+  👥 Pekerjaan **Pull Contacts** masuk antrean.
+
+  Kami akan membagikan pembaruan progres setiap **{{batch}}** kontak.
+  Penarikan kontak bisa memakan waktu—periksa status terbaru kapan saja dengan `contacts status`.
+
+cli.cmd.options.job.attempts: |-
+  Jumlah percobaan ulang sebelum pekerjaan dianggap gagal.
+
+cli.cmd.options.job.timeout: |-
+  Durasi maksimum pekerjaan sebelum dicoba ulang (mendukung nilai seperti `30s`, `5m`, `1h`).
+
+cli.cmd.contacts.status.description: |-
+  Tampilkan status pekerjaan penarikan saat ini.
+
+cli.cmd.contacts.status.not-found: |-
+  ℹ️ Tidak ada pekerjaan **Pull Contacts** aktif. Mulai satu dengan `contacts pull`.
 
 cli.cmd.server.description: |-
   Kelola server.
@@ -185,6 +247,34 @@ cli.help.options.defaultGroup: |-
 
 cli.help.globalOptions.title: |-
   **Opsi global:**
+
+task.contacts.status: |-
+  👤 Penarikan kontak: **{{state}}**
+  - ✅ Berhasil: {{{progress.ok}}} kontak
+  - ⚪ Dilewati: {{{progress.skipped}}} kontak
+  - ⚠️ Kesalahan: {{{progress.errors}}} kontak
+
+  {{#job}}
+  ⌛ Linimasa:
+  - Masuk antrean: {{{timestamp}}}
+  {{#processedOn}}
+  - Mulai: {{{processedOn}}}
+  {{/processedOn}}
+  {{#finishedOn}}
+  - Selesai: {{{finishedOn}}}
+  {{/finishedOn}}
+  {{/job}}
+
+  {{#error}}
+  Detail:
+  [{{{details.text}}}]({{{details.url}}})
+  {{/error}}
+
+task.contacts.started: |-
+  Menarik kontak...
+
+task.contacts.progress: |-
+  Penarikan kontak: ✅ {{progress.ok}}, ⚪ {{progress.skipped}}, ⚠️ {{progress.errors}}
 
 app.help.reminder: |-
   Kirim **help** untuk mendapatkan daftar perintah yang tersedia.

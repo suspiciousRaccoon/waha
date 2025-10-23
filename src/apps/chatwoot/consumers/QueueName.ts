@@ -6,6 +6,11 @@ export enum QueueName {
   SCHEDULED_CHECK_VERSION = 'chatwoot.scheduled | check.version',
 
   //
+  // Task
+  //
+  TASK_CONTACTS_PULL = 'chatwoot.task | contacts.pull',
+
+  //
   // WAHA Events
   //
   WAHA_SESSION_STATUS = 'chatwoot.waha | session.status',

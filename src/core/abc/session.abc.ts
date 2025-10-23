@@ -7,6 +7,7 @@ import {
   IgnoreJidConfig,
   isJidBroadcast,
   isJidNewsletter,
+  isNullJid,
   JidFilter,
 } from '@waha/core/utils/jids';
 import {
@@ -748,7 +749,7 @@ export abstract class WhatsappSession {
   protected async refreshProfilePicture(id: string) {
     this.logger.debug(`Refreshing profile picture for id "${id}"...`);
     // Have no pictures
-    if (id === '0@c.us' || id === '0@s.whatsapp.net') {
+    if (isNullJid(id)) {
       return null;
     } else if (isJidBroadcast(id)) {
       return null;

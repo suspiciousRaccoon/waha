@@ -1,8 +1,10 @@
 import { InjectQueue } from '@nestjs/bullmq';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Queue } from 'bullmq';
 
 import { QueueName } from '../consumers/QueueName';
+import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
+import { ContactsPullRemove } from '@waha/apps/chatwoot/cli/cmd.contacts';
 
 /**
  * Service for scheduling ChatWoot tasks
@@ -11,10 +13,14 @@ import { QueueName } from '../consumers/QueueName';
 @Injectable()
 export class ChatWootScheduleService {
   constructor(
+    @InjectPinoLogger('DashboardConfigService')
+    protected logger: PinoLogger,
     @InjectQueue(QueueName.SCHEDULED_MESSAGE_CLEANUP)
     private readonly messageCleanupQueue: Queue,
     @InjectQueue(QueueName.SCHEDULED_CHECK_VERSION)
     private readonly checkVersionQueue: Queue,
+    @InjectQueue(QueueName.TASK_CONTACTS_PULL)
+    private readonly importContactsQueue: Queue,
   ) {}
 
   /**
@@ -58,9 +64,27 @@ export class ChatWootScheduleService {
     await this.checkVersionQueue.removeJobScheduler(
       this.JobId(QueueName.SCHEDULED_CHECK_VERSION, appId),
     );
+
+    // contacts
+    ContactsPullRemove(this.importContactsQueue, appId, this.logger).catch(
+      (reason) => {
+        // Ignore errors
+        this.logger.warn(
+          `Failed to remove "contacts" job for app ${appId}, session ${sessionName}: ${reason}`,
+        );
+      },
+    );
   }
 
+  /**
+   * DEPRECATED - for backward compatability
+   * Use SingleJobId if you want to have single job in the queue by app
+   */
   private JobId(queue: QueueName, appId: string) {
     return `${queue} | ${appId}`;
+  }
+
+  static SingleJobId(appId: string) {
+    return `${appId}`;
   }
 }

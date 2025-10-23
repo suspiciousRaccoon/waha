@@ -11,12 +11,12 @@ import { PinoLogger } from 'nestjs-pino';
 
 import { AppRepository } from '../../storage';
 import { TKey } from '@waha/apps/chatwoot/i18n/templates';
+import { SignalRace } from '@waha/utils/abortable';
 
 /**
- * Base class for ChatWoot scheduled consumers
- * Contains common logic for all scheduled consumers
+ * Base class for ChatWoot background task consumers
  */
-export abstract class ChatWootScheduledConsumer extends AppConsumer {
+export abstract class ChatWootTaskConsumer extends AppConsumer {
   protected appRepository: AppRepository;
 
   constructor(
@@ -45,24 +45,31 @@ export abstract class ChatWootScheduledConsumer extends AppConsumer {
    * Get the function that processes the scheduled job
    * This method must be implemented by subclasses
    */
-  protected abstract Process(container: DIContainer, job: Job): Promise<any>;
+  protected abstract Process(
+    container: DIContainer,
+    job: Job,
+    signal: AbortSignal,
+  ): Promise<any>;
 
   /**
    * Process the job
    * This method is called by the queue processor
    */
   async processJob(job: Job<ScheduledData, any, string>): Promise<any> {
-    return this.ProcessAndReportStatus(job);
+    const signal = this.signal(job);
+    return SignalRace(this.ProcessAndReportStatus(job, signal), signal);
   }
 
-  private async ProcessAndReportStatus(job: Job) {
+  private async ProcessAndReportStatus(job: Job, signal: AbortSignal) {
     try {
       const container = await this.DIContainer(job, job.data.app);
-      const result = await this.Process(container, job);
+      const result = await this.Process(container, job, signal);
       await this.ReportErrorRecovered(job);
       return result;
     } catch (err) {
-      await this.ReportErrorForJob(job, err);
+      this.ReportErrorForJob(job, err).catch((exc) =>
+        this.logger.error(`Failed to report error for job ${job.id}: ${exc}`),
+      );
       throw err;
     }
   }

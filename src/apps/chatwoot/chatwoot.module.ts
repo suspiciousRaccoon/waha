@@ -28,6 +28,7 @@ import { ChatWootScheduleService } from './services/ChatWootScheduleService';
 import { ChatWootWAHAQueueService } from './services/ChatWootWAHAQueueService';
 import { ChatWootConversationCreatedConsumer } from './consumers/inbox/conversation_created';
 import { ChatWootConversationStatusChangedConsumer } from '@waha/apps/chatwoot/consumers/inbox/conversation_status_changed';
+import { TaskContactsPullConsumer } from '@waha/apps/chatwoot/consumers/task/contacts.pull';
 
 const CONTROLLERS = [ChatwootWebhookController, ChatwootLocalesController];
 
@@ -39,6 +40,10 @@ const IMPORTS = lodash.flatten([
   RegisterAppQueue({
     name: QueueName.SCHEDULED_CHECK_VERSION,
     defaultJobOptions: merge(NoRetriesJobOptions, JobRemoveOptions),
+  }),
+  RegisterAppQueue({
+    name: QueueName.TASK_CONTACTS_PULL,
+    defaultJobOptions: merge(ExponentialRetriesJobOptions, JobRemoveOptions),
   }),
   RegisterAppQueue({
     name: QueueName.WAHA_MESSAGE_ANY,
@@ -98,14 +103,19 @@ const PROVIDERS = [
   ChatWootConversationCreatedConsumer,
   ChatWootConversationStatusChangedConsumer,
   ChatWootInboxCommandsConsumer,
+  // Tasks
+  TaskContactsPullConsumer,
+  // WAHA
   WAHASessionStatusConsumer,
   WAHAMessageAnyConsumer,
   WAHAMessageReactionConsumer,
   WAHAMessageEditedConsumer,
   WAHAMessageRevokedConsumer,
   WAHAMessageAckConsumer,
+  // Scheduled
   MessageCleanupConsumer,
   CheckVersionConsumer,
+  // Services
   ChatWootWAHAQueueService,
   ChatWootQueueService,
   ChatWootScheduleService,

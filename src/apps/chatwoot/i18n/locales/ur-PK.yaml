@@ -117,6 +117,9 @@ app.updated.message: |-
 
   ✅ واٹس ایپ سیشن **{{{name}}}** کی ترتیبات اپڈیٹ کر دی گئی ہیں۔
 
+cli.usage.arguments: |-
+  [عمل]
+
 cli.usage.command: |-
   [کمانڈ]
 
@@ -138,6 +141,9 @@ cli.cmd.root.sub.session: |-
 cli.cmd.root.sub.server: |-
   🖥️ **سرور**:
 
+cli.cmd.root.sub.sync: |-
+  🔄️ **ہم وقت سازی**:
+
 cli.cmd.session.status.description: |-
   موجودہ سیشن کی حالت حاصل کریں۔
 
@@ -158,6 +164,62 @@ cli.cmd.session.qr.description: |-
 
 cli.cmd.session.screenshot.description: |-
   سیشن کا اسکرین شاٹ لیں (صرف **WEBJS** انجن کے ساتھ دستیاب)۔
+
+cli.cmd.contacts.summary: |-
+  واٹس ایپ روابط نکالیں۔
+
+cli.cmd.contacts.description: |-
+  👤 ہم وقت سازی شروع کرنے کے لیے `contacts pull` چلائیں یا پیش رفت دیکھنے کے لیے `contacts status` چلائیں۔
+
+cli.cmd.contacts.action.description: |-
+  `start` سے روابط نکالنا شروع کریں یا `status` سے فعال کام چیک کریں۔
+
+cli.cmd.contacts.pull.description: |-
+  واٹس ایپ روابط کو ChatWoot میں لانا شروع کریں۔
+
+cli.cmd.contacts.pull.option.batch: |-
+  ہر بیچ میں نکالے جانے والے رابطوں کی تعداد۔
+
+cli.cmd.contacts.pull.option.delay-contact: |-
+  ہر رابطے کے درمیان وقفہ تاکہ اوتار نکالتے وقت ریٹ لمٹس سے بچا جا سکے۔
+
+cli.cmd.contacts.pull.option.delay-batch: |-
+  رابطوں کے بیچوں کے درمیان وقفہ۔
+
+cli.cmd.contacts.pull.option.avatar: |-
+  یہ منتخب کریں کہ رابطوں کے اوتار کس طرح نکالے جائیں: `skip`, `if-missing`, یا `update`.
+
+cli.cmd.contacts.pull.option.groups: |-
+  واٹس ایپ گروپ روابط کو ہم وقت سازی میں شامل کریں۔
+
+cli.cmd.contacts.pull.option.no-lids: |-
+  واٹس ایپ LID روابط (لنک شدہ ڈیوائس JID) کو ہم وقت سازی کے دوران چھوڑ دیں۔
+
+cli.cmd.contacts.pull.option.no-attributes: |-
+  اگر رابطہ پہلے سے موجود ہو تو اس کے خواص نہ نکالیں (اس سے عمل تیز ہوتا ہے)۔
+
+cli.cmd.contacts.pull.already-running: |-
+  ⏳ **Pull Contacts** کام پہلے ہی چل رہا ہے۔ اسے مکمل ہونے دیں یا نیا شروع کرنے سے پہلے روک دیں۔
+
+  تفصیلات کے لیے `contacts status` بھیجیں۔
+
+cli.cmd.contacts.pull.queued: |-
+  👥 **Pull Contacts** کام قطار میں لگا دیا گیا ہے۔
+
+  ہم ہر **{{batch}}** رابطوں کے بعد پیش رفت کی تازہ کاری شیئر کریں گے۔
+  روابط نکالنے میں وقت لگ سکتا ہے — کسی بھی وقت `contacts status` کے ذریعے تازہ ترین حالت دیکھیں۔
+
+cli.cmd.options.job.attempts: |-
+  کام کو ناکام قرار دینے سے پہلے دوبارہ کوششوں کی تعداد۔
+
+cli.cmd.options.job.timeout: |-
+  کام کو دوبارہ چلانے سے پہلے زیادہ سے زیادہ مدت (جیسے `30s`, `5m`, `1h`)۔
+
+cli.cmd.contacts.status.description: |-
+  موجودہ نکاسی کے کام کی حالت دکھائیں۔
+
+cli.cmd.contacts.status.not-found: |-
+  ℹ️ کوئی فعال **Pull Contacts** کام نہیں ملا۔ `contacts pull` سے ایک شروع کریں۔
 
 cli.cmd.server.description: |-
   سرور کا انتظام کریں۔
@@ -185,6 +247,34 @@ cli.help.options.defaultGroup: |-
 
 cli.help.globalOptions.title: |-
   **عالمی اختیارات:**
+
+task.contacts.status: |-
+  👤 رابطے نکالنا: **{{state}}**
+  - ✅ کامیابی: {{{progress.ok}}} روابط
+  - ⚪ چھوڑے گئے: {{{progress.skipped}}} روابط
+  - ⚠️ غلطیاں: {{{progress.errors}}} روابط
+
+  {{#job}}
+  ⌛ ٹائم لائن:
+  - قطار میں: {{{timestamp}}}
+  {{#processedOn}}
+  - آغاز: {{{processedOn}}}
+  {{/processedOn}}
+  {{#finishedOn}}
+  - اختتام: {{{finishedOn}}}
+  {{/finishedOn}}
+  {{/job}}
+
+  {{#error}}
+  تفصیلات:
+  [{{{details.text}}}]({{{details.url}}})
+  {{/error}}
+
+task.contacts.started: |-
+  روابط نکالے جا رہے ہیں...
+
+task.contacts.progress: |-
+  رابطے نکالنا: ✅ {{progress.ok}}، ⚪ {{progress.skipped}}، ⚠️ {{progress.errors}}
 
 app.help.reminder: |-
   دستیاب کمانڈز کی فہرست حاصل کرنے کے لیے **help** بھیجیں۔

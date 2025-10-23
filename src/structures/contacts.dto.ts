@@ -30,7 +30,7 @@ export class ContactProfilePictureQuery extends ContactQuery {
   refresh?: boolean = false;
 }
 
-enum ContactSortField {
+export enum ContactSortField {
   ID = 'id',
   NAME = 'name',
 }

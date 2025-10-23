@@ -117,6 +117,9 @@ app.updated.message: |-
 
   ✅ WhatsApp 会话 **{{{name}}}** 的设置已更新。
 
+cli.usage.arguments: |-
+  [操作]
+
 cli.usage.command: |-
   [命令]
 
@@ -138,6 +141,9 @@ cli.cmd.root.sub.session: |-
 cli.cmd.root.sub.server: |-
   🖥️ **服务器**：
 
+cli.cmd.root.sub.sync: |-
+  🔄️ **同步**：
+
 cli.cmd.session.status.description: |-
   获取当前会话状态。
 
@@ -158,6 +164,62 @@ cli.cmd.session.qr.description: |-
 
 cli.cmd.session.screenshot.description: |-
   截取会话截图（仅适用于 **WEBJS** 引擎）。
+
+cli.cmd.contacts.summary: |-
+  拉取 WhatsApp 联系人。
+
+cli.cmd.contacts.description: |-
+  👤 运行 `contacts pull` 启动同步，或运行 `contacts status` 查看进度。
+
+cli.cmd.contacts.action.description: |-
+  使用 `start` 开始拉取联系人，或使用 `status` 查看进行中的任务。
+
+cli.cmd.contacts.pull.description: |-
+  开始将 WhatsApp 联系人拉取到 ChatWoot。
+
+cli.cmd.contacts.pull.option.batch: |-
+  每批次拉取的联系人数量。
+
+cli.cmd.contacts.pull.option.delay-contact: |-
+  在每个联系人之间延迟，以避免拉取头像时触发频率限制。
+
+cli.cmd.contacts.pull.option.delay-batch: |-
+  在联系人批次之间的延迟。
+
+cli.cmd.contacts.pull.option.avatar: |-
+  选择如何拉取联系人头像：`skip`、`if-missing` 或 `update`。
+
+cli.cmd.contacts.pull.option.groups: |-
+  在同步中包含 WhatsApp 群组联系人。
+
+cli.cmd.contacts.pull.option.no-lids: |-
+  在同步中跳过 WhatsApp LID 联系人（关联设备 JID）。
+
+cli.cmd.contacts.pull.option.no-attributes: |-
+  如果联系人已存在，则不要拉取其属性（可加快流程）。
+
+cli.cmd.contacts.pull.already-running: |-
+  ⏳ **Pull Contacts** 任务已在运行。请等待完成或先停止再启动新的。
+
+  发送 `contacts status` 获取详情。
+
+cli.cmd.contacts.pull.queued: |-
+  👥 **Pull Contacts** 任务已排队。
+
+  我们会每 **{{batch}}** 个联系人更新一次进度。
+  拉取联系人可能需要一些时间——随时使用 `contacts status` 查看最新状态。
+
+cli.cmd.options.job.attempts: |-
+  任务标记为失败前的最大重试次数。
+
+cli.cmd.options.job.timeout: |-
+  任务重新尝试前允许运行的最长时间（支持 `30s`、`5m`、`1h` 等值）。
+
+cli.cmd.contacts.status.description: |-
+  显示当前拉取任务的状态。
+
+cli.cmd.contacts.status.not-found: |-
+  ℹ️ 未找到正在运行的 **Pull Contacts** 任务。使用 `contacts pull` 启动一个。
 
 cli.cmd.server.description: |-
   管理服务器。
@@ -185,6 +247,34 @@ cli.help.options.defaultGroup: |-
 
 cli.help.globalOptions.title: |-
   **全局选项：**
+
+task.contacts.status: |-
+  👤 联系人拉取：**{{state}}**
+  - ✅ 成功：{{{progress.ok}}} 位联系人
+  - ⚪ 跳过：{{{progress.skipped}}} 位联系人
+  - ⚠️ 错误：{{{progress.errors}}} 位联系人
+
+  {{#job}}
+  ⌛ 时间线：
+  - 排队：{{{timestamp}}}
+  {{#processedOn}}
+  - 开始：{{{processedOn}}}
+  {{/processedOn}}
+  {{#finishedOn}}
+  - 完成：{{{finishedOn}}}
+  {{/finishedOn}}
+  {{/job}}
+
+  {{#error}}
+  详情：
+  [{{{details.text}}}]({{{details.url}}})
+  {{/error}}
+
+task.contacts.started: |-
+  正在拉取联系人...
+
+task.contacts.progress: |-
+  联系人拉取：✅ {{progress.ok}}，⚪ {{progress.skipped}}，⚠️ {{progress.errors}}
 
 app.help.reminder: |-
   发送 **help** 获取可用命令列表。

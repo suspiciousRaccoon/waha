@@ -64,7 +64,22 @@ export class Locale {
     return date.toLocaleString(this.locale, options);
   }
 
-  FormatTimestamp(timestamp: Long | string | number | null): string | null {
+  FormatDatetimeSec(date: Date | null) {
+    if (!date) {
+      return null;
+    }
+    const options: any = this.strings['datetime'] || {};
+    options.second = '2-digit';
+    options.timeZone = options.timeZone || options.timezone || process.env.TZ;
+    return date.toLocaleString(this.locale, options);
+  }
+
+  FormatTimestampSec(timestamp: any) {
+    const date = this.ParseTimestamp(timestamp);
+    return this.FormatDatetimeSec(date);
+  }
+
+  ParseTimestamp(timestamp: Long | string | number | null): Date | null {
     const value = ensureNumber(timestamp);
     if (!value) {
       return undefined;
@@ -77,6 +92,11 @@ export class Locale {
     if (Number.isNaN(date.getTime())) {
       return undefined;
     }
+    return date;
+  }
+
+  FormatTimestamp(timestamp: Long | string | number | null): string | null {
+    const date = this.ParseTimestamp(timestamp);
     return this.FormatDatetime(date);
   }
 }

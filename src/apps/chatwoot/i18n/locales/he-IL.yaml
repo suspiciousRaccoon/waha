@@ -117,6 +117,9 @@ app.updated.message: |-
 
   ✅ ההגדרות עבור הפעלת וואטסאפ **{{{name}}}** עודכנו.
 
+cli.usage.arguments: |-
+  [פעולה]
+
 cli.usage.command: |-
   [פקודה]
 
@@ -138,6 +141,9 @@ cli.cmd.root.sub.session: |-
 cli.cmd.root.sub.server: |-
   🖥️ **שרת**:
 
+cli.cmd.root.sub.sync: |-
+  🔄️ **סנכרון**:
+
 cli.cmd.session.status.description: |-
   קבל את סטטוס ההפעלה הנוכחי.
 
@@ -158,6 +164,62 @@ cli.cmd.session.qr.description: |-
 
 cli.cmd.session.screenshot.description: |-
   צלם צילום מסך של ההפעלה (זמין רק עם מנוע **WEBJS**).
+
+cli.cmd.contacts.summary: |-
+  משיכת אנשי קשר של וואטסאפ.
+
+cli.cmd.contacts.description: |-
+  👤 הרץ `contacts pull` כדי להתחיל סנכרון או `contacts status` כדי לבדוק את ההתקדמות.
+
+cli.cmd.contacts.action.description: |-
+  השתמש ב-`start` כדי להתחיל למשוך אנשי קשר או ב-`status` כדי לבדוק את המשימה הפעילה.
+
+cli.cmd.contacts.pull.description: |-
+  התחל למשוך אנשי קשר של וואטסאפ אל ChatWoot.
+
+cli.cmd.contacts.pull.option.batch: |-
+  מספר אנשי הקשר שנמשכים בכל אצווה.
+
+cli.cmd.contacts.pull.option.delay-contact: |-
+  השהיה בין כל איש קשר כדי להימנע ממגבלות בעת משיכת תמונות הפרופיל.
+
+cli.cmd.contacts.pull.option.delay-batch: |-
+  השהיה בין אצוות של אנשי קשר.
+
+cli.cmd.contacts.pull.option.avatar: |-
+  בחר כיצד למשוך תמונות פרופיל: `skip`, `if-missing` או `update`.
+
+cli.cmd.contacts.pull.option.groups: |-
+  כלול בסנכרון אנשי קשר של קבוצות WhatsApp.
+
+cli.cmd.contacts.pull.option.no-lids: |-
+  דלג בסנכרון על אנשי קשר מסוג LID של WhatsApp (כתובות JID של מכשירים מקושרים).
+
+cli.cmd.contacts.pull.option.no-attributes: |-
+  אל תמשוך מאפייני איש קשר אם הוא כבר קיים (מאיץ את התהליך).
+
+cli.cmd.contacts.pull.already-running: |-
+  ⏳ המשימה **Pull Contacts** כבר פועלת. המתן שתסתיים או עצור אותה לפני שמתחילים חדשה.
+
+  שלח `contacts status` לקבלת פרטים.
+
+cli.cmd.contacts.pull.queued: |-
+  👥 המשימה **Pull Contacts** בתור.
+
+  נעדכן בהתקדמות כל **{{batch}}** אנשי קשר.
+  משיכת אנשי קשר יכולה לקחת זמן – בדוק בכל עת את הסטטוס האחרון עם `contacts status`.
+
+cli.cmd.options.job.attempts: |-
+  מספר ניסיונות החזרה לפני שסימנים את המשימה ככושלת.
+
+cli.cmd.options.job.timeout: |-
+  משך הזמן המרבי שבו המשימה יכולה לפעול לפני ניסיון נוסף (תומך בערכים כגון `30s`, `5m`, `1h`).
+
+cli.cmd.contacts.status.description: |-
+  הצגת הסטטוס של משימת המשיכה הנוכחית.
+
+cli.cmd.contacts.status.not-found: |-
+  ℹ️ לא נמצאה משימת **Pull Contacts** פעילה. התחל אחת עם `contacts pull`.
 
 cli.cmd.server.description: |-
   נהל את השרת.
@@ -185,6 +247,34 @@ cli.help.options.defaultGroup: |-
 
 cli.help.globalOptions.title: |-
   **אפשרויות גלובליות:**
+
+task.contacts.status: |-
+  👤 משיכת אנשי קשר: **{{state}}**
+  - ✅ הצלחות: {{{progress.ok}}} אנשי קשר
+  - ⚪ שדלגו עליהם: {{{progress.skipped}}} אנשי קשר
+  - ⚠️ שגיאות: {{{progress.errors}}} אנשי קשר
+
+  {{#job}}
+  ⌛ ציר זמן:
+  - נכנסה לתור: {{{timestamp}}}
+  {{#processedOn}}
+  - התחלה: {{{processedOn}}}
+  {{/processedOn}}
+  {{#finishedOn}}
+  - סיום: {{{finishedOn}}}
+  {{/finishedOn}}
+  {{/job}}
+
+  {{#error}}
+  פרטים:
+  [{{{details.text}}}]({{{details.url}}})
+  {{/error}}
+
+task.contacts.started: |-
+  אנשי קשר נמשכים...
+
+task.contacts.progress: |-
+  משיכת אנשי קשר: ✅ {{progress.ok}}, ⚪ {{progress.skipped}}, ⚠️ {{progress.errors}}
 
 app.help.reminder: |-
   שלח **help** כדי לקבל את רשימת הפקודות הזמינות.

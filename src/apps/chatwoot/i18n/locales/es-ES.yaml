@@ -117,6 +117,9 @@ app.updated.message: |-
 
   ✅ La configuración para la sesión de WhatsApp **{{{name}}}** ha sido actualizada.
 
+cli.usage.arguments: |-
+  [acción]
+
 cli.usage.command: |-
   [comando]
 
@@ -138,6 +141,9 @@ cli.cmd.root.sub.session: |-
 cli.cmd.root.sub.server: |-
   🖥️ **Servidor**:
 
+cli.cmd.root.sub.sync: |-
+  🔄️ **Sincronización**:
+
 cli.cmd.session.status.description: |-
   Obtén el estado actual de la sesión.
 
@@ -158,6 +164,62 @@ cli.cmd.session.qr.description: |-
 
 cli.cmd.session.screenshot.description: |-
   Captura una imagen de la sesión (disponible solo con el motor **WEBJS**).
+
+cli.cmd.contacts.summary: |-
+  Obtener contactos de WhatsApp.
+
+cli.cmd.contacts.description: |-
+  👤 Ejecuta `contacts pull` para iniciar una sincronización o `contacts status` para revisar el progreso.
+
+cli.cmd.contacts.action.description: |-
+  Usa `start` para comenzar la extracción de contactos o `status` para revisar el trabajo activo.
+
+cli.cmd.contacts.pull.description: |-
+  Empieza a importar contactos de WhatsApp en ChatWoot.
+
+cli.cmd.contacts.pull.option.batch: |-
+  Cantidad de contactos a extraer en cada lote.
+
+cli.cmd.contacts.pull.option.delay-contact: |-
+  Retraso entre cada contacto para evitar límites al obtener los avatares.
+
+cli.cmd.contacts.pull.option.delay-batch: |-
+  Retraso entre los lotes de contactos.
+
+cli.cmd.contacts.pull.option.avatar: |-
+  Elige cómo obtener los avatares de los contactos: `skip`, `if-missing` o `update`.
+
+cli.cmd.contacts.pull.option.groups: |-
+  Incluir contactos de grupos de WhatsApp en la sincronización.
+
+cli.cmd.contacts.pull.option.no-lids: |-
+  Omitir contactos LID de WhatsApp (JID de dispositivo vinculado) en la sincronización.
+
+cli.cmd.contacts.pull.option.no-attributes: |-
+  No obtengas los atributos del contacto si ya existe (acelera el proceso).
+
+cli.cmd.contacts.pull.already-running: |-
+  ⏳ El trabajo **Pull Contacts** ya se está ejecutando. Espera a que finalice o deténlo antes de iniciar uno nuevo.
+
+  Envía `contacts status` para más detalles.
+
+cli.cmd.contacts.pull.queued: |-
+  👥 Trabajo **Pull Contacts** en cola.
+
+  Compartiremos una actualización de progreso cada **{{batch}}** contactos.
+  La importación puede tardar; consulta el estado más reciente en cualquier momento con `contacts status`.
+
+cli.cmd.options.job.attempts: |-
+  Número de intentos antes de marcar el trabajo como fallido.
+
+cli.cmd.options.job.timeout: |-
+  Tiempo máximo que puede ejecutarse el trabajo antes de reintentarlo (admite valores como `30s`, `5m`, `1h`).
+
+cli.cmd.contacts.status.description: |-
+  Mostrar el estado del trabajo de importación actual.
+
+cli.cmd.contacts.status.not-found: |-
+  ℹ️ No se encontró ningún trabajo activo de **Pull Contacts**. Inicia uno con `contacts pull`.
 
 cli.cmd.server.description: |-
   Administra el servidor.
@@ -185,6 +247,34 @@ cli.help.options.defaultGroup: |-
 
 cli.help.globalOptions.title: |-
   **Opciones globales:**
+
+task.contacts.status: |-
+  👤 Extracción de contactos: **{{state}}**
+  - ✅ Correctos: {{{progress.ok}}} contactos
+  - ⚪ Omitidos: {{{progress.skipped}}} contactos
+  - ⚠️ Errores: {{{progress.errors}}} contactos
+
+  {{#job}}
+  ⌛ Cronología:
+  - En cola: {{{timestamp}}}
+  {{#processedOn}}
+  - Inicio: {{{processedOn}}}
+  {{/processedOn}}
+  {{#finishedOn}}
+  - Finalizó: {{{finishedOn}}}
+  {{/finishedOn}}
+  {{/job}}
+
+  {{#error}}
+  Detalles:
+  [{{{details.text}}}]({{{details.url}}})
+  {{/error}}
+
+task.contacts.started: |-
+  Extrayendo contactos...
+
+task.contacts.progress: |-
+  Extracción de contactos: ✅ {{progress.ok}}, ⚪ {{progress.skipped}}, ⚠️ {{progress.errors}}
 
 app.help.reminder: |-
   Envía **help** para obtener la lista de comandos disponibles.

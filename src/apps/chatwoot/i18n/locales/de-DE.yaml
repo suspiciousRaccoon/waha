@@ -120,6 +120,9 @@ app.updated.message: |-
 
   ✅ Einstellungen für WhatsApp-Sitzung **{{{name}}}** wurden aktualisiert.
 
+cli.usage.arguments: |-
+  [Aktion]
+
 cli.usage.command: |-
   [Befehl]
 
@@ -141,6 +144,9 @@ cli.cmd.root.sub.session: |-
 cli.cmd.root.sub.server: |-
   🖥️ **Server**:
 
+cli.cmd.root.sub.sync: |-
+  🔄️ **Synchronisierung**:
+
 cli.cmd.session.status.description: |-
   Aktuellen Sitzungsstatus abrufen.
 
@@ -161,6 +167,62 @@ cli.cmd.session.qr.description: |-
 
 cli.cmd.session.screenshot.description: |-
   Einen Screenshot der Sitzung aufnehmen (nur mit der **WEBJS**-Engine verfügbar).
+
+cli.cmd.contacts.summary: |-
+  WhatsApp-Kontakte abrufen.
+
+cli.cmd.contacts.description: |-
+  👤 Führen Sie `contacts pull` aus, um eine Synchronisierung zu starten, oder `contacts status`, um den Fortschritt zu prüfen.
+
+cli.cmd.contacts.action.description: |-
+  Mit `start` den Abruf beginnen oder mit `status` den aktiven Auftrag prüfen.
+
+cli.cmd.contacts.pull.description: |-
+  Beginnen Sie, WhatsApp-Kontakte in ChatWoot zu importieren.
+
+cli.cmd.contacts.pull.option.batch: |-
+  Anzahl der Kontakte pro Batch.
+
+cli.cmd.contacts.pull.option.delay-contact: |-
+  Verzögerung zwischen einzelnen Kontakten, um beim Laden von Avataren Rate Limits zu vermeiden.
+
+cli.cmd.contacts.pull.option.delay-batch: |-
+  Verzögerung zwischen Kontakt-Batches.
+
+cli.cmd.contacts.pull.option.avatar: |-
+  Legen Sie fest, wie Avatare geladen werden: `skip`, `if-missing` oder `update`.
+
+cli.cmd.contacts.pull.option.groups: |-
+  WhatsApp-Gruppenkontakte in die Synchronisierung einbeziehen.
+
+cli.cmd.contacts.pull.option.no-lids: |-
+  WhatsApp-LID-Kontakte (Linked-Device-JIDs) bei der Synchronisierung überspringen.
+
+cli.cmd.contacts.pull.option.no-attributes: |-
+  Keine Kontaktattribute laden, wenn der Kontakt bereits existiert (beschleunigt den Vorgang).
+
+cli.cmd.contacts.pull.already-running: |-
+  ⏳ Der Auftrag **Pull Contacts** läuft bereits. Warten Sie, bis er abgeschlossen ist, oder stoppen Sie ihn, bevor Sie einen neuen starten.
+
+  Senden Sie `contacts status` für Details.
+
+cli.cmd.contacts.pull.queued: |-
+  👥 Auftrag **Pull Contacts** in die Warteschlange gestellt.
+
+  Wir teilen nach jeweils **{{batch}}** Kontakten ein Fortschrittsupdate.
+  Das Abrufen kann etwas dauern – prüfen Sie den aktuellen Stand jederzeit mit `contacts status`.
+
+cli.cmd.options.job.attempts: |-
+  Anzahl der erneuten Versuche, bevor der Auftrag als fehlgeschlagen markiert wird.
+
+cli.cmd.options.job.timeout: |-
+  Maximale Laufzeit, bevor der Auftrag erneut versucht wird (unterstützt Werte wie `30s`, `5m`, `1h`).
+
+cli.cmd.contacts.status.description: |-
+  Status des aktuellen Abrufauftrags anzeigen.
+
+cli.cmd.contacts.status.not-found: |-
+  ℹ️ Kein aktiver **Pull Contacts** Auftrag gefunden. Starten Sie einen mit `contacts pull`.
 
 cli.cmd.server.description: |-
   Server verwalten.
@@ -188,6 +250,34 @@ cli.help.options.defaultGroup: |-
 
 cli.help.globalOptions.title: |-
   **Globale Optionen:**
+
+task.contacts.status: |-
+  👤 Kontakte abrufen: **{{state}}**
+  - ✅ Erfolgreich: {{{progress.ok}}} Kontakte
+  - ⚪ Übersprungen: {{{progress.skipped}}} Kontakte
+  - ⚠️ Fehler: {{{progress.errors}}} Kontakte
+
+  {{#job}}
+  ⌛ Zeitplan:
+  - Eingereiht: {{{timestamp}}}
+  {{#processedOn}}
+  - Start: {{{processedOn}}}
+  {{/processedOn}}
+  {{#finishedOn}}
+  - Ende: {{{finishedOn}}}
+  {{/finishedOn}}
+  {{/job}}
+
+  {{#error}}
+  Details:
+  [{{{details.text}}}]({{{details.url}}})
+  {{/error}}
+
+task.contacts.started: |-
+  Kontakte werden abgerufen...
+
+task.contacts.progress: |-
+  Kontakte abrufen: ✅ {{progress.ok}}, ⚪ {{progress.skipped}}, ⚠️ {{progress.errors}}
 
 app.help.reminder: |-
   Senden Sie **help**, um die Liste der verfügbaren Befehle zu erhalten.

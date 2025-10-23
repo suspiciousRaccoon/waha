@@ -290,6 +290,9 @@ app.updated.message: |-
 
   ✅ Settings for WhatsApp session **{{{name}}}** have been updated.
 
+cli.usage.arguments: |-
+  [action]
+
 cli.usage.command: |-
   [command]
 
@@ -310,6 +313,9 @@ cli.cmd.root.sub.session: |-
 
 cli.cmd.root.sub.server: |-
   🖥️ **Session**:
+
+cli.cmd.root.sub.sync: |-
+  🔄️ **Sync**:
 
 cli.cmd.session.status.description: |-
   Get current session status.
@@ -332,6 +338,62 @@ cli.cmd.session.qr.description: |-
 cli.cmd.session.screenshot.description: |-
   Capture a session screenshot (available only with the **WEBJS** engine).
 
+cli.cmd.contacts.summary: |-
+  Pull WhatsApp contacts.
+
+cli.cmd.contacts.description: |-
+  👤 Run `contacts pull` to launch a sync or `contacts status` to inspect progress.
+
+cli.cmd.contacts.action.description: |-
+  `start` to launch a contact pull or `status` to inspect the active job.
+
+cli.cmd.contacts.pull.description: |-
+  Start pulling WhatsApp contacts into ChatWoot.
+
+cli.cmd.contacts.pull.option.batch: |-
+  Number of contacts to pull in each batch.
+
+cli.cmd.contacts.pull.option.delay-contact: |-
+  Delay between syncing each contact to avoid rate limiting in pulling avatars.
+
+cli.cmd.contacts.pull.option.delay-batch: |-
+  Delay between batches of contacts.
+
+cli.cmd.contacts.pull.option.avatar: |-
+  Choose how to pull avatars for contacts: `skip`, `if-missing`, or `update`.
+
+cli.cmd.contacts.pull.option.groups: |-
+  Include WhatsApp group contacts in the sync.
+
+cli.cmd.contacts.pull.option.no-lids: |-
+  Skip WhatsApp LID contacts (linked-device JIDs) in the sync.
+
+cli.cmd.contacts.pull.option.no-attributes: |-
+  Do not pull contact attributes if contact already exists (it speeds up the process).
+
+cli.cmd.contacts.pull.already-running: |-
+  ⏳ **Pull Contacts** job is already running. Wait for it to finish or stop it before starting a new one.
+
+  Send `contacts status` for details.
+
+cli.cmd.contacts.pull.queued: |-
+  👥 **Pull Contacts** job queued.
+
+  We'll share a progress update every **{{batch}}** contacts.
+  Pulling contacts may take a while - check the latest status anytime with `contacts status`.
+
+cli.cmd.options.job.attempts: |-
+  Number of times to retry the job before marking it as failed.
+
+cli.cmd.options.job.timeout: |-
+  Maximum time the job is allowed to run before it is retried (supports values like `30s`, `5m`, `1h`).
+
+cli.cmd.contacts.status.description: |-
+  Show the status of the current pull job.
+
+cli.cmd.contacts.status.not-found: |-
+  ℹ️ No active **Pull Contacts** job found. Start one with `contacts pull`.
+
 cli.cmd.server.description: |-
   Manage the server.
 
@@ -345,7 +407,7 @@ cli.cmd.server.reboot.option.force: |-
   Force an immediate reboot.
 
 cli.help.usage.title: |-
-  Usage: send a command to the conversation in the format:
+  Send a command to the conversation in the format:
 
 cli.help.commands.defaultGroup: |-
   **Commands:**
@@ -358,6 +420,34 @@ cli.help.options.defaultGroup: |-
 
 cli.help.globalOptions.title: |-
   **Global Options:**
+
+task.contacts.status: |-
+  👤 Pull Contacts: **{{state}}**
+  - ✅ Successful: {{{progress.ok}}} contacts
+  - ⚪ Skipped: {{{progress.skipped}}} contacts
+  - ⚠️ Errors: {{{progress.errors}}} contacts
+
+  {{#job}}
+  ⌛ Timeline:
+  - Queued: {{{timestamp}}}
+  {{#processedOn}}
+  - Start At: {{{processedOn}}}
+  {{/processedOn}}
+  {{#finishedOn}}
+  - Finished At: {{{finishedOn}}}
+  {{/finishedOn}}
+  {{/job}}
+
+  {{#error}}
+  Details: 
+  [{{{details.text}}}]({{{details.url}}})
+  {{/error}}
+
+task.contacts.started: |-
+  Pulling contacts...
+
+task.contacts.progress: |-
+  Pull Contacts: ✅ {{progress.ok}}, ⚪ {{progress.skipped}}, ⚠️ {{progress.errors}}
 
 app.help.reminder: |-
   Send **help** to get the list of available commands.
