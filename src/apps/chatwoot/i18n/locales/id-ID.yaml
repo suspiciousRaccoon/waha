@@ -117,33 +117,74 @@ app.updated.message: |-
 
   ✅ Pengaturan untuk sesi WhatsApp **{{{name}}}** telah diperbarui.
 
-app.commands.list: |-
-  Anda dapat mengelola **Integrasi WhatsApp** dengan mengirimkan salah satu perintah berikut:
+cli.usage.command: |-
+  [perintah]
 
-  🖥️ **Sesi**:
-  1. **status** - dapatkan status sesi saat ini.
-  2. **restart** - mulai ulang sesi - ini akan mencoba menghubungkan kembali akun WhatsApp Anda.
-  3. **start** - mulai sesi.
-  4. **stop** - hentikan sesi.
-  5. **logout** - keluar dari sesi, sehingga Anda dapat memindai kode QR dan memperbaiki sesi.
-  6. **qr** - dapatkan kode QR untuk sesi.
-  7. **screenshot** - dapatkan tangkapan layar sesi (hanya tersedia di mesin **WEBJS**).
-  8. **help** - perintah yang tersedia.
+cli.usage.options: |-
+  [opsi]
 
-  {{#commands.server}}
-  ⚙️ Server:
-  - **server status** - dapatkan informasi versi dan status server.
-  - **server reboot** - mulai ulang server dengan anggun.
-  - **server reboot force** - paksa mulai ulang server.
-  {{/commands.server}}
-
-  Kirim **perintah** (tidak peka huruf besar/kecil) atau **nomor perintah** ke percakapan ini.
-
-app.commands.server.disabled: ⛔ **Perintah server dinonaktifkan**.
+cli.cmd.disabled: ⛔ **Perintah `{{command}}` dinonaktifkan**.
 
   Silakan hubungi administrator Anda.
 
-  Kirim **help** untuk melihat daftar perintah yang tersedia.
+  Kirim **help** untuk mendapatkan daftar perintah yang tersedia.
+
+cli.cmd.root.description: |-
+  Kelola **Integrasi WhatsApp** Anda!
+
+cli.cmd.root.sub.session: |-
+  🖥️ **Sesi**:
+
+cli.cmd.root.sub.server: |-
+  🖥️ **Server**:
+
+cli.cmd.session.status.description: |-
+  Dapatkan status sesi saat ini.
+
+cli.cmd.session.restart.description: |-
+  Mulai ulang sesi.
+
+cli.cmd.session.start.description: |-
+  Mulai sesi.
+
+cli.cmd.session.stop.description: |-
+  Hentikan sesi.
+
+cli.cmd.session.logout.description: |-
+  Keluar dari sesi untuk memindai kode QR baru dan memulihkan koneksi.
+
+cli.cmd.session.qr.description: |-
+  Tampilkan kode QR sesi.
+
+cli.cmd.session.screenshot.description: |-
+  Ambil tangkapan layar sesi (hanya tersedia dengan mesin **WEBJS**).
+
+cli.cmd.server.description: |-
+  Kelola server.
+
+cli.cmd.server.status.description: |-
+  Tampilkan versi dan status server.
+
+cli.cmd.server.reboot.description: |-
+  Mulai ulang server.
+
+cli.cmd.server.reboot.option.force: |-
+  Paksa reboot segera.
+
+cli.help.usage.title: |-
+  Penggunaan: kirim perintah ke percakapan dalam format berikut:
+
+cli.help.commands.defaultGroup: |-
+  **Perintah:**
+
+cli.help.arguments.title: |-
+  **Argumen:**
+
+cli.help.options.defaultGroup: |-
+  **Opsi:**
+
+cli.help.globalOptions.title: |-
+  **Opsi global:**
 
 app.help.reminder: |-
   Kirim **help** untuk mendapatkan daftar perintah yang tersedia.

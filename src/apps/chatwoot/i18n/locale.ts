@@ -18,6 +18,11 @@ export class Locale {
     return new Template(this.strings[key] || key);
   }
 
+  r<K extends TKey | string>(key: K, data: TemplatePayloads[K] = null): string {
+    const template = this.key(key as TKey);
+    return template.render(data as any);
+  }
+
   /**
    * Overrides the existing strings with the provided strings for the locale.
    * Merges the new strings with the current strings.

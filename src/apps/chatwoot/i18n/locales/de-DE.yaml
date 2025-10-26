@@ -120,33 +120,74 @@ app.updated.message: |-
 
   ✅ Einstellungen für WhatsApp-Sitzung **{{{name}}}** wurden aktualisiert.
 
-app.commands.list: |-
-  Sie können die **WhatsApp Integration** verwalten, indem Sie einen der folgenden Befehle senden:
+cli.usage.command: |-
+  [Befehl]
 
-  🖥️ **Sitzung**:
-  1. **status** - den aktuellen Sitzungsstatus abrufen.
-  2. **restart** - die Sitzung neu starten - dies versucht, Ihr WhatsApp-Konto neu zu verbinden.
-  3. **start** - die Sitzung starten.
-  4. **stop** - die Sitzung stoppen.
-  5. **logout** - von der Sitzung abmelden, damit Sie den QR-Code scannen und die Sitzung reparieren können.
-  6. **qr** - den QR-Code für die Sitzung abrufen.
-  7. **screenshot** - einen Screenshot der Sitzung erhalten (nur in der **WEBJS**-Engine verfügbar).
-  8. **help** - verfügbare Befehle.
+cli.usage.options: |-
+  [Optionen]
 
-  {{#commands.server}}
-  ⚙️ Server:
-  - **server status** - Serverversion und Statusinformationen abrufen.
-  - **server reboot** - Server ordnungsgemäß neu starten.
-  - **server reboot force** - Server erzwungen neu starten.
-  {{/commands.server}}
-
-  Senden Sie einen **Befehl** (Groß-/Kleinschreibung wird nicht beachtet) oder eine **Befehlsnummer** an diese Konversation.
-
-app.commands.server.disabled: ⛔ **Serverbefehle sind deaktiviert**.
+cli.cmd.disabled: ⛔ **Der Befehl `{{command}}` ist deaktiviert**.
 
   Bitte wenden Sie sich an Ihren Administrator.
 
   Senden Sie **help**, um die Liste der verfügbaren Befehle zu erhalten.
+
+cli.cmd.root.description: |-
+  Verwalten Sie Ihre **WhatsApp-Integration**!
+
+cli.cmd.root.sub.session: |-
+  🖥️ **Sitzung**:
+
+cli.cmd.root.sub.server: |-
+  🖥️ **Server**:
+
+cli.cmd.session.status.description: |-
+  Aktuellen Sitzungsstatus abrufen.
+
+cli.cmd.session.restart.description: |-
+  Sitzung neu starten.
+
+cli.cmd.session.start.description: |-
+  Sitzung starten.
+
+cli.cmd.session.stop.description: |-
+  Sitzung stoppen.
+
+cli.cmd.session.logout.description: |-
+  Melden Sie die Sitzung ab, um einen neuen QR-Code zu scannen und die Verbindung wiederherzustellen.
+
+cli.cmd.session.qr.description: |-
+  QR-Code der Sitzung anzeigen.
+
+cli.cmd.session.screenshot.description: |-
+  Einen Screenshot der Sitzung aufnehmen (nur mit der **WEBJS**-Engine verfügbar).
+
+cli.cmd.server.description: |-
+  Server verwalten.
+
+cli.cmd.server.status.description: |-
+  Serverversion und -status anzeigen.
+
+cli.cmd.server.reboot.description: |-
+  Server neu starten.
+
+cli.cmd.server.reboot.option.force: |-
+  Neustart sofort erzwingen.
+
+cli.help.usage.title: |-
+  Verwendung: Senden Sie einen Befehl im folgenden Format an die Konversation:
+
+cli.help.commands.defaultGroup: |-
+  **Befehle:**
+
+cli.help.arguments.title: |-
+  **Argumente:**
+
+cli.help.options.defaultGroup: |-
+  **Optionen:**
+
+cli.help.globalOptions.title: |-
+  **Globale Optionen:**
 
 app.help.reminder: |-
   Senden Sie **help**, um die Liste der verfügbaren Befehle zu erhalten.

@@ -5646,6 +5646,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"commander@npm:^14.0.1":
+  version: 14.0.1
+  resolution: "commander@npm:14.0.1"
+  checksum: a072b714e73a69cc85e68f588a3c910f330e5b31861fe1f9abc9312e81bdca193676fc1fea99f739b4237ee903751fb20b4adcdd409ec4c4df0964792e9daa47
+  languageName: node
+  linkType: hard
+
 "commander@npm:^2.20.0":
   version: 2.20.3
   resolution: "commander@npm:2.20.3"
@@ -11543,6 +11550,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"string-argv@npm:^0.3.2":
+  version: 0.3.2
+  resolution: "string-argv@npm:0.3.2"
+  checksum: 8703ad3f3db0b2641ed2adbb15cf24d3945070d9a751f9e74a924966db9f325ac755169007233e8985a39a6a292f14d4fee20482989b89b96e473c4221508a0f
+  languageName: node
+  linkType: hard
+
 "string-length@npm:^4.0.1":
   version: 4.0.2
   resolution: "string-length@npm:4.0.2"
@@ -12562,6 +12576,7 @@ __metadata:
     chokidar: ^3.6.0
     class-transformer: ^0.5.1
     class-validator: 0.14.0
+    commander: ^14.0.1
     del: ^8.0.0
     express-basic-auth: ^1.2.1
     file-type: 16.5.4
@@ -12602,6 +12617,7 @@ __metadata:
     rxjs: ^7.8.1
     sharp: ^0.33.4
     sqlite3: ^5.1.7
+    string-argv: ^0.3.2
     supertest: ^4.0.2
     swagger-ui-express: ^4.1.4
     ts-jest: ^29.1.3
@@ -12614,7 +12630,6 @@ __metadata:
     whatsapp-web.js: "github:devlikeapro/whatsapp-web.js#fork-main-2025-09-10"
     write-file-atomic: ^6.0.0
     yaml: ^2.7.1
-    yargs: ^17.7.2
   dependenciesMeta:
     bufferutil:
       optional: true

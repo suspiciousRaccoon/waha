@@ -117,33 +117,74 @@ app.updated.message: |-
 
   ✅ WhatsApp oturumu **{{{name}}}** için ayarlar güncellendi.
 
-app.commands.list: |-
-  Aşağıdaki komutlardan birini göndererek **WhatsApp Entegrasyonu**nu yönetebilirsiniz:
+cli.usage.command: |-
+  [komut]
 
-  🖥️ **Oturum**:
-  1. **status** - mevcut oturum durumunu alın.
-  2. **restart** - oturumu yeniden başlatın - bu, WhatsApp hesabınızı yeniden bağlamaya çalışacaktır.
-  3. **start** - oturumu başlatın.
-  4. **stop** - oturumu durdurun.
-  5. **logout** - oturumdan çıkış yapın, böylece QR kodu tarayabilir ve oturumu onarabilirsiniz.
-  6. **qr** - oturum için QR kodu alın.
-  7. **screenshot** - oturumun ekran görüntüsünü alın (yalnızca **WEBJS** motorunda kullanılabilir).
-  8. **help** - kullanılabilir komutlar.
+cli.usage.options: |-
+  [seçenekler]
 
-  {{#commands.server}}
-  ⚙️ Sunucu:
-  - **server status** - sunucu sürümü ve durum bilgilerini alın.
-  - **server reboot** - sunucuyu nazikçe yeniden başlatın.
-  - **server reboot force** - sunucuyu zorla yeniden başlatın.
-  {{/commands.server}}
-
-  Bu konuşmaya bir **komut** (büyük/küçük harf duyarsız) veya **komut numarası** gönderin.
-
-app.commands.server.disabled: ⛔ **Sunucu komutları devre dışı**.
+cli.cmd.disabled: ⛔ **`{{command}}` komutu devre dışı**.
 
   Lütfen yöneticinizle iletişime geçin.
 
   Kullanılabilir komutların listesini almak için **help** gönderin.
+
+cli.cmd.root.description: |-
+  **WhatsApp entegrasyonunuzu** yönetin!
+
+cli.cmd.root.sub.session: |-
+  🖥️ **Oturum**:
+
+cli.cmd.root.sub.server: |-
+  🖥️ **Sunucu**:
+
+cli.cmd.session.status.description: |-
+  Geçerli oturum durumunu alın.
+
+cli.cmd.session.restart.description: |-
+  Oturumu yeniden başlatın.
+
+cli.cmd.session.start.description: |-
+  Oturumu başlatın.
+
+cli.cmd.session.stop.description: |-
+  Oturumu durdurun.
+
+cli.cmd.session.logout.description: |-
+  Bağlantıyı yeniden kurmak için oturumdan çıkın ve yeni bir QR kodu tarayın.
+
+cli.cmd.session.qr.description: |-
+  Oturumun QR kodunu gösterin.
+
+cli.cmd.session.screenshot.description: |-
+  Oturumun ekran görüntüsünü alın (yalnızca **WEBJS** motoru ile kullanılabilir).
+
+cli.cmd.server.description: |-
+  Sunucuyu yönetin.
+
+cli.cmd.server.status.description: |-
+  Sunucunun sürümünü ve durumunu gösterin.
+
+cli.cmd.server.reboot.description: |-
+  Sunucuyu yeniden başlatın.
+
+cli.cmd.server.reboot.option.force: |-
+  Anında yeniden başlatmayı zorlayın.
+
+cli.help.usage.title: |-
+  Kullanım: Komutu aşağıdaki formatta sohbete gönderin:
+
+cli.help.commands.defaultGroup: |-
+  **Komutlar:**
+
+cli.help.arguments.title: |-
+  **Argümanlar:**
+
+cli.help.options.defaultGroup: |-
+  **Seçenekler:**
+
+cli.help.globalOptions.title: |-
+  **Genel seçenekler:**
 
 app.help.reminder: |-
   Kullanılabilir komutların listesini almak için **help** gönderin.

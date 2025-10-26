@@ -1,5 +1,4 @@
 import type { proto } from '@adiwajshing/baileys';
-import { ChatWootCommandsConfig } from '@waha/apps/chatwoot/dto/config.dto';
 import { WAMessage } from '@waha/structures/responses.dto';
 import { SimpleVCardInfo } from '@waha/core/vcard';
 
@@ -83,13 +82,14 @@ export enum TKey {
   //
   // App Commands
   //
-  APP_COMMANDS_LIST = 'app.commands.list',
-  APP_COMMANDS_SERVER_DISABLED = 'app.commands.server.disabled',
   APP_HELP_REMINDER = 'app.help.reminder',
   APP_SERVER_VERSION_AND_STATUS = 'app.server.version.and.status',
   APP_SERVER_REBOOT = 'app.server.reboot',
   APP_SERVER_REBOOT_FORCE = 'app.server.reboot.force',
   APP_LOGOUT_SUCCESS = 'app.logout.success',
+
+  // CLI
+  ['cli.cmd.disabled'] = 'cli.cmd.disabled',
 
   //
   // App Inbox
@@ -226,8 +226,7 @@ export type TemplatePayloads = {
   [TKey.APP_SESSION_STATUS_ERROR]: void;
   [TKey.APP_SESSION_SCAN_QR_CODE]: void;
   [TKey.APP_HELP_REMINDER]: void;
-  [TKey.APP_COMMANDS_LIST]: { commands: ChatWootCommandsConfig };
-  [TKey.APP_COMMANDS_SERVER_DISABLED]: void;
+  ['cli.cmd.disabled']: { command: string };
   [TKey.APP_SERVER_VERSION_AND_STATUS]: {
     version: string;
     status: string;
@@ -243,4 +242,5 @@ export type TemplatePayloads = {
   [TKey.WAHA_CORE_VERSION_USED]: {
     supportUrl: string;
   };
+  [key: string]: unknown;
 };

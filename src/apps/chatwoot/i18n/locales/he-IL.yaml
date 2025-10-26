@@ -117,33 +117,74 @@ app.updated.message: |-
 
   ✅ ההגדרות עבור הפעלת וואטסאפ **{{{name}}}** עודכנו.
 
-app.commands.list: |-
-  אתה יכול לנהל **אינטגרציית וואטסאפ** על ידי שליחת אחת מהפקודות הבאות:
+cli.usage.command: |-
+  [פקודה]
 
+cli.usage.options: |-
+  [אפשרויות]
+
+cli.cmd.disabled: ⛔ **הפקודה `{{command}}` מושבתת**.
+
+  אנא פנה למנהל המערכת שלך.
+
+  שלח **help** כדי לקבל את רשימת הפקודות הזמינות.
+
+cli.cmd.root.description: |-
+  נהל את **האינטגרציה של וואטסאפ** שלך!
+
+cli.cmd.root.sub.session: |-
   🖥️ **הפעלה**:
-  1. **status** - קבל את סטטוס ההפעלה הנוכחי.
-  2. **restart** - הפעל מחדש את ההפעלה - זה ינסה לחבר מחדש את חשבון הוואטסאפ שלך.
-  3. **start** - התחל את ההפעלה.
-  4. **stop** - עצור את ההפעלה.
-  5. **logout** - התנתק מההפעלה, כך שתוכל לסרוק קוד QR ולתקן את ההפעלה.
-  6. **qr** - קבל את קוד ה-QR עבור ההפעלה.
-  7. **screenshot** - קבל צילום מסך של ההפעלה (זמין רק במנוע **WEBJS**).
-  8. **help** - פקודות זמינות.
 
-  {{#commands.server}}
-  ⚙️ שרת:
-  - **server status** - קבל מידע על גרסת השרת והסטטוס.
-  - **server reboot** - הפעל מחדש את השרת בצורה חלקה.
-  - **server reboot force** - אלץ הפעלה מחדש של השרת.
-  {{/commands.server}}
+cli.cmd.root.sub.server: |-
+  🖥️ **שרת**:
 
-  שלח **פקודה** (לא תלוי רישיות) או **מספר פקודה** לשיחה זו.
+cli.cmd.session.status.description: |-
+  קבל את סטטוס ההפעלה הנוכחי.
 
-app.commands.server.disabled: ⛔ **פקודות השרת מושבתות**.
+cli.cmd.session.restart.description: |-
+  אתחל את ההפעלה מחדש.
 
-  אנא פנו למנהל המערכת שלכם.
+cli.cmd.session.start.description: |-
+  התחל את ההפעלה.
 
-  שלחו **help** כדי לקבל את רשימת הפקודות הזמינות.
+cli.cmd.session.stop.description: |-
+  עצור את ההפעלה.
+
+cli.cmd.session.logout.description: |-
+  התנתק מההפעלה כדי לסרוק קוד QR חדש ולהחזיר את החיבור.
+
+cli.cmd.session.qr.description: |-
+  הצג את קוד ה-QR של ההפעלה.
+
+cli.cmd.session.screenshot.description: |-
+  צלם צילום מסך של ההפעלה (זמין רק עם מנוע **WEBJS**).
+
+cli.cmd.server.description: |-
+  נהל את השרת.
+
+cli.cmd.server.status.description: |-
+  הצג את גרסת השרת והסטטוס.
+
+cli.cmd.server.reboot.description: |-
+  אתחל את השרת מחדש.
+
+cli.cmd.server.reboot.option.force: |-
+  כפה אתחול מיידי.
+
+cli.help.usage.title: |-
+  שימוש: שלח פקודה לשיחה בפורמט הבא:
+
+cli.help.commands.defaultGroup: |-
+  **פקודות:**
+
+cli.help.arguments.title: |-
+  **ארגומנטים:**
+
+cli.help.options.defaultGroup: |-
+  **אפשרויות:**
+
+cli.help.globalOptions.title: |-
+  **אפשרויות גלובליות:**
 
 app.help.reminder: |-
   שלח **help** כדי לקבל את רשימת הפקודות הזמינות.

@@ -290,33 +290,74 @@ app.updated.message: |-
 
   ✅ Settings for WhatsApp session **{{{name}}}** have been updated.
 
-app.commands.list: |-
-  You can manage **WhatsApp Integration** by sending one of the following commands:
+cli.usage.command: |-
+  [command]
 
-  🖥️ **Session**:
-  1. **status** - get the current session status.
-  2. **restart** - restart the session - this will try to reconnect your WhatsApp account.
-  3. **start** - start the session.
-  4. **stop** - stop the session.
-  5. **logout** - logout from the session, so you can scan QR code and repair the session.
-  6. **qr** - get the QR code for the session.
-  7. **screenshot** - get a screenshot of the session (only available in **WEBJS** engine).
-  8. **help** - available commands.
+cli.usage.options: |-
+  [options]
 
-  {{#commands.server}}
-  🛠️ **Server**:
-  - **server status** - get the server version and status information.
-  - **server reboot** - reboot the server gracefully.
-  - **server reboot force** - force reboot the server.
-
-  {{/commands.server}}
-  Send a **command** (case insensitive) or a **command number**  to this conversation.
-
-app.commands.server.disabled: ⛔ **Server commands are disabled**.
+cli.cmd.disabled: ⛔ **`{{command}}` command is disabled**.
 
   Please contact your administrator.
 
   Send **help** to get the list of available commands.
+
+cli.cmd.root.description: |-
+  Manage your **WhatsApp Integration**!
+
+cli.cmd.root.sub.session: |-
+  🖥️ **Session**:
+
+cli.cmd.root.sub.server: |-
+  🖥️ **Session**:
+
+cli.cmd.session.status.description: |-
+  Get current session status.
+
+cli.cmd.session.restart.description: |-
+  Restart the session.
+
+cli.cmd.session.start.description: |-
+  Start the session.
+
+cli.cmd.session.stop.description: |-
+  Stop the session.
+
+cli.cmd.session.logout.description: |-
+  Log out of the session to scan a new QR code and restore the connection.
+
+cli.cmd.session.qr.description: |-
+  Show the session QR code.
+
+cli.cmd.session.screenshot.description: |-
+  Capture a session screenshot (available only with the **WEBJS** engine).
+
+cli.cmd.server.description: |-
+  Manage the server.
+
+cli.cmd.server.status.description: |-
+  Show the server version and status.
+
+cli.cmd.server.reboot.description: |-
+  Reboot the server.
+
+cli.cmd.server.reboot.option.force: |-
+  Force an immediate reboot.
+
+cli.help.usage.title: |-
+  Usage: send a command to the conversation in the format:
+
+cli.help.commands.defaultGroup: |-
+  **Commands:**
+
+cli.help.arguments.title: |-
+  **Arguments:**
+
+cli.help.options.defaultGroup: |-
+  **Options:**
+
+cli.help.globalOptions.title: |-
+  **Global Options:**
 
 app.help.reminder: |-
   Send **help** to get the list of available commands.
