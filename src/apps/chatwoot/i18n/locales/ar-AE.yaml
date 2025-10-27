@@ -19,7 +19,7 @@ datetime:
   hour: 2-digit
   minute: 2-digit
   # https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#timezonename
-  timeZoneName: shortGeneric
+  timeZoneName: short
   # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
   # timeZone: 'Asia/Dubai'
 
