@@ -1,4 +1,4 @@
-# Spanish translations for ChatWoot integration
+# Spanish translations for WhatsApp inbox integration
 locale.name: '🇪🇸 Español (Spanish)'
 
 # Código de locale base - debe ser un locale BCP 47 válido
@@ -86,11 +86,11 @@ whatsapp.contact.broadcast.suffix: 'Lista de difusión'
 whatsapp.contact.status.name: 'Estado'
 
 app.connected.message: |-
-  🔗 **CONECTADO: Sesión de WhatsApp a Bandeja de Entrada de ChatWoot**
+  🔗 **CONECTADO: Sesión de WhatsApp a la bandeja de entrada**
 
-  ✅ La sesión de WhatsApp **{{{name}}}** ha sido conectada exitosamente a esta Bandeja de Entrada de ChatWoot.
+  ✅ La sesión de WhatsApp **{{{name}}}** ha sido conectada exitosamente a esta bandeja de entrada.
 
-  Esta bandeja de entrada ahora está vinculada a tu **Cuenta de WhatsApp**. Puedes enviar y recibir mensajes directamente desde aquí — justo como usar WhatsApp, pero dentro de ChatWoot.
+  Esta bandeja de entrada ahora está vinculada a tu **Cuenta de WhatsApp**. Puedes enviar y recibir mensajes directamente desde aquí — justo como usar WhatsApp, pero dentro de tu espacio de trabajo.
 
   También puedes gestionar la sesión de WhatsApp vinculada a esta bandeja de entrada. Para ver las acciones disponibles, envía **help** a este chat.
 
@@ -104,9 +104,9 @@ app.connected.message: |-
   ¡Comencemos! 🚀
 
 app.disconnected.message: |-
-  🔌 **DESCONECTADO: Sesión de WhatsApp de Bandeja de Entrada de ChatWoot**
+  🔌 **DESCONECTADO: Sesión de WhatsApp de la bandeja de entrada**
 
-  ❌ La sesión de WhatsApp **{{{name}}}** ha sido desconectada de esta Bandeja de Entrada de ChatWoot.
+  ❌ La sesión de WhatsApp **{{{name}}}** ha sido desconectada de esta bandeja de entrada.
 
   Ya no podrás enviar o recibir mensajes desde WhatsApp.
 
@@ -175,7 +175,7 @@ cli.cmd.contacts.action.description: |-
   Usa `start` para comenzar la extracción de contactos o `status` para revisar el trabajo activo.
 
 cli.cmd.contacts.pull.description: |-
-  Empieza a importar contactos de WhatsApp en ChatWoot.
+  Empieza a importar contactos de WhatsApp en la bandeja de entrada.
 
 cli.cmd.contacts.pull.option.batch: |-
   Cantidad de contactos a extraer en cada lote.
@@ -289,17 +289,17 @@ app.session.current.status: |-
   📱 **{{{name}}} ({{{id}}})**
 
 app.session.status.working: |-
-  ✅ ¡Esta Bandeja de Entrada de ChatWoot está vinculada a la **Cuenta de WhatsApp** y lista para enviar y recibir mensajes!
+  ✅ ¡Esta bandeja de entrada está vinculada a tu **Cuenta de WhatsApp** y lista para enviar y recibir mensajes!
 
   📱 **{{{name}}} ({{{id}}})**
 
 app.session.status.error: |-
-  ⚠️ **¡Esta Bandeja de Entrada de ChatWoot está vinculada a la Cuenta de WhatsApp pero NO está lista para enviar y recibir mensajes!**
+  ⚠️ **¡Esta bandeja de entrada está vinculada a la Cuenta de WhatsApp pero NO está lista para enviar y recibir mensajes!**
 
   Por favor, comprueba el estado de la sesión e intenta reiniciarla o cierra sesión y escanea el código QR de nuevo.
 
 app.session.scan.qr.code: |-
-  ⚠️ **¡Escanea el código QR en tu teléfono para vincular la Cuenta de WhatsApp con esta Bandeja de Entrada de ChatWoot!**
+  ⚠️ **¡Escanea el código QR en tu teléfono para vincular la Cuenta de WhatsApp con esta bandeja de entrada!**
 
 app.server.version.and.status: |-
   **Versión:**
@@ -492,7 +492,7 @@ whatsapp.to.chatwoot.message.pix: |-
   {{/pixData}}
 
 whatsapp.to.chatwoot.message.unsupported: |-
-  ⚠️ **Este tipo de mensaje no es compatible con ChatWoot.**
+  ⚠️ **Este tipo de mensaje no es compatible con esta bandeja de entrada.**
   📱 Por favor, abre **WhatsApp** para verlo.
 
   Detalles: [{{{details.text}}}]({{{details.url}}})

@@ -1,4 +1,4 @@
-# German translations for ChatWoot integration
+# German translations for WhatsApp inbox integration
 locale.name: '🇩🇪 Deutsch (German)'
 
 # Basis-Gebietsschema-Code - muss eine gültige BCP 47 Locale sein
@@ -89,11 +89,11 @@ whatsapp.contact.broadcast.suffix: 'Broadcast-Liste'
 whatsapp.contact.status.name: 'Status'
 
 app.connected.message: |-
-  🔗 **VERBUNDEN: WhatsApp-Sitzung mit ChatWoot Inbox**
+  🔗 **VERBUNDEN: WhatsApp-Sitzung mit der Inbox**
 
-  ✅ WhatsApp-Sitzung **{{{name}}}** wurde erfolgreich mit dieser ChatWoot Inbox verbunden.
+  ✅ WhatsApp-Sitzung **{{{name}}}** wurde erfolgreich mit dieser Inbox verbunden.
 
-  Diese Inbox ist jetzt mit Ihrem **WhatsApp-Konto** verknüpft. Sie können Nachrichten direkt von hier senden und empfangen — genau wie bei WhatsApp, aber innerhalb von ChatWoot.
+  Diese Inbox ist jetzt mit Ihrem **WhatsApp-Konto** verknüpft. Sie können Nachrichten direkt von hier senden und empfangen — genau wie bei WhatsApp, aber innerhalb Ihrer Arbeitsumgebung.
 
   Sie können auch die mit dieser Inbox verknüpfte WhatsApp-Sitzung verwalten. Um verfügbare Aktionen anzuzeigen, senden Sie **help** an diesen Chat.
 
@@ -107,9 +107,9 @@ app.connected.message: |-
   Lassen Sie uns beginnen! 🚀
 
 app.disconnected.message: |-
-  🔌 **GETRENNT: WhatsApp-Sitzung von ChatWoot Inbox**
+  🔌 **GETRENNT: WhatsApp-Sitzung von der Inbox**
 
-  ❌ WhatsApp-Sitzung **{{{name}}}** wurde von dieser ChatWoot Inbox getrennt.
+  ❌ WhatsApp-Sitzung **{{{name}}}** wurde von dieser Inbox getrennt.
 
   Sie können keine Nachrichten mehr von WhatsApp senden oder empfangen.
 
@@ -178,7 +178,7 @@ cli.cmd.contacts.action.description: |-
   Mit `start` den Abruf beginnen oder mit `status` den aktiven Auftrag prüfen.
 
 cli.cmd.contacts.pull.description: |-
-  Beginnen Sie, WhatsApp-Kontakte in ChatWoot zu importieren.
+  Beginnen Sie, WhatsApp-Kontakte in die Inbox zu importieren.
 
 cli.cmd.contacts.pull.option.batch: |-
   Anzahl der Kontakte pro Batch.
@@ -292,17 +292,17 @@ app.session.current.status: |-
   📱 **{{{name}}} ({{{id}}})**
 
 app.session.status.working: |-
-  ✅ Diese ChatWoot Inbox ist mit dem **WhatsApp-Konto** verknüpft und bereit zum Senden und Empfangen von Nachrichten!
+  ✅ Diese Inbox ist mit Ihrem **WhatsApp-Konto** verknüpft und bereit zum Senden und Empfangen von Nachrichten!
 
   📱 **{{{name}}} ({{{id}}})**
 
 app.session.status.error: |-
-  ⚠️ **Diese ChatWoot Inbox ist mit dem WhatsApp-Konto verknüpft, aber NICHT bereit zum Senden und Empfangen von Nachrichten!**
+  ⚠️ **Diese Inbox ist mit dem WhatsApp-Konto verknüpft, aber NICHT bereit zum Senden und Empfangen von Nachrichten!**
 
   Bitte überprüfen Sie den Sitzungsstatus und versuchen Sie, sie neu zu starten oder melden Sie sich ab und scannen Sie den QR-Code erneut.
 
 app.session.scan.qr.code: |-
-  ⚠️ **Scannen Sie den QR-Code auf Ihrem Telefon, um das WhatsApp-Konto mit dieser ChatWoot Inbox zu verknüpfen!**
+  ⚠️ **Scannen Sie den QR-Code auf Ihrem Telefon, um das WhatsApp-Konto mit dieser Inbox zu verknüpfen!**
 
 app.server.version.and.status: |-
   **Version:**
@@ -495,7 +495,7 @@ whatsapp.to.chatwoot.message.pix: |-
   {{/pixData}}
 
 whatsapp.to.chatwoot.message.unsupported: |-
-  ⚠️ **Dieser Nachrichtentyp wird in ChatWoot nicht unterstützt.**
+  ⚠️ **Dieser Nachrichtentyp wird in dieser Inbox nicht unterstützt.**
   📱 Bitte öffne **WhatsApp**, um ihn anzusehen.
 
   Details: [{{{details.text}}}]({{{details.url}}})

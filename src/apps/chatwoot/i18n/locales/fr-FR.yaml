@@ -1,4 +1,4 @@
-# French translations for ChatWoot integration
+# French translations for WhatsApp inbox integration
 locale.name: '🇫🇷 Français (French)'
 
 # Code de locale de base - doit être une locale BCP 47 valide
@@ -86,11 +86,11 @@ whatsapp.contact.broadcast.suffix: 'Liste de diffusion'
 whatsapp.contact.status.name: 'Statut'
 
 app.connected.message: |-
-  🔗 **CONNECTÉ : Session WhatsApp à la Boîte de Réception ChatWoot**
+  🔗 **CONNECTÉ : Session WhatsApp à la boîte de réception**
 
-  ✅ La session WhatsApp **{{{name}}}** a été connectée avec succès à cette Boîte de Réception ChatWoot.
+  ✅ La session WhatsApp **{{{name}}}** a été connectée avec succès à cette boîte de réception.
 
-  Cette boîte de réception est maintenant liée à votre **Compte WhatsApp**. Vous pouvez envoyer et recevoir des messages directement d'ici — tout comme utiliser WhatsApp, mais à l'intérieur de ChatWoot.
+  Cette boîte de réception est maintenant liée à votre **Compte WhatsApp**. Vous pouvez envoyer et recevoir des messages directement d'ici — tout comme utiliser WhatsApp, mais dans votre espace de travail.
 
   Vous pouvez également gérer la session WhatsApp liée à cette boîte de réception. Pour voir les actions disponibles, envoyez **help** à ce chat.
 
@@ -104,9 +104,9 @@ app.connected.message: |-
   Commençons ! 🚀
 
 app.disconnected.message: |-
-  🔌 **DÉCONNECTÉ : Session WhatsApp de la Boîte de Réception ChatWoot**
+  🔌 **DÉCONNECTÉ : Session WhatsApp de la boîte de réception**
 
-  ❌ La session WhatsApp **{{{name}}}** a été déconnectée de cette Boîte de Réception ChatWoot.
+  ❌ La session WhatsApp **{{{name}}}** a été déconnectée de cette boîte de réception.
 
   Vous ne pourrez plus envoyer ou recevoir de messages depuis WhatsApp.
 
@@ -175,7 +175,7 @@ cli.cmd.contacts.action.description: |-
   Utilisez `start` pour démarrer l'import de contacts ou `status` pour consulter la tâche active.
 
 cli.cmd.contacts.pull.description: |-
-  Commencez à importer les contacts WhatsApp dans ChatWoot.
+  Commencez à importer les contacts WhatsApp dans la boîte de réception.
 
 cli.cmd.contacts.pull.option.batch: |-
   Nombre de contacts importés par lot.
@@ -289,17 +289,17 @@ app.session.current.status: |-
   📱 **{{{name}}} ({{{id}}})**
 
 app.session.status.working: |-
-  ✅ Cette Boîte de Réception ChatWoot est liée au **Compte WhatsApp** et prête à envoyer et recevoir des messages !
+  ✅ Cette boîte de réception est liée à votre **Compte WhatsApp** et prête à envoyer et recevoir des messages !
 
   📱 **{{{name}}} ({{{id}}})**
 
 app.session.status.error: |-
-  ⚠️ **Cette Boîte de Réception ChatWoot est liée au Compte WhatsApp mais N'EST PAS prête à envoyer et recevoir des messages !**
+  ⚠️ **Cette boîte de réception est liée au Compte WhatsApp mais N'EST PAS prête à envoyer et recevoir des messages !**
 
   Veuillez vérifier l'état de la session et essayer de la redémarrer ou déconnectez-vous et scannez à nouveau le code QR.
 
 app.session.scan.qr.code: |-
-  ⚠️ **Scannez le code QR sur votre téléphone pour lier le Compte WhatsApp à cette Boîte de Réception ChatWoot !**
+  ⚠️ **Scannez le code QR sur votre téléphone pour lier le Compte WhatsApp à cette boîte de réception !**
 
 app.server.version.and.status: |-
   **Version :**
@@ -492,7 +492,7 @@ whatsapp.to.chatwoot.message.pix: |-
   {{/pixData}}
 
 whatsapp.to.chatwoot.message.unsupported: |-
-  ⚠️ **Ce type de message n’est pas pris en charge dans ChatWoot.**
+  ⚠️ **Ce type de message n’est pas pris en charge dans cette boîte de réception.**
   📱 Veuillez ouvrir **WhatsApp** pour l’afficher.
 
   Détails: [{{{details.text}}}]({{{details.url}}})

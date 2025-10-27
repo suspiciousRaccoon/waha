@@ -1,4 +1,4 @@
-# Portuguese translations for ChatWoot integration
+# Portuguese translations for WhatsApp inbox integration
 locale.name: '🇧🇷🇵🇹 Português (Portuguese)'
 
 # Código de locale base - deve ser um locale BCP 47 válido
@@ -89,11 +89,11 @@ whatsapp.contact.broadcast.suffix: 'Lista de transmissão'
 whatsapp.contact.status.name: 'Status'
 
 app.connected.message: |-
-  🔗 **CONECTADO: Sessão do WhatsApp para Caixa de Entrada do ChatWoot**
+  🔗 **CONECTADO: Sessão do WhatsApp para a caixa de entrada**
 
-  ✅ A sessão do WhatsApp **{{{name}}}** foi conectada com sucesso a esta Caixa de Entrada do ChatWoot.
+  ✅ A sessão do WhatsApp **{{{name}}}** foi conectada com sucesso a esta caixa de entrada.
 
-  Esta caixa de entrada agora está vinculada à sua **Conta do WhatsApp**. Você pode enviar e receber mensagens diretamente daqui — assim como usar o WhatsApp, mas dentro do ChatWoot.
+  Esta caixa de entrada agora está vinculada à sua **Conta do WhatsApp**. Você pode enviar e receber mensagens diretamente daqui — assim como usar o WhatsApp, mas dentro do seu espaço de trabalho.
 
   Você também pode gerenciar a sessão do WhatsApp vinculada a esta caixa de entrada. Para ver as ações disponíveis, envie **help** para este chat.
 
@@ -107,9 +107,9 @@ app.connected.message: |-
   Vamos começar! 🚀
 
 app.disconnected.message: |-
-  🔌 **DESCONECTADO: Sessão do WhatsApp da Caixa de Entrada do ChatWoot**
+  🔌 **DESCONECTADO: Sessão do WhatsApp da caixa de entrada**
 
-  ❌ A sessão do WhatsApp **{{{name}}}** foi desconectada desta Caixa de Entrada do ChatWoot.
+  ❌ A sessão do WhatsApp **{{{name}}}** foi desconectada desta caixa de entrada.
 
   Você não poderá mais enviar ou receber mensagens do WhatsApp.
 
@@ -178,7 +178,7 @@ cli.cmd.contacts.action.description: |-
   Use `start` para iniciar a busca de contatos ou `status` para conferir o trabalho ativo.
 
 cli.cmd.contacts.pull.description: |-
-  Comece a importar contatos do WhatsApp para o ChatWoot.
+  Comece a importar contatos do WhatsApp para esta caixa de entrada.
 
 cli.cmd.contacts.pull.option.batch: |-
   Quantidade de contatos buscados em cada lote.
@@ -292,17 +292,17 @@ app.session.current.status: |-
   📱 **{{{name}}} ({{{id}}})**
 
 app.session.status.working: |-
-  ✅ Esta Caixa de Entrada do ChatWoot está vinculada à **Conta do WhatsApp** e pronta para enviar e receber mensagens!
+  ✅ Esta caixa de entrada está vinculada à sua **Conta do WhatsApp** e pronta para enviar e receber mensagens!
 
   📱 **{{{name}}} ({{{id}}})**
 
 app.session.status.error: |-
-  ⚠️ **Esta Caixa de Entrada do ChatWoot está vinculada à Conta do WhatsApp, mas NÃO está pronta para enviar e receber mensagens!**
+  ⚠️ **Esta caixa de entrada está vinculada à Conta do WhatsApp, mas NÃO está pronta para enviar e receber mensagens!**
 
   Por favor, verifique o status da sessão e tente reiniciá-la ou saia e escaneie o código QR novamente.
 
 app.session.scan.qr.code: |-
-  ⚠️ **Escaneie o código QR no seu telefone para vincular a Conta do WhatsApp a esta Caixa de Entrada do ChatWoot!**
+  ⚠️ **Escaneie o código QR no seu telefone para vincular a Conta do WhatsApp a esta caixa de entrada!**
 
 app.server.version.and.status: |-
   **Versão:**
@@ -499,7 +499,7 @@ whatsapp.to.chatwoot.message.pix: |-
   {{/pixData}}
 
 whatsapp.to.chatwoot.message.unsupported: |-
-  ⚠️ **Esse tipo de mensagem não é suportado no ChatWoot.**
+  ⚠️ **Esse tipo de mensagem não é suportado nesta caixa de entrada.**
   📱 Por favor, abra o **WhatsApp** para visualizá-la.
 
   Detalhes: [{{{details.text}}}]({{{details.url}}})

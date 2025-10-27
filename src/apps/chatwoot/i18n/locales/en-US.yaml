@@ -1,4 +1,4 @@
-# English translations for ChatWoot integration
+# English translations for WhatsApp inbox integration
 locale.name: '🇺🇸 English (English)'
 
 # Base locale code - must be a valid BCP 47 locale
@@ -238,7 +238,7 @@ whatsapp.to.chatwoot.message.pix: |-
   {{/pixData}}
 
 whatsapp.to.chatwoot.message.unsupported: |-
-  ⚠️ **This message type is not supported in ChatWoot.**
+  ⚠️ **This message type is not supported in this inbox.**
   📱 Please open **WhatsApp** to view it.
 
   Details: [{{{details.text}}}]({{{details.url}}})
@@ -259,11 +259,11 @@ whatsapp.to.chatwoot.message.facebook.ad: |-
   {{{payload.body}}}
 
 app.connected.message: |-
-  🔗 **CONNECTED: WhatsApp Session to ChatWoot Inbox**
+  🔗 **CONNECTED: WhatsApp Session to Inbox**
 
-  ✅ WhatsApp session **{{{name}}}** has been successfully connected to this ChatWoot Inbox.
+  ✅ WhatsApp session **{{{name}}}** has been successfully connected to this inbox.
 
-  This inbox is now linked to your **WhatsApp Account**. You can send and receive messages directly from here — just like using WhatsApp, but inside ChatWoot.
+  This inbox is now linked to your **WhatsApp Account**. You can send and receive messages directly from here — just like using WhatsApp, but inside your workspace.
 
   You can also manage the WhatsApp session linked to this inbox. To view available actions, send **help** to this chat.
 
@@ -277,9 +277,9 @@ app.connected.message: |-
   Let's get started! 🚀
 
 app.disconnected.message: |-
-  🔌 **DISCONNECTED: WhatsApp Session from ChatWoot Inbox**
+  🔌 **DISCONNECTED: WhatsApp Session from Inbox**
 
-  ❌ WhatsApp session **{{{name}}}** has been disconnected from this ChatWoot Inbox.
+  ❌ WhatsApp session **{{{name}}}** has been disconnected from this inbox.
 
   You will no longer be able to send or receive messages from WhatsApp.
 
@@ -348,7 +348,7 @@ cli.cmd.contacts.action.description: |-
   `start` to launch a contact pull or `status` to inspect the active job.
 
 cli.cmd.contacts.pull.description: |-
-  Start pulling WhatsApp contacts into ChatWoot.
+  Start pulling WhatsApp contacts into the inbox.
 
 cli.cmd.contacts.pull.option.batch: |-
   Number of contacts to pull in each batch.
@@ -462,17 +462,17 @@ app.session.current.status: |-
   📱 **{{{name}}} ({{{id}}})**
 
 app.session.status.working: |-
-  ✅ This ChatWoot Inbox is linked to **WhatsApp Account** and ready to send and receive messages!
+  ✅ This inbox is linked to your **WhatsApp Account** and ready to send and receive messages!
 
   📱 **{{{name}}} ({{{id}}})**
 
 app.session.status.error: |-
-  ⚠️ **This ChatWoot Inbox is linked to WhatsApp Account but NOT ready to send and receive messages!**
+  ⚠️ **This inbox is linked to your WhatsApp Account but NOT ready to send and receive messages!**
 
   Please check the session status and try restarting it or logout and scan the QR code again.
 
 app.session.scan.qr.code: |-
-  ⚠️ **Scan the QR code on your phone to link WhatsApp Account with this ChatWoot Inbox!**
+  ⚠️ **Scan the QR code on your phone to link your WhatsApp Account with this inbox!**
 
 app.server.version.and.status: |-
   **Version:**

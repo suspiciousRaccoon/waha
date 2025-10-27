@@ -1,4 +1,4 @@
-# Indonesian translations for ChatWoot integration
+# Indonesian translations for WhatsApp inbox integration
 locale.name: '🇮🇩 Bahasa Indonesia (Indonesian)'
 
 # Kode locale dasar - harus berupa locale BCP 47 yang valid
@@ -86,11 +86,11 @@ whatsapp.contact.broadcast.suffix: 'Daftar Siaran'
 whatsapp.contact.status.name: 'Status'
 
 app.connected.message: |-
-  🔗 **TERHUBUNG: Sesi WhatsApp ke Kotak Masuk ChatWoot**
+  🔗 **TERHUBUNG: Sesi WhatsApp ke kotak masuk**
 
-  ✅ Sesi WhatsApp **{{{name}}}** telah berhasil terhubung ke Kotak Masuk ChatWoot ini.
+  ✅ Sesi WhatsApp **{{{name}}}** telah berhasil terhubung ke kotak masuk ini.
 
-  Kotak masuk ini sekarang terhubung ke **Akun WhatsApp** Anda. Anda dapat mengirim dan menerima pesan langsung dari sini — seperti menggunakan WhatsApp, tetapi di dalam ChatWoot.
+  Kotak masuk ini sekarang terhubung ke **Akun WhatsApp** Anda. Anda dapat mengirim dan menerima pesan langsung dari sini — seperti menggunakan WhatsApp, tetapi di dalam ruang kerja Anda.
 
   Anda juga dapat mengelola sesi WhatsApp yang terhubung ke kotak masuk ini. Untuk melihat tindakan yang tersedia, kirim **help** ke obrolan ini.
 
@@ -104,9 +104,9 @@ app.connected.message: |-
   Mari kita mulai! 🚀
 
 app.disconnected.message: |-
-  🔌 **TERPUTUS: Sesi WhatsApp dari Kotak Masuk ChatWoot**
+  🔌 **TERPUTUS: Sesi WhatsApp dari kotak masuk**
 
-  ❌ Sesi WhatsApp **{{{name}}}** telah terputus dari Kotak Masuk ChatWoot ini.
+  ❌ Sesi WhatsApp **{{{name}}}** telah terputus dari kotak masuk ini.
 
   Anda tidak akan dapat lagi mengirim atau menerima pesan dari WhatsApp.
 
@@ -175,7 +175,7 @@ cli.cmd.contacts.action.description: |-
   Gunakan `start` untuk mulai menarik kontak atau `status` untuk memeriksa pekerjaan aktif.
 
 cli.cmd.contacts.pull.description: |-
-  Mulai menarik kontak WhatsApp ke ChatWoot.
+  Mulai menarik kontak WhatsApp ke kotak masuk ini.
 
 cli.cmd.contacts.pull.option.batch: |-
   Jumlah kontak yang ditarik di setiap batch.
@@ -289,17 +289,17 @@ app.session.current.status: |-
   📱 **{{{name}}} ({{{id}}})**
 
 app.session.status.working: |-
-  ✅ Kotak Masuk ChatWoot ini terhubung ke **Akun WhatsApp** dan siap untuk mengirim dan menerima pesan!
+  ✅ Kotak masuk ini terhubung ke **Akun WhatsApp** Anda dan siap untuk mengirim dan menerima pesan!
 
   📱 **{{{name}}} ({{{id}}})**
 
 app.session.status.error: |-
-  ⚠️ **Kotak Masuk ChatWoot ini terhubung ke Akun WhatsApp tetapi TIDAK siap untuk mengirim dan menerima pesan!**
+  ⚠️ **Kotak masuk ini terhubung ke Akun WhatsApp tetapi TIDAK siap untuk mengirim dan menerima pesan!**
 
   Silakan periksa status sesi dan coba mulai ulang atau keluar dan pindai kode QR lagi.
 
 app.session.scan.qr.code: |-
-  ⚠️ **Pindai kode QR di ponsel Anda untuk menghubungkan Akun WhatsApp dengan Kotak Masuk ChatWoot ini!**
+  ⚠️ **Pindai kode QR di ponsel Anda untuk menghubungkan Akun WhatsApp dengan kotak masuk ini!**
 
 app.server.version.and.status: |-
   **Versi:**
@@ -492,7 +492,7 @@ whatsapp.to.chatwoot.message.pix: |-
   {{/pixData}}
 
 whatsapp.to.chatwoot.message.unsupported: |-
-  ⚠️ **Jenis pesan ini tidak didukung di ChatWoot.**
+  ⚠️ **Jenis pesan ini tidak didukung di kotak masuk ini.**
   📱 Silakan buka **WhatsApp** untuk melihatnya.
 
   Detail: [{{{details.text}}}]({{{details.url}}})

@@ -1,4 +1,4 @@
-# Turkish translations for ChatWoot integration
+# Turkish translations for WhatsApp inbox integration
 locale.name: '🇹🇷 Türkçe (Turkish)'
 
 # Temel yerel kodu - geçerli bir BCP 47 yerel kodu olmalı
@@ -86,11 +86,11 @@ whatsapp.contact.broadcast.suffix: 'Yayın Listesi'
 whatsapp.contact.status.name: 'Durum'
 
 app.connected.message: |-
-  🔗 **BAĞLANDI: WhatsApp Oturumu ChatWoot Gelen Kutusuna**
+  🔗 **BAĞLANDI: WhatsApp Oturumu Gelen Kutusuna**
 
-  ✅ WhatsApp oturumu **{{{name}}}** bu ChatWoot Gelen Kutusuna başarıyla bağlandı.
+  ✅ WhatsApp oturumu **{{{name}}}** bu gelen kutusuna başarıyla bağlandı.
 
-  Bu gelen kutusu artık **WhatsApp Hesabınıza** bağlı. Mesajları doğrudan buradan gönderip alabilirsiniz — tıpkı WhatsApp kullanır gibi, ancak ChatWoot içinde.
+  Bu gelen kutusu artık **WhatsApp Hesabınıza** bağlı. Mesajları doğrudan buradan gönderip alabilirsiniz — tıpkı WhatsApp kullanır gibi, ancak çalışma alanınız içinde.
 
   Ayrıca bu gelen kutusuna bağlı WhatsApp oturumunu da yönetebilirsiniz. Kullanılabilir eylemleri görmek için, bu sohbete **help** gönderin.
 
@@ -104,9 +104,9 @@ app.connected.message: |-
   Hadi başlayalım! 🚀
 
 app.disconnected.message: |-
-  🔌 **BAĞLANTI KESİLDİ: WhatsApp Oturumu ChatWoot Gelen Kutusundan**
+  🔌 **BAĞLANTI KESİLDİ: WhatsApp Oturumu Gelen Kutusundan**
 
-  ❌ WhatsApp oturumu **{{{name}}}** bu ChatWoot Gelen Kutusundan bağlantısı kesildi.
+  ❌ WhatsApp oturumu **{{{name}}}** bu gelen kutusundan bağlantısı kesildi.
 
   Artık WhatsApp'tan mesaj gönderemez veya alamazsınız.
 
@@ -175,7 +175,7 @@ cli.cmd.contacts.action.description: |-
   `start` ile kişi çekmeyi başlatın veya `status` ile etkin görevi kontrol edin.
 
 cli.cmd.contacts.pull.description: |-
-  WhatsApp kişilerini ChatWoot'a çekmeye başlayın.
+  WhatsApp kişilerini bu gelen kutusuna çekmeye başlayın.
 
 cli.cmd.contacts.pull.option.batch: |-
   Her partide çekilecek kişi sayısı.
@@ -289,17 +289,17 @@ app.session.current.status: |-
   📱 **{{{name}}} ({{{id}}})**
 
 app.session.status.working: |-
-  ✅ Bu ChatWoot Gelen Kutusu **WhatsApp Hesabına** bağlı ve mesaj gönderip almaya hazır!
+  ✅ Bu gelen kutusu **WhatsApp Hesabınıza** bağlı ve mesaj gönderip almaya hazır!
 
   📱 **{{{name}}} ({{{id}}})**
 
 app.session.status.error: |-
-  ⚠️ **Bu ChatWoot Gelen Kutusu WhatsApp Hesabına bağlı ancak mesaj gönderip almaya hazır DEĞİL!**
+  ⚠️ **Bu gelen kutusu WhatsApp Hesabına bağlı ancak mesaj gönderip almaya hazır DEĞİL!**
 
   Lütfen oturum durumunu kontrol edin ve yeniden başlatmayı deneyin veya çıkış yapın ve QR kodu tekrar tarayın.
 
 app.session.scan.qr.code: |-
-  ⚠️ **WhatsApp Hesabını bu ChatWoot Gelen Kutusuna bağlamak için telefonunuzda QR kodu tarayın!**
+  ⚠️ **WhatsApp Hesabını bu gelen kutusuna bağlamak için telefonunuzda QR kodu tarayın!**
 
 app.server.version.and.status: |-
   **Sürüm:**
@@ -492,7 +492,7 @@ whatsapp.to.chatwoot.message.pix: |-
   {{/pixData}}
 
 whatsapp.to.chatwoot.message.unsupported: |-
-  ⚠️ **Bu mesaj türü ChatWoot’ta desteklenmiyor.**
+  ⚠️ **Bu mesaj türü bu gelen kutusunda desteklenmiyor.**
   📱 Görüntülemek için lütfen **WhatsApp’ı** açın.
 
   Ayrıntılar: [{{{details.text}}}]({{{details.url}}})
