@@ -12,6 +12,7 @@ import { PinoLogger } from 'nestjs-pino';
 import { AppRepository } from '../../storage';
 import { TKey } from '@waha/apps/chatwoot/i18n/templates';
 import { SignalRace } from '@waha/utils/abortable';
+import { IsCommandsChat } from '@waha/apps/chatwoot/client/ids';
 
 /**
  * Base class for ChatWoot background task consumers
@@ -74,6 +75,16 @@ export abstract class ChatWootTaskConsumer extends AppConsumer {
     }
   }
 
+  protected conversationForReport(container, body) {
+    const conversation = container
+      .ContactConversationService()
+      .ConversationById(body.conversation.id);
+    if (!IsCommandsChat(body)) {
+      conversation.forceNote();
+    }
+    return conversation;
+  }
+
   /**
    * Report an error for a scheduled job
    */
@@ -84,9 +95,7 @@ export abstract class ChatWootTaskConsumer extends AppConsumer {
       : err.message || `${err}`;
     header = `${job.queueName}: ${header}`;
 
-    const conversation = await container
-      .ContactConversationService()
-      .InboxNotifications();
+    const conversation = this.conversationForReport(container, job.data.body);
 
     const reporter = container.ChatWootErrorReporter(job);
     await reporter.ReportError(conversation, header, MessageType.INCOMING, err);
@@ -99,9 +108,7 @@ export abstract class ChatWootTaskConsumer extends AppConsumer {
     }
 
     const container = await this.DIContainer(job, job.data.app);
-    const conversation = await container
-      .ContactConversationService()
-      .InboxNotifications();
+    const conversation = this.conversationForReport(container, job.data.body);
 
     const reporter = container.ChatWootErrorReporter(job);
     await reporter.ReportSucceeded(conversation, MessageType.INCOMING);

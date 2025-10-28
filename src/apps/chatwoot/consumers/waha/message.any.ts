@@ -8,7 +8,7 @@ import {
   IMessageInfo,
   MessageBaseHandler,
 } from '@waha/apps/chatwoot/consumers/waha/base';
-import { WAHASessionAPI } from '@waha/apps/chatwoot/session/WAHASelf';
+import { WAHASessionAPI } from '@waha/apps/app_sdk/waha/WAHASelf';
 import { SessionManager } from '@waha/core/abc/manager.abc';
 import { parseMessageIdSerialized } from '@waha/core/utils/ids';
 import { RMutexService } from '@waha/modules/rmutex/rmutex.service';
@@ -30,6 +30,8 @@ import {
   UnsupportedMessage,
   resolveProtoMessage,
 } from '@waha/apps/chatwoot/messages/to/chatwoot';
+import { EngineHelper } from '@waha/apps/chatwoot/waha';
+import { HasMediaWithNoMediaMessage } from '@waha/apps/chatwoot/messages/to/chatwoot/HasMediaWithNoMediaMessage';
 
 @Processor(QueueName.WAHA_MESSAGE_ANY, { concurrency: JOB_CONCURRENCY })
 export class WAHAMessageAnyConsumer extends ChatWootWAHABaseConsumer {
@@ -42,7 +44,7 @@ export class WAHAMessageAnyConsumer extends ChatWootWAHABaseConsumer {
   }
 
   GetChatId(event: WAHAWebhookMessageAny): string {
-    return event.payload.from;
+    return EngineHelper.ChatID(event.payload);
   }
 
   async Process(
@@ -62,11 +64,13 @@ export class WAHAMessageAnyConsumer extends ChatWootWAHABaseConsumer {
       container.Locale(),
       container.WAHASelf(),
     );
-    return await handler.handle(event);
+    return await handler.handle(event.payload);
   }
 }
 
-class MessageAnyHandler extends MessageBaseHandler<WAMessage> {
+export class MessageAnyHandler extends MessageBaseHandler<WAMessage> {
+  public shouldLogUnsupported: boolean = false;
+
   protected async getMessage(
     payload: WAMessage,
   ): Promise<ChatWootMessagePartial> {
@@ -81,7 +85,7 @@ class MessageAnyHandler extends MessageBaseHandler<WAMessage> {
       return msg;
     }
 
-    converter = new TextMessage(this.l, this.logger, this.waha);
+    converter = new TextMessage(this.l, this.logger, this.waha, this.job);
     msg = await converter.convert(payload, null);
     if (msg) {
       return msg;
@@ -123,14 +127,28 @@ class MessageAnyHandler extends MessageBaseHandler<WAMessage> {
       return msg;
     }
 
+    converter = new HasMediaWithNoMediaMessage(this.l, this.job);
+    msg = await converter.convert(payload, protoMessage);
+    if (msg) {
+      return msg;
+    }
+
     converter = new UnsupportedMessage(this.l, this.job);
     msg = await converter.convert(payload, protoMessage);
+    if (this.shouldLogUnsupported) {
+      this.logger.warn(
+        `UnsupportedMessage:\n${JSON.stringify(payload, null, 2)}`,
+      );
+    }
     return msg;
   }
 
   getReplyToWhatsAppID(payload: WAMessage): string {
     const replyTo = payload.replyTo;
     if (!replyTo) {
+      return undefined;
+    }
+    if (!replyTo.id) {
       return undefined;
     }
     const key = parseMessageIdSerialized(replyTo.id, true);

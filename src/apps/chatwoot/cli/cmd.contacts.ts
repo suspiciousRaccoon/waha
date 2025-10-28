@@ -8,14 +8,19 @@ import { Job, JobsOptions, Queue } from 'bullmq';
 import { ChatWootScheduleService } from '@waha/apps/chatwoot/services/ChatWootScheduleService';
 import { ILogger } from '@waha/apps/app_sdk/ILogger';
 import { JobDataTimeout } from '@waha/apps/app_sdk/AppConsumer';
+import {
+  ExponentialRetriesJobOptions,
+  JobRemoveOptions,
+  merge,
+} from '@waha/apps/app_sdk/constants';
 
 export async function ContactsPullStart(
   ctx: CommandContext,
   options: ContactsPullOptions,
   jobOptions: JobsOptions & JobDataTimeout,
 ) {
-  const jobId = ChatWootScheduleService.SingleJobId(ctx.app);
-  const job: Job = await ctx.queues.importContacts.getJob(jobId);
+  const jobId = ChatWootScheduleService.SingleJobId(ctx.data.app);
+  const job: Job = await ctx.queues.contactsPull.getJob(jobId);
   if (job) {
     const state = await job.getState();
     const done = state === 'completed' || state === 'failed';
@@ -26,32 +31,28 @@ export async function ContactsPullStart(
     }
 
     // Remove already done job
-    await ContactsPullRemove(ctx.queues.importContacts, ctx.app, ctx.logger);
+    await ContactsPullRemove(ctx.queues.contactsPull, ctx.data.app, ctx.logger);
   }
 
-  const opts: JobsOptions = {
-    ...jobOptions,
-    jobId: jobId,
-  };
+  const opts: JobsOptions = merge(
+    ExponentialRetriesJobOptions,
+    JobRemoveOptions,
+    jobOptions,
+  );
   const data = {
-    app: ctx.app,
-    session: ctx.session,
+    ...ctx.data,
     timeout: {
       job: jobOptions.timeout.job,
     },
     options: options,
   };
-  await ctx.queues.importContacts.add(QueueName.TASK_CONTACTS_PULL, data, opts);
-
-  const msg = ctx.l.r('cli.cmd.contacts.pull.queued', {
-    batch: options.batch,
-  });
-  await ctx.conversation.incoming(msg);
+  opts.jobId = jobId;
+  await ctx.queues.contactsPull.add(QueueName.TASK_CONTACTS_PULL, data, opts);
 }
 
 export async function ContactsPullStatus(ctx: CommandContext) {
-  const jobId = ChatWootScheduleService.SingleJobId(ctx.app);
-  const job: Job | null = await ctx.queues.importContacts.getJob(jobId);
+  const jobId = ChatWootScheduleService.SingleJobId(ctx.data.app);
+  const job: Job | null = await ctx.queues.contactsPull.getJob(jobId);
 
   if (!job) {
     const msg = ctx.l.r('cli.cmd.contacts.status.not-found');

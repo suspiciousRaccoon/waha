@@ -5,6 +5,7 @@ import { Queue } from 'bullmq';
 import { QueueName } from '../consumers/QueueName';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { ContactsPullRemove } from '@waha/apps/chatwoot/cli/cmd.contacts';
+import { MessagesPullRemove } from '@waha/apps/chatwoot/cli/cmd.messages';
 
 /**
  * Service for scheduling ChatWoot tasks
@@ -20,7 +21,9 @@ export class ChatWootScheduleService {
     @InjectQueue(QueueName.SCHEDULED_CHECK_VERSION)
     private readonly checkVersionQueue: Queue,
     @InjectQueue(QueueName.TASK_CONTACTS_PULL)
-    private readonly importContactsQueue: Queue,
+    private readonly contactsPullQueue: Queue,
+    @InjectQueue(QueueName.TASK_MESSAGES_PULL)
+    private readonly messagesPullQueue: Queue,
   ) {}
 
   /**
@@ -66,11 +69,19 @@ export class ChatWootScheduleService {
     );
 
     // contacts
-    ContactsPullRemove(this.importContactsQueue, appId, this.logger).catch(
+    ContactsPullRemove(this.contactsPullQueue, appId, this.logger).catch(
       (reason) => {
         // Ignore errors
         this.logger.warn(
           `Failed to remove "contacts" job for app ${appId}, session ${sessionName}: ${reason}`,
+        );
+      },
+    );
+
+    MessagesPullRemove(this.messagesPullQueue, appId, this.logger).catch(
+      (reason) => {
+        this.logger.warn(
+          `Failed to remove "messages" job for app ${appId}, session ${sessionName}: ${reason}`,
         );
       },
     );

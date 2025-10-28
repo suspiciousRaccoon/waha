@@ -8,8 +8,8 @@ import {
 } from '@waha/apps/chatwoot/consumers/inbox/base';
 import { QueueName } from '@waha/apps/chatwoot/consumers/QueueName';
 import { DIContainer } from '@waha/apps/chatwoot/di/DIContainer';
-import { EngineHelper } from '@waha/apps/chatwoot/session';
-import { WAHASessionAPI } from '@waha/apps/chatwoot/session/WAHASelf';
+import { EngineHelper } from '@waha/apps/chatwoot/waha';
+import { WAHASessionAPI } from '@waha/apps/app_sdk/waha/WAHASelf';
 import {
   ChatwootMessage,
   MessageMapping,

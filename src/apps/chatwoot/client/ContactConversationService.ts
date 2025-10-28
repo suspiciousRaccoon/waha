@@ -53,10 +53,11 @@ export class ContactConversationService {
       return this.cache.get(chatId);
     }
 
-    let cwContact = await this.contactService.findOrCreateContact(contactInfo);
+    let [cwContact, created] =
+      await this.contactService.findOrCreateContact(contactInfo);
 
     // Update custom attributes - always
-    this.logger.info(
+    this.logger.debug(
       `Updating if required contact custom attributes for chat.id: ${chatId}, contact.id: ${cwContact.data.id}`,
     );
     const attributes = await contactInfo.Attributes();
@@ -69,7 +70,7 @@ export class ContactConversationService {
       contactInfo,
       AvatarUpdateMode.IF_MISSING,
     );
-    this.logger.info(
+    this.logger.debug(
       `Using contact for chat.id: ${chatId}, contact.id: ${cwContact.data.id}, contact.sourceId: ${cwContact.sourceId}`,
     );
 
@@ -80,7 +81,7 @@ export class ContactConversationService {
       id: cwContact.data.id,
       sourceId: cwContact.sourceId,
     });
-    this.logger.info(
+    this.logger.debug(
       `Using conversation for chat.id: ${chatId}, conversation.id: ${conversation.id}, contact.id: ${cwContact.sourceId}`,
     );
 
@@ -134,7 +135,7 @@ export class ContactConversationService {
   }
 
   public ResetCache(chatIds: Array<string>) {
-    this.logger.info(`Resetting cache chat ids: ${chatIds.join(', ')}`);
+    this.logger.debug(`Resetting cache chat ids: ${chatIds.join(', ')}`);
     for (const chatId of chatIds) {
       this.cache.delete(chatId);
     }
@@ -147,7 +148,7 @@ export class ContactConversationService {
       }
       const current = this.cache.get(chatId);
       if (current.id !== contactId) {
-        this.logger.info(
+        this.logger.debug(
           `Resetting cache for chat id: ${chatId}, value changed from ${current} to ${contactId}`,
         );
         this.cache.delete(chatId);

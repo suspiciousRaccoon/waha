@@ -39,6 +39,7 @@ export class ChatwootMessageRepository {
         app_pk: this.appPk,
         id: id,
       })
+      .orderBy('id', 'desc')
       .first();
   }
 

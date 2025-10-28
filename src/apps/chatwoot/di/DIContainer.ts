@@ -15,7 +15,7 @@ import {
 } from '@waha/apps/chatwoot/dto/config.dto';
 import { ChatWootErrorReporter } from '@waha/apps/chatwoot/error/ChatWootErrorReporter';
 import { Locale } from '@waha/apps/chatwoot/i18n/locale';
-import { WAHASelf } from '@waha/apps/chatwoot/session/WAHASelf';
+import { WAHASelf } from '@waha/apps/app_sdk/waha/WAHASelf';
 import {
   ChatwootMessageRepository,
   MessageMappingRepository,

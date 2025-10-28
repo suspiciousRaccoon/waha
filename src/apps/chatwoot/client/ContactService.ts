@@ -34,14 +34,18 @@ export class ContactService {
     private logger: ILogger,
   ) {}
 
-  async findOrCreateContact(contactInfo: ContactInfo) {
+  async findOrCreateContact(
+    contactInfo: ContactInfo,
+  ): Promise<[ContactResponse, boolean]> {
     const chatId = contactInfo.ChatId();
     let contact = await this.searchByAnyID(chatId);
-    if (!contact) {
-      const request = await contactInfo.PublicContactCreate();
-      contact = await this.create(chatId, request);
+    if (contact) {
+      return [contact, false];
     }
-    return contact;
+
+    const request = await contactInfo.PublicContactCreate();
+    contact = await this.create(chatId, request);
+    return [contact, true];
   }
 
   async searchByAnyID(chatId: string): Promise<ContactResponse | null> {
@@ -156,10 +160,10 @@ export class ContactService {
     contact: ContactResponse,
     contactInfo: ContactInfo,
     mode: AvatarUpdateMode,
-  ) {
+  ): Promise<boolean> {
     // Update Avatar if nothing, but keep the original one if any
     if (contact.data.thumbnail && mode == AvatarUpdateMode.IF_MISSING) {
-      return;
+      return false;
     }
     const chatId = contactInfo.ChatId();
     const avatarUrl = await contactInfo.AvatarUrl().catch((err) => {
@@ -169,13 +173,15 @@ export class ContactService {
       this.logger.warn(err);
       return null;
     });
-    if (avatarUrl) {
-      this.updateAvatarUrlSafe(contact.data.id, avatarUrl);
+    if (!avatarUrl) {
+      return false;
     }
+    const success = await this.updateAvatarUrlSafe(contact.data.id, avatarUrl);
+    return success;
   }
 
-  public updateAvatarUrlSafe(contactId, avatarUrl: string) {
-    this.accountAPI.contacts
+  public updateAvatarUrlSafe(contactId, avatarUrl: string): Promise<boolean> {
+    return this.accountAPI.contacts
       .update({
         accountId: this.config.accountId,
         id: contactId,
@@ -183,11 +189,15 @@ export class ContactService {
           avatar_url: avatarUrl,
         },
       })
+      .then(() => {
+        return true;
+      })
       .catch((e) => {
         this.logger.warn(
           `Error updating avatar_url for contact.id: ${contactId}`,
         );
         this.logger.warn(e);
+        return true;
       });
   }
 }

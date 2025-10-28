@@ -63,6 +63,7 @@ export class MessageMappingRepository {
         app_pk: this.appPk,
         whatsapp_message_id: id,
       })
+      .orderBy('id', 'desc')
       .first();
   }
 
@@ -72,6 +73,7 @@ export class MessageMappingRepository {
         app_pk: this.appPk,
         chatwoot_message_id: id,
       })
+      .orderBy('id', 'desc')
       .first();
   }
 
@@ -85,6 +87,7 @@ export class MessageMappingRepository {
         chatwoot_message_id: id,
         part: part,
       })
+      .orderBy('id', 'desc')
       .first();
   }
 }

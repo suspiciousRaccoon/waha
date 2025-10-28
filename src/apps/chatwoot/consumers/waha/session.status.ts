@@ -11,8 +11,8 @@ import {
   IMessageInfo,
 } from '@waha/apps/chatwoot/consumers/waha/base';
 import { Locale } from '@waha/apps/chatwoot/i18n/locale';
-import { WAHASelf } from '@waha/apps/chatwoot/session/WAHASelf';
-import { SessionStatusEmoji } from '@waha/apps/chatwoot/SessionStatusEmoji';
+import { WAHASelf } from '@waha/apps/app_sdk/waha/WAHASelf';
+import { SessionStatusEmoji } from '@waha/apps/chatwoot/emoji';
 import { SessionManager } from '@waha/core/abc/manager.abc';
 import { RMutexService } from '@waha/modules/rmutex/rmutex.service';
 import { WAHAEvents, WAHASessionStatus } from '@waha/structures/enums.dto';

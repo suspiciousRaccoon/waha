@@ -78,6 +78,7 @@ export function toJID(chatId) {
 }
 
 export interface IgnoreJidConfig {
+  dm?: boolean;
   status: boolean;
   groups: boolean;
   channels: boolean;
@@ -99,6 +100,10 @@ export class JidFilter {
     } else if (this.ignore.groups && isJidGroup(jid)) {
       return false;
     } else if (this.ignore.channels && isJidNewsletter(jid)) {
+      return false;
+    } else if (this.ignore.dm && isLidUser(jid)) {
+      return false;
+    } else if (this.ignore.dm && isPnUser(jid)) {
       return false;
     }
     return true;

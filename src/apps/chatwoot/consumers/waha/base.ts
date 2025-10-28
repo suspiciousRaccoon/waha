@@ -13,7 +13,7 @@ import { EventData } from '@waha/apps/chatwoot/consumers/types';
 import { WhatsAppContactInfo } from '@waha/apps/chatwoot/contacts/WhatsAppContactInfo';
 import { DIContainer } from '@waha/apps/chatwoot/di/DIContainer';
 import { Locale } from '@waha/apps/chatwoot/i18n/locale';
-import { WAHASelf, WAHASessionAPI } from '@waha/apps/chatwoot/session/WAHASelf';
+import { WAHASelf, WAHASessionAPI } from '@waha/apps/app_sdk/waha/WAHASelf';
 import {
   AppRepository,
   ChatwootMessage,
@@ -25,16 +25,13 @@ import { parseMessageIdSerialized } from '@waha/core/utils/ids';
 import { RMutexService } from '@waha/modules/rmutex/rmutex.service';
 import { WAHAEvents } from '@waha/structures/enums.dto';
 import { MessageSource, WAMessageBase } from '@waha/structures/responses.dto';
-import {
-  WAHAWebhook,
-  WAHAWebhookMessageRevoked,
-} from '@waha/structures/webhooks.dto';
 import { sleep } from '@waha/utils/promiseTimeout';
 import { Job } from 'bullmq';
 import { PinoLogger } from 'nestjs-pino';
 
 import { TKey } from '@waha/apps/chatwoot/i18n/templates';
 import { isJidBroadcast, isJidGroup, toCusFormat } from '@waha/core/utils/jids';
+import { EngineHelper } from '@waha/apps/chatwoot/waha';
 
 export function ListenEventsForChatWoot() {
   return [
@@ -177,7 +174,7 @@ export interface IMessageInfo {
   onMessageType(type: MessageType): void;
 }
 
-class MessageReportInfo implements IMessageInfo {
+export class MessageReportInfo implements IMessageInfo {
   public conversationId: number | null = null;
   public type: MessageType | null = null;
 
@@ -212,10 +209,29 @@ export abstract class MessageBaseHandler<Payload extends WAMessageBase> {
     payload: Payload,
   ): Promise<ChatWootMessagePartial>;
 
+  protected finalizeContent(content: string, payload: Payload): string {
+    return content;
+  }
+
   abstract getReplyToWhatsAppID(payload: Payload): string | undefined;
 
-  async handle(data: WAHAWebhook<Payload>) {
-    const payload = data.payload;
+  protected get delayFromMeAPI() {
+    return 3_000;
+  }
+
+  async ShouldProcessMessage(payload: Payload): Promise<boolean> {
+    const key = parseMessageIdSerialized(payload.id);
+    const chatwoot = await this.mappingService.getChatWootMessage({
+      chat_id: toCusFormat(key.remoteJid),
+      message_id: key.id,
+    });
+    if (chatwoot) {
+      return false;
+    }
+    return true;
+  }
+
+  async handle(payload: Payload): Promise<conversation_message_create | null> {
     // Find the type as soon as possible for error reporting
     const type = payload.fromMe ? MessageType.OUTGOING : MessageType.INCOMING;
     this.info.onMessageType(type);
@@ -224,28 +240,25 @@ export abstract class MessageBaseHandler<Payload extends WAMessageBase> {
     // It also handles messages fromMe and ChatWoot (but does not if send via API)
     if (payload.fromMe && payload.source === MessageSource.API) {
       // Sleep a few seconds to save it to a database
-      await sleep(3_000);
+      await sleep(this.delayFromMeAPI);
     }
 
-    const key = parseMessageIdSerialized(payload.id);
-    const chatwoot = await this.mappingService.getChatWootMessage({
-      chat_id: toCusFormat(key.remoteJid),
-      message_id: key.id,
-    });
-    if (chatwoot) {
-      this.logger.info(
-        `Message '${payload.id}' already in ChatWoot: conversation.id=${chatwoot.conversation_id}, message.id=${chatwoot.message_id}`,
-      );
-      return;
+    if (!(await this.ShouldProcessMessage(payload))) {
+      const log = `Skipping existing message '${payload.id}' from WhatsApp`;
+      this.logger.debug(log);
+      return null;
     }
-
-    const contactInfo = WhatsAppContactInfo(this.session, payload.from, this.l);
+    const contactInfo = WhatsAppContactInfo(
+      this.session,
+      EngineHelper.ChatID(payload as any),
+      this.l,
+    );
     const conversation = await this.repo.ConversationByContact(contactInfo);
     this.info.onConversationId(conversation.conversationId);
 
     const message = await this.buildChatWootMessage(payload);
     const response = await conversation.send(message);
-    this.logger.info(
+    this.logger.debug(
       `Created message as '${message.message_type}' from WhatsApp: ${response.id}`,
     );
     await this.saveMapping(response, payload);
@@ -288,14 +301,16 @@ export abstract class MessageBaseHandler<Payload extends WAMessageBase> {
       content = this.l.key(key).render({ text: content });
     }
 
-    const chatId = payload.from;
+    const chatId = EngineHelper.ChatID(payload);
 
     // Add participant name to group messages
     const manyParticipants = isJidGroup(chatId) || isJidBroadcast(chatId);
     if (!payload.fromMe && manyParticipants) {
       const key = parseMessageIdSerialized(payload.id, true);
-      let participant = toCusFormat(key.participant);
-      const contact: any = await this.session.getContact(key.participant);
+      let participant = toCusFormat(
+        key.participant || (payload as any)._data.participant,
+      );
+      const contact: any = await this.session.getContact(participant);
       const name = contact?.name || contact?.pushName || contact?.pushname;
       if (name) {
         participant = `${name} (${participant})`;
@@ -315,6 +330,7 @@ export abstract class MessageBaseHandler<Payload extends WAMessageBase> {
     );
 
     const type = payload.fromMe ? MessageType.OUTGOING : MessageType.INCOMING;
+    content = this.finalizeContent(content, payload);
     return {
       content: content,
       message_type: type,
@@ -334,7 +350,7 @@ export abstract class MessageBaseHandler<Payload extends WAMessageBase> {
       return;
     }
     const chatwoot = await this.mappingService.getChatWootMessage({
-      chat_id: payload.from,
+      chat_id: EngineHelper.ChatID(payload),
       message_id: replyToWhatsAppID,
     });
     return chatwoot?.message_id;

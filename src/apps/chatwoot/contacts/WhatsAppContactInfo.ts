@@ -2,7 +2,7 @@ import { public_contact_create_update_payload as Contact } from '@figuro/chatwoo
 import { ContactInfo } from '@waha/apps/chatwoot/client/ContactConversationService';
 import { AttributeKey } from '@waha/apps/chatwoot/const';
 import { Locale } from '@waha/apps/chatwoot/i18n/locale';
-import { WAHASessionAPI } from '@waha/apps/chatwoot/session/WAHASelf';
+import { WAHASessionAPI } from '@waha/apps/app_sdk/waha/WAHASelf';
 import { Channel } from '@waha/structures/channels.dto';
 import { CacheAsync } from '@waha/utils/Cache';
 import { TKey } from '@waha/apps/chatwoot/i18n/templates';
@@ -91,6 +91,9 @@ class LidContactInfo extends ChatContactInfo {
   @CacheAsync()
   async jid() {
     const pn = await this.session.findPNByLid(this.chatId);
+    if (!pn) {
+      return null;
+    }
     return new JidContactInfo(this.session, pn, this.locale);
   }
 
@@ -99,7 +102,7 @@ class LidContactInfo extends ChatContactInfo {
     if (jid) {
       return await jid.AvatarUrl();
     }
-    return null;
+    return await this.session.getChatPicture(this.chatId);
   }
 
   @CacheAsync()
@@ -109,7 +112,6 @@ class LidContactInfo extends ChatContactInfo {
     if (jid) {
       attributes = await jid.Attributes();
     }
-    attributes[AttributeKey.WA_CHAT_ID] = this.chatId;
     attributes[AttributeKey.WA_LID] = this.chatId;
     return attributes;
   }

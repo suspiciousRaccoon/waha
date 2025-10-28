@@ -1,5 +1,8 @@
 import { Channel } from '@waha/structures/channels.dto';
-import { ChatPictureResponse } from '@waha/structures/chats.dto';
+import {
+  GetChatMessagesFilter,
+  GetChatMessagesQuery,
+} from '@waha/structures/chats.dto';
 import {
   ChatRequest,
   MessageFileRequest,
@@ -76,6 +79,20 @@ export class WAHASelf {
     const url = `/api/sessions/${session}/`;
     return await this.client
       .get(url, { signal: opts?.signal })
+      .then((response) => response.data);
+  }
+
+  async getChats(
+    session: string,
+    page: PaginationParams,
+    opts?: RequestOptions,
+  ) {
+    const url = `/api/${session}/chats`;
+    const params = {
+      ...page,
+    };
+    return await this.client
+      .get(url, { params: params, signal: opts?.signal })
       .then((response) => response.data);
   }
 
@@ -232,6 +249,39 @@ export class WAHASelf {
       .then((response) => response.data);
   }
 
+  async getMessages(
+    session: string,
+    chatId: string,
+    query: GetChatMessagesQuery,
+    filter: GetChatMessagesFilter,
+    opts?: RequestOptions,
+  ) {
+    const url = `/api/${session}/chats/${chatId}/messages`;
+    const params = {
+      ...query,
+      ...filter,
+    };
+    return await this.client
+      .get(url, { params: params, signal: opts?.signal })
+      .then((response) => response.data);
+  }
+
+  async getMessageById(
+    session: string,
+    chatId: string,
+    messageId: string,
+    media: boolean,
+    opts?: RequestOptions,
+  ) {
+    const url = `/api/${session}/chats/${chatId}/messages/${messageId}`;
+    const params = {
+      downloadMedia: media,
+    };
+    return await this.client
+      .get(url, { params: params, signal: opts?.signal })
+      .then((response) => response.data);
+  }
+
   async findPNByLid(
     session: string,
     lid: string,
@@ -297,6 +347,10 @@ export class WAHASessionAPI {
     private session: string,
     private api: WAHASelf,
   ) {}
+
+  getChats(page: PaginationParams, opts?: RequestOptions) {
+    return this.api.getChats(this.session, page, opts);
+  }
 
   getContacts(page: PaginationParams, opts?: RequestOptions): Promise<any> {
     return this.api.getContacts(this.session, page, opts);
@@ -369,6 +423,30 @@ export class WAHASessionAPI {
 
   readMessages(chatId: string, opts?: RequestOptions) {
     return this.api.readMessages(this.session, chatId, opts);
+  }
+
+  async getMessages(
+    chatId: string,
+    query: GetChatMessagesQuery,
+    filter: GetChatMessagesFilter,
+    opts?: RequestOptions,
+  ) {
+    return this.api.getMessages(this.session, chatId, query, filter, opts);
+  }
+
+  async getMessageById(
+    chatId: string,
+    messageId: string,
+    media: boolean,
+    opts?: RequestOptions,
+  ) {
+    return this.api.getMessageById(
+      this.session,
+      chatId,
+      messageId,
+      media,
+      opts,
+    );
   }
 
   //

@@ -39,6 +39,7 @@ export class WhatsAppMessageRepository {
         app_pk: this.appPk,
         id: id,
       })
+      .orderBy('id', 'desc')
       .first();
   }
 
@@ -48,6 +49,7 @@ export class WhatsAppMessageRepository {
         app_pk: this.appPk,
         message_id: messageId,
       })
+      .orderBy('id', 'desc')
       .first();
   }
 

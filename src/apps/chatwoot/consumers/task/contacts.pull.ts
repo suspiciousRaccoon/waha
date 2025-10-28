@@ -10,7 +10,7 @@ import { PinoLogger } from 'nestjs-pino';
 
 import { ChatWootTaskConsumer } from '@waha/apps/chatwoot/consumers/task/base';
 import { TKey } from '@waha/apps/chatwoot/i18n/templates';
-import { WAHASessionAPI } from '@waha/apps/chatwoot/session/WAHASelf';
+import { WAHASessionAPI } from '@waha/apps/app_sdk/waha/WAHASelf';
 import { WhatsAppContactInfo } from '@waha/apps/chatwoot/contacts/WhatsAppContactInfo';
 import { ContactSortField } from '@waha/structures/contacts.dto';
 import { SortOrder } from '@waha/structures/pagination.dto';
@@ -23,11 +23,17 @@ import { Locale } from '@waha/apps/chatwoot/i18n/locale';
 import { ILogger } from '@waha/apps/app_sdk/ILogger';
 import { JobLink } from '@waha/apps/app_sdk/JobUtils';
 import { sleep } from '@waha/utils/promiseTimeout';
-import { isJidGroup, isPnUser, isLidUser } from '@waha/core/utils/jids';
+import { isJidGroup, isLidUser, isPnUser } from '@waha/core/utils/jids';
+import {
+  ArrayPaginator,
+  PaginatorParams,
+} from '@waha/apps/app_sdk/waha/Paginator';
+import { EngineHelper } from '@waha/apps/chatwoot/waha';
 
 export interface ContactsPullOptions {
   batch: number;
-  avatar: 'skip' | 'if-missing' | 'update';
+  progress: number | null;
+  avatar: null | 'if-missing' | 'update';
   attributes: boolean;
   contacts: {
     groups: boolean;
@@ -66,10 +72,7 @@ export class TaskContactsPullConsumer extends ChatWootTaskConsumer {
     const locale = container.Locale();
     const waha = container.WAHASelf();
     const session = new WAHASessionAPI(job.data.session, waha);
-    const conversation = await container
-      .ContactConversationService()
-      .InboxNotifications();
-
+    const conversation = this.conversationForReport(container, job.data.body);
     const handler = new ContactsPullHandler(
       signal,
       container.Logger(),
@@ -83,18 +86,34 @@ export class TaskContactsPullConsumer extends ChatWootTaskConsumer {
 }
 
 interface Progress {
-  ok: number;
-  errors: number;
+  created: number;
+  updated: number;
   skipped: number;
+  errors: number;
+  avatar: {
+    updated: number;
+  };
+}
+
+function total(progress: Progress) {
+  return (
+    progress.created + progress.updated + progress.skipped + progress.errors
+  );
 }
 
 const NullProgress: Progress = {
-  ok: 0,
-  errors: 0,
+  created: 0,
+  updated: 0,
   skipped: 0,
+  errors: 0,
+  avatar: {
+    updated: 0,
+  },
 };
 
 class ContactsPullHandler {
+  private activity: TaskActivity;
+
   constructor(
     private signal: AbortSignal,
     private logger: ILogger,
@@ -102,99 +121,110 @@ class ContactsPullHandler {
     private session: WAHASessionAPI,
     private l: Locale,
     private contactService: ContactService,
-  ) {}
+  ) {
+    this.activity = new TaskActivity(this.l, this.conversation);
+  }
 
   async handle(options: ContactsPullOptions, job) {
     const batch = options.batch;
     let progress = lodash.merge({}, NullProgress, job.progress);
-    this.logger.info(
+    this.logger.debug(
       `Pulling contacts for session ${job.data.session} with batch size ${batch}...`,
     );
-    if (progress.ok == 0 && progress.errors == 0 && progress.skipped == 0) {
-      await this.conversation.activity(
-        this.l.r('task.contacts.started', { progress: progress }),
-      );
-    } else {
-      await this.conversation.activity(
-        this.l.r('task.contacts.progress', { progress: progress }),
-      );
+    if (lodash.isEqual(progress, NullProgress)) {
+      await this.activity.started(progress);
     }
 
-    // fake 'null' first, so it's not empty list
-    // we overwrite it at the beginning of the loop
-    let contacts: any[] = [null];
-    while (contacts.length != 0) {
-      this.signal.throwIfAborted();
-      const processed = progress.ok + progress.errors + progress.skipped;
-      this.logger.info(
-        `Fetching contacts batch: offset=${processed}, limit=${batch}...`,
-      );
-      contacts = await this.session.getContacts(
-        {
-          offset: processed,
-          limit: batch,
-          sortBy: ContactSortField.ID,
-          sortOrder: SortOrder.ASC,
-        },
-        { signal: this.signal },
-      );
+    const query = {
+      sortBy: ContactSortField.ID,
+      sortOrder: SortOrder.ASC,
+      limit: batch,
+      offset: 0,
+    };
+    const params: PaginatorParams = {
+      processed: total(progress),
+    };
+    const paginator = new ArrayPaginator<any>(params);
+    const contacts = paginator.iterate((processed: number) => {
+      query.offset = processed;
+      return this.session.getContacts(query, {
+        signal: this.signal,
+      });
+    });
 
-      for (const contact of contacts) {
-        try {
-          const chatId = contact.id;
-          if (isJidGroup(chatId)) {
-            if (!options.contacts.groups) {
-              this.logger.info(`Skipping group contact ${chatId}...`);
-              progress.skipped += 1;
-              await job.updateProgress(progress);
-              continue;
-            }
-          } else if (isLidUser(chatId)) {
-            if (!options.contacts.lids) {
-              this.logger.info(`Skipping PN contact ${chatId}...`);
-              progress.skipped += 1;
-              await job.updateProgress(progress);
-              continue;
-            }
-            this.logger.info(`Skipping LID contact ${chatId}...`);
-          } else if (!isPnUser(chatId)) {
-            this.logger.info(`Skipping non-phone-number contact ${chatId}...`);
+    for await (const contact of contacts) {
+      this.signal.throwIfAborted();
+
+      //
+      // Show progress
+      //
+      const thetotal = total(progress);
+      if (options.progress && thetotal) {
+        if (thetotal % options.progress == 0) {
+          await this.activity.progress(progress);
+        }
+      }
+      // Delay on batch
+      if (thetotal && options.delay.batch) {
+        if (thetotal % batch == 0) {
+          await sleep(options.delay.batch);
+        }
+      }
+
+      // Process
+      try {
+        if (!EngineHelper.ContactIsMy(contact)) {
+          progress.skipped += 1;
+          await job.updateProgress(progress);
+          continue;
+        }
+        const chatId = contact.id;
+        if (isJidGroup(chatId)) {
+          if (!options.contacts.groups) {
+            this.logger.debug(`Skipping group contact ${chatId}...`);
             progress.skipped += 1;
             await job.updateProgress(progress);
             continue;
           }
-
-          this.logger.info(`Pulling ${chatId}...`);
-          await this.pullOneContact(options, chatId);
-          progress.ok += 1;
-        } catch (e) {
-          this.logger.error(`Error pulling contact ${contact.id}: ${e}`);
-          progress.errors += 1;
+        } else if (isLidUser(chatId)) {
+          if (!options.contacts.lids) {
+            this.logger.debug(`Skipping LID contact ${chatId}...`);
+            progress.skipped += 1;
+            await job.updateProgress(progress);
+            continue;
+          }
+        } else if (!isPnUser(chatId)) {
+          this.logger.info(`Skipping non-phone-number contact ${chatId}...`);
+          progress.skipped += 1;
+          await job.updateProgress(progress);
           continue;
         }
-        // update progress before signal fails
-        await job.updateProgress(progress);
-        this.signal.throwIfAborted();
-        await sleep(options.delay.contact);
+
+        this.logger.debug(`Pulling ${chatId}...`);
+        const result = await this.pullOneContact(options, chatId);
+        progress.created += result.created;
+        progress.updated += result.updated;
+        progress.avatar.updated += result.avatar.updated;
+        this.logger.info(
+          `Contact ${chatId}: created=${result.created}, updated=${result.updated}, avatar.updated=${result.avatar.updated}`,
+        );
+      } catch (e) {
+        this.logger.error(`Error pulling contact ${contact.id}: ${e}`);
+        progress.errors += 1;
       }
-      await this.conversation.activity(
-        this.l.r('task.contacts.progress', { progress: progress }),
-      );
-      await sleep(options.delay.batch);
+      // update progress before signal fails
+      await job.updateProgress(progress);
+      await sleep(options.delay.contact);
     }
 
-    //
-    // Final report
-    //
-    job.progress = progress;
-    const msg = ContactsPullStatusMessage(this.l, job, 'completed');
-    await this.conversation.incoming(msg);
+    await this.activity.completed(progress);
   }
 
   private async pullOneContact(options: ContactsPullOptions, chatId: string) {
     // Contact
     const contactInfo = WhatsAppContactInfo(this.session, chatId, this.l);
-    let cwContact = await this.contactService.findOrCreateContact(contactInfo);
+    let [cwContact, created] =
+      await this.contactService.findOrCreateContact(contactInfo);
     // Attributes
     if (options.attributes) {
       const attributes = await contactInfo.Attributes();
@@ -204,42 +234,73 @@ class ContactsPullHandler {
       );
     }
     // Avatar
+    let avatarUpdated = false;
     switch (options.avatar) {
       case 'if-missing':
-        await this.contactService.updateAvatar(
+        avatarUpdated = await this.contactService.updateAvatar(
           cwContact,
           contactInfo,
           AvatarUpdateMode.IF_MISSING,
         );
         break;
       case 'update':
-        await this.contactService.updateAvatar(
+        avatarUpdated = await this.contactService.updateAvatar(
           cwContact,
           contactInfo,
           AvatarUpdateMode.ALWAYS,
         );
         break;
     }
+    return {
+      created: created ? 1 : 0,
+      updated: created ? 0 : 1,
+      avatar: {
+        updated: avatarUpdated ? 1 : 0,
+      },
+    };
+  }
+}
+
+class TaskActivity {
+  constructor(
+    private l: Locale,
+    private conversation: Conversation,
+  ) {}
+
+  public async started(progress: Progress) {
+    await this.conversation.activity(
+      this.l.r('task.contacts.started', { progress: progress }),
+    );
+  }
+
+  public async progress(progress: Progress) {
+    await this.conversation.activity(
+      this.l.r('task.contacts.progress', { progress: progress }),
+    );
+  }
+
+  /**
+   * Final report
+   */
+  public async completed(progress: Progress) {
+    await this.conversation.activity(
+      this.l.r('task.contacts.completed', { progress: progress }),
+    );
   }
 }
 
 export function ContactsPullStatusMessage(
   l: Locale,
-  job,
+  job: Job,
   state: JobState | 'unknown',
 ) {
   const details = JobLink(job);
-  job.progress = lodash.merge({}, NullProgress, job.progress);
+  const progress = lodash.merge({}, NullProgress, job.progress);
   const payload = {
-    error: state === 'failed' || job.progress.errors > 0,
-    state: lodash.capitalize(state),
-    progress: job.progress,
+    error: state === 'failed' || state === 'unknown' || progress.errors > 0,
+    state: lodash.capitalize(state ?? 'unknown'),
+    progress: progress,
     details: details,
-    job: {
-      timestamp: l.FormatTimestampSec(job.timestamp),
-      processedOn: l.FormatTimestampSec(job.processedOn),
-      finishedOn: l.FormatTimestampSec(job.finishedOn),
-    },
   };
   return l.r('task.contacts.status', payload);
 }

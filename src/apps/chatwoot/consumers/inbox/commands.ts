@@ -1,15 +1,19 @@
-import { InjectQueue, Processor } from '@nestjs/bullmq';
+import { InjectFlowProducer, InjectQueue, Processor } from '@nestjs/bullmq';
 import { JOB_CONCURRENCY } from '@waha/apps/app_sdk/constants';
 import { ChatWootInboxMessageConsumer } from '@waha/apps/chatwoot/consumers/inbox/base';
-import { QueueName } from '@waha/apps/chatwoot/consumers/QueueName';
+import {
+  FlowProducerName,
+  QueueName,
+} from '@waha/apps/chatwoot/consumers/QueueName';
 import { DIContainer } from '@waha/apps/chatwoot/di/DIContainer';
 import { SessionManager } from '@waha/core/abc/manager.abc';
 import { RMutexService } from '@waha/modules/rmutex/rmutex.service';
-import { Job, Queue } from 'bullmq';
+import { FlowProducer, Job, Queue } from 'bullmq';
 import { PinoLogger } from 'nestjs-pino';
 import { TKey } from '@waha/apps/chatwoot/i18n/templates';
-import { runText } from '@waha/apps/chatwoot/cli';
+import { CommandPrefix, runText } from '@waha/apps/chatwoot/cli';
 import { CommandContext } from '@waha/apps/chatwoot/cli/types';
+import { IsCommandsChat } from '@waha/apps/chatwoot/client/ids';
 
 @Processor(QueueName.INBOX_COMMANDS, { concurrency: JOB_CONCURRENCY })
 export class ChatWootInboxCommandsConsumer extends ChatWootInboxMessageConsumer {
@@ -18,7 +22,11 @@ export class ChatWootInboxCommandsConsumer extends ChatWootInboxMessageConsumer 
     log: PinoLogger,
     rmutex: RMutexService,
     @InjectQueue(QueueName.TASK_CONTACTS_PULL)
-    private readonly importContactsQueue: Queue,
+    private readonly contactsPullQueue: Queue,
+    @InjectQueue(QueueName.TASK_MESSAGES_PULL)
+    private readonly messagesPullQueue: Queue,
+    @InjectFlowProducer(FlowProducerName.MESSAGES_PULL_FLOW)
+    private readonly messagesPullFlow: FlowProducer,
   ) {
     super(manager, log, rmutex, 'ChatWootInboxCommandsConsumer');
   }
@@ -27,23 +35,37 @@ export class ChatWootInboxCommandsConsumer extends ChatWootInboxMessageConsumer 
     return null;
   }
 
+  protected conversationForReport(container, body) {
+    const conversation = super.conversationForReport(container, body);
+    if (!IsCommandsChat(body)) {
+      conversation.forceNote();
+    }
+    return conversation;
+  }
+
   protected async Process(container: DIContainer, body, job: Job) {
-    const cmd = body.content;
+    let cmd = body.content;
+    cmd = cmd.startsWith(CommandPrefix) ? cmd.slice(CommandPrefix.length) : cmd;
     this.logger.info(
       `Executing command '${cmd}' for session ${job.data.session}...`,
     );
     const repo = container.ContactConversationService();
-    const conversation = await repo.InboxNotifications();
-
+    let conversation = repo.ConversationById(body.conversation.id);
+    if (!IsCommandsChat(body)) {
+      conversation.forceNote();
+    }
     const ctx: CommandContext = {
-      app: job.data.app,
-      session: job.data.session,
+      data: job.data,
       logger: this.logger,
       l: container.Locale(),
       waha: container.WAHASelf(),
       conversation: conversation,
       queues: {
-        importContacts: this.importContactsQueue,
+        contactsPull: this.contactsPullQueue,
+        messagesPull: this.messagesPullQueue,
+      },
+      flows: {
+        messagesPull: this.messagesPullFlow,
       },
     };
     const commands = container.ChatWootConfig().commands;

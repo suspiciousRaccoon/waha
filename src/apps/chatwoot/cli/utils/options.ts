@@ -19,15 +19,47 @@ export function ParseSeconds(value: string): number {
 
 export class JobAttemptsOption extends Option {
   constructor(l: Locale, def: number) {
-    super('--attempts <number>', l.r('cli.cmd.options.job.attempts'));
+    super('--at, --attempts <number>', l.r('cli.cmd.options.job.attempts'));
+    this.argParser(NotNegativeNumber);
     this.default(def);
   }
 }
 
 export class JobTimeoutOption extends Option {
   constructor(l: Locale, def: string) {
-    super('--timeout <duration>', l.r('cli.cmd.options.job.timeout'));
+    super('-t, --timeout <duration>', l.r('cli.cmd.options.job.timeout'));
     this.argParser(ParseMS);
     this.default(ParseMS(def));
   }
+}
+
+export function ProgressOption(
+  description: string,
+  def: number = 1000,
+): Option {
+  return new Option('-p, --progress [number]', description)
+    .argParser(NotNegativeNumber)
+    .default(def);
+}
+
+export function NotNegativeNumber(value: string): number {
+  const n = parseInt(value, 10);
+  if (isNaN(n)) {
+    throw new Error(`Invalid number: "${value}"`);
+  }
+  if (n < 0) {
+    throw new Error(`Number must be positive or 0: "${value}"`);
+  }
+  return n;
+}
+
+export function PositiveNumber(value: string): number {
+  const n = parseInt(value, 10);
+  if (isNaN(n)) {
+    throw new Error(`Invalid number: "${value}"`);
+  }
+  if (n <= 0) {
+    throw new Error(`Number must be positive: "${value}"`);
+  }
+  return n;
 }

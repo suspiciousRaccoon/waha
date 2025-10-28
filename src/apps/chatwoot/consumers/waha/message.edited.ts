@@ -18,12 +18,13 @@ import {
 import { Job } from 'bullmq';
 import { PinoLogger } from 'nestjs-pino';
 
-import { WAHASessionAPI } from '../../session/WAHASelf';
+import { WAHASessionAPI } from '../../../app_sdk/waha/WAHASelf';
 import {
   MessageEdited,
   MessageToChatWootConverter,
   resolveProtoMessage,
 } from '@waha/apps/chatwoot/messages/to/chatwoot';
+import { EngineHelper } from '@waha/apps/chatwoot/waha';
 
 @Processor(QueueName.WAHA_MESSAGE_EDITED, { concurrency: JOB_CONCURRENCY })
 export class WAHAMessageEditedConsumer extends ChatWootWAHABaseConsumer {
@@ -36,7 +37,7 @@ export class WAHAMessageEditedConsumer extends ChatWootWAHABaseConsumer {
   }
 
   GetChatId(event: WAHAWebhookMessageEdited): string {
-    return event.payload.from;
+    return EngineHelper.ChatID(event.payload);
   }
 
   async Process(
@@ -56,7 +57,7 @@ export class WAHAMessageEditedConsumer extends ChatWootWAHABaseConsumer {
       container.Locale(),
       container.WAHASelf(),
     );
-    return await handler.handle(event);
+    return await handler.handle(event.payload);
   }
 }
 

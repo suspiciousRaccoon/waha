@@ -2,13 +2,14 @@ import type { WAHAWebhookMessageAck } from '@waha/structures/webhooks.dto';
 import { isJidCusFormat } from '@waha/utils/wa';
 import { WAMessageAck } from '@waha/structures/enums.dto';
 import { isLidUser, toCusFormat } from '@waha/core/utils/jids';
+import { EngineHelper } from '@waha/apps/chatwoot/waha';
 
 export function ShouldMarkAsReadInChatWoot(
   event: WAHAWebhookMessageAck,
 ): boolean {
   // Mark as seen only if it's DM
   // Ignore groups and other multiple participants chats
-  const chatId = event.payload.from;
+  const chatId = EngineHelper.ChatID(event.payload);
   if (!isJidCusFormat(chatId) && !isLidUser(chatId)) {
     return false;
   }

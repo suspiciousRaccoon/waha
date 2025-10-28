@@ -10,7 +10,7 @@ import {
   ChatIDNotFoundForContactError,
   PhoneNumberNotFoundInWhatsAppError,
 } from '@waha/apps/chatwoot/errors';
-import { WAHASessionAPI } from '@waha/apps/chatwoot/session/WAHASelf';
+import { WAHASessionAPI } from '@waha/apps/app_sdk/waha/WAHASelf';
 import { SessionManager } from '@waha/core/abc/manager.abc';
 import { RMutexService } from '@waha/modules/rmutex/rmutex.service';
 import { Job } from 'bullmq';
@@ -18,6 +18,7 @@ import { PinoLogger } from 'nestjs-pino';
 
 import { AppRepository } from '../../storage';
 import { TKey } from '@waha/apps/chatwoot/i18n/templates';
+import { Conversation } from '@waha/apps/chatwoot/client/Conversation';
 
 /**
  * Base class for ChatWoot inbox consumers
@@ -90,6 +91,12 @@ export abstract class ChatWootInboxMessageConsumer extends AppConsumer {
     }
   }
 
+  protected conversationForReport(container, body): Conversation {
+    return container
+      .ContactConversationService()
+      .ConversationById(body.conversation.id);
+  }
+
   /**
    * Report an error for a message
    */
@@ -98,9 +105,7 @@ export abstract class ChatWootInboxMessageConsumer extends AppConsumer {
     const header: string = this.ErrorHeaderKey()
       ? container.Locale().key(this.ErrorHeaderKey()).render()
       : err.message || `${err}`;
-    const conversation = container
-      .ContactConversationService()
-      .ConversationById(body.conversation.id);
+    const conversation = this.conversationForReport(container, body);
     const reporter = container.ChatWootErrorReporter(job);
     await reporter.ReportError(
       conversation,
@@ -118,9 +123,7 @@ export abstract class ChatWootInboxMessageConsumer extends AppConsumer {
     }
 
     const container = await this.DIContainer(job, job.data.app);
-    const conversation = container
-      .ContactConversationService()
-      .ConversationById(body.conversation.id);
+    const conversation = this.conversationForReport(container, body);
     const reporter = container.ChatWootErrorReporter(job);
     await reporter.ReportSucceeded(conversation, body.message_type, body.id);
   }

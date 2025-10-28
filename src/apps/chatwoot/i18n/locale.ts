@@ -1,7 +1,9 @@
 import * as Mustache from 'mustache';
+import * as lodash from 'lodash';
 import { TemplatePayloads, TKey } from '@waha/apps/chatwoot/i18n/templates';
 import Long from 'long';
 import { ensureNumber } from '@waha/core/engines/noweb/utils';
+import { EnsureMilliseconds } from '@waha/utils/timehelper';
 
 export class Locale {
   constructor(private readonly strings: Record<string, string>) {}
@@ -55,28 +57,9 @@ export class Locale {
     }
   }
 
-  FormatDatetime(date: Date | null): string | null {
-    if (!date) {
-      return null;
-    }
-    const options: any = this.strings['datetime'] || {};
-    options.timeZone = options.timeZone || options.timezone || process.env.TZ;
-    return date.toLocaleString(this.locale, options);
-  }
-
-  FormatDatetimeSec(date: Date | null) {
-    if (!date) {
-      return null;
-    }
-    const options: any = this.strings['datetime'] || {};
-    options.second = '2-digit';
-    options.timeZone = options.timeZone || options.timezone || process.env.TZ;
-    return date.toLocaleString(this.locale, options);
-  }
-
-  FormatTimestampSec(timestamp: any) {
-    const date = this.ParseTimestamp(timestamp);
-    return this.FormatDatetimeSec(date);
+  FormatDatetime(date: Date | null, year): string | null {
+    const options: any = lodash.clone(this.strings['datetime'] || {});
+    return this.FormatDatetimeOpts(date, options, year);
   }
 
   ParseTimestamp(timestamp: Long | string | number | null): Date | null {
@@ -87,7 +70,7 @@ export class Locale {
     if (!Number.isFinite(value)) {
       return undefined;
     }
-    const milliseconds = value >= 1e12 ? value : value * 1000;
+    const milliseconds = EnsureMilliseconds(value);
     const date = new Date(milliseconds);
     if (Number.isNaN(date.getTime())) {
       return undefined;
@@ -95,9 +78,44 @@ export class Locale {
     return date;
   }
 
-  FormatTimestamp(timestamp: Long | string | number | null): string | null {
+  FormatTimestamp(
+    timestamp: Long | string | number | null,
+    year: boolean = true,
+  ): string | null {
     const date = this.ParseTimestamp(timestamp);
-    return this.FormatDatetime(date);
+    return this.FormatDatetime(date, year);
+  }
+
+  /**
+   * Format date using custom options
+   */
+
+  FormatDatetimeOpts(
+    date: Date,
+    options: Intl.DateTimeFormatOptions,
+    year: boolean,
+  ) {
+    options = lodash.cloneDeep(options);
+    if (!date) {
+      return null;
+    }
+    const opts: any = this.strings['datetime'] || {};
+    // Copy timezone if any
+    options.timeZone = opts.timeZone || opts.timezone || process.env.TZ;
+    if (!year && date.getFullYear() === new Date().getFullYear()) {
+      // Hide year if current year
+      options.year = undefined;
+    }
+    return date.toLocaleDateString(this.locale, options);
+  }
+
+  FormatTimestampOpts(
+    timestamp: Long | string | number | null,
+    options: Intl.DateTimeFormatOptions,
+    year: boolean = true,
+  ): string | null {
+    const date = this.ParseTimestamp(timestamp);
+    return this.FormatDatetimeOpts(date, options, year);
   }
 }
 

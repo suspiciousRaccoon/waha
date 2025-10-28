@@ -1,9 +1,11 @@
 import ChatwootClient from '@figuro/chatwoot-sdk';
 import type { conversation_message_create } from '@figuro/chatwoot-sdk/dist/models/conversation_message_create';
 import { MessageType } from '@waha/apps/chatwoot/client/types';
+import { IsCommandsChat } from '@waha/apps/chatwoot/client/ids';
 
 export class Conversation {
   public onError: (e: any) => void;
+  public overrideIncoming: any = null;
 
   constructor(
     private accountAPI: ChatwootClient,
@@ -13,6 +15,9 @@ export class Conversation {
   ) {}
 
   public async send(data: conversation_message_create) {
+    if (data.message_type === MessageType.INCOMING && this.overrideIncoming) {
+      data = { ...data, ...this.overrideIncoming };
+    }
     try {
       const message = await this.accountAPI.messages.create({
         accountId: this.accountId,
@@ -29,10 +34,13 @@ export class Conversation {
   }
 
   public async incoming(text: string) {
-    const data: conversation_message_create = {
+    let data: conversation_message_create = {
       content: text,
       message_type: MessageType.INCOMING as any,
     };
+    if (this.overrideIncoming) {
+      data = { ...data, ...this.overrideIncoming };
+    }
     return this.send(data);
   }
 
@@ -44,11 +52,22 @@ export class Conversation {
     return this.send(data);
   }
 
-  public async outgoing(text: string) {
+  public async note(text: string) {
     const data: conversation_message_create = {
       content: text,
+      private: true,
       message_type: MessageType.OUTGOING as any,
     };
     return this.send(data);
+  }
+
+  /**
+   * Force a note message (private outgoing) for all communications
+   */
+  public forceNote() {
+    this.overrideIncoming = {
+      private: true,
+      message_type: MessageType.OUTGOING as any,
+    };
   }
 }

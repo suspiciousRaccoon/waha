@@ -1,4 +1,5 @@
-import { AttributeKey } from '@waha/apps/chatwoot/const';
+import { AttributeKey, INBOX_CONTACT_CHAT_ID } from '@waha/apps/chatwoot/const';
+import * as lodash from 'lodash';
 import { WhatsAppMessage } from '@waha/apps/chatwoot/storage';
 import { buildMessageId } from '@waha/core/engines/noweb/session.noweb.core';
 import { isLidUser } from '@waha/core/utils/jids';
@@ -22,7 +23,7 @@ export function GetAllChatIDs(contact: any): Array<string> {
     attrs[AttributeKey.WA_JID],
     attrs[AttributeKey.WA_LID],
   ];
-  return ids.filter(Boolean);
+  return lodash.uniq(ids.filter(Boolean));
 }
 
 export function FindChatID(contact: any): string | null {
@@ -54,4 +55,10 @@ export function ContactAttr(chatId: string): AttributeKey {
   } else {
     return AttributeKey.WA_JID;
   }
+}
+
+export function IsCommandsChat(body): boolean {
+  const sender = body?.conversation?.meta?.sender;
+  const chatId = FindChatID(sender);
+  return chatId === INBOX_CONTACT_CHAT_ID;
 }

@@ -12,8 +12,9 @@ app.inbox.contact.avatar.url: 'https://raw.githubusercontent.com/devlikeapro/wah
 # "options" from date.toLocaleString
 # https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#options
 datetime:
+  weekday: short
   day: 2-digit
-  month: 2-digit
+  month: short
   year: numeric
   hour: 2-digit
   minute: 2-digit
@@ -52,12 +53,12 @@ job.scheduled.error.header: Scheduled job failed to execute
 message.from.whatsapp: |-
   {{{text}}}
 
-  📱 *Sent from WhatsApp*
+  *📱 Sent from WhatsApp*
 
 message.from.api: |-
   {{{text}}}
 
-  📱 *Sent via API*
+  *📱 Sent via API*
 
 message.removed.in.whatsapp: |-
   ❌ *This message was deleted in WhatsApp*
@@ -71,6 +72,35 @@ whatsapp.group.message: |-
   👥 *{{{participant}}}*
 
   {{{text}}}
+
+whatsapp.history.message.wrapper: |-
+  {{{content}}}
+  {{^payload.fromMe}}
+
+  {{/payload.fromMe}}
+  `🗓️ {{{timestamp}}}`
+
+# WhatsApp Messages Ack
+UNKNOWN: |-
+  Unknown
+
+ERROR: |-
+  Error
+
+PENDING: |-
+  Sending
+
+SERVER: |-
+  Server
+
+DEVICE: |-
+  Device
+
+READ: |-
+  Read
+
+PLAYED: |-
+  Played
 
 whatsapp.reaction.added: |-
   *Reacted* {{{emoji}}}
@@ -237,6 +267,18 @@ whatsapp.to.chatwoot.message.pix: |-
   💳 **PIX Copy and Paste sent**
   {{/pixData}}
 
+whatsapp.to.chatwoot.message.has.media.no.media: |-
+  {{#content}}
+  {{{content}}}
+
+  {{/content}}
+  🖼️⚠️ **The message has media, but we couldn't download it**
+  📱 Please open **WhatsApp** to view it.
+
+  {{^content}}
+  Details: [{{{details.text}}}]({{{details.url}}})
+  {{/content}}
+
 whatsapp.to.chatwoot.message.unsupported: |-
   ⚠️ **This message type is not supported in this inbox.**
   📱 Please open **WhatsApp** to view it.
@@ -338,6 +380,65 @@ cli.cmd.session.qr.description: |-
 cli.cmd.session.screenshot.description: |-
   Capture a session screenshot (available only with the **WEBJS** engine).
 
+cli.cmd.messages.summary: |-
+  Pull WhatsApp messages.
+
+cli.cmd.messages.description: |-
+  💬 Run `messages pull` to request message sync or `messages status` to review progress.
+
+cli.cmd.messages.action.description: |-
+  `pull` to start a message pull or `status` to inspect the active job.
+
+cli.cmd.messages.pull.option.chat: |-
+  Limit the pull to a specific WhatsApp Chat ID.
+
+cli.cmd.messages.pull.option.force: |-
+  Force ChatWoot to create messages even when the WhatsApp message is already present in the inbox mapping.
+
+cli.cmd.messages.pull.option.batch: |-
+  Number of messages to pull in each batch.
+
+cli.cmd.messages.pull.option.progress: |-
+  Report progress every N messages. Set to 0 to disable progress reports.
+
+cli.cmd.messages.pull.option.no-dm: |-
+  Skip direct messages while pulling history.
+
+cli.cmd.messages.pull.option.groups: |-
+  Include WhatsApp group chats when pulling history.
+
+cli.cmd.messages.pull.option.channels: |-
+  Include WhatsApp Channels when pulling history.
+
+cli.cmd.messages.pull.option.status: |-
+  Include WhatsApp status updates when pulling history.
+
+cli.cmd.messages.pull.option.broadcast: |-
+  Include broadcast lists when pulling history.
+
+cli.cmd.messages.pull.option.media: |-
+  Fetch media attachments (images, videos, files) when pulling history.
+
+cli.cmd.messages.pull.option.timeout-media: |-
+  Set how long to try downloading media for each message (defaults to `30s`).
+
+cli.cmd.messages.pull.argument.end: |-
+  Set how far back the pull window ends, e.g., `2d` stops at two days ago (defaults to `1d`).
+
+cli.cmd.messages.pull.argument.start: |-
+  Set where the pull window starts, e.g., `1d` begins one day ago (defaults to `0d`, meaning now).
+
+cli.cmd.messages.pull.already-running: |-
+  ⏳ **Pull Messages** job is already running for **{{{chat}}}**. Wait for it to finish or stop it before starting a new one.
+
+  Send `messages status` for details.
+
+cli.cmd.messages.status.not-found: |-
+  ℹ️ No active **Pull Messages** job found. Start one with `messages pull`.
+
+cli.cmd.messages.pull.no-chats-found: |-
+  No WhatsApp chats found to pull messages from for the period.
+
 cli.cmd.contacts.summary: |-
   Pull WhatsApp contacts.
 
@@ -353,6 +454,9 @@ cli.cmd.contacts.pull.description: |-
 cli.cmd.contacts.pull.option.batch: |-
   Number of contacts to pull in each batch.
 
+cli.cmd.contacts.pull.option.progress: |-
+  Report progress every N contacts. Set to 0 to disable progress reports.
+
 cli.cmd.contacts.pull.option.delay-contact: |-
   Delay between syncing each contact to avoid rate limiting in pulling avatars.
 
@@ -360,13 +464,13 @@ cli.cmd.contacts.pull.option.delay-batch: |-
   Delay between batches of contacts.
 
 cli.cmd.contacts.pull.option.avatar: |-
-  Choose how to pull avatars for contacts: `skip`, `if-missing`, or `update`.
+  Choose how to pull avatars for contacts.
 
 cli.cmd.contacts.pull.option.groups: |-
   Include WhatsApp group contacts in the sync.
 
-cli.cmd.contacts.pull.option.no-lids: |-
-  Skip WhatsApp LID contacts (linked-device JIDs) in the sync.
+cli.cmd.contacts.pull.option.lids: |-
+  Include WhatsApp LID contacts (anonymous contacts) in the sync.
 
 cli.cmd.contacts.pull.option.no-attributes: |-
   Do not pull contact attributes if contact already exists (it speeds up the process).
@@ -375,12 +479,6 @@ cli.cmd.contacts.pull.already-running: |-
   ⏳ **Pull Contacts** job is already running. Wait for it to finish or stop it before starting a new one.
 
   Send `contacts status` for details.
-
-cli.cmd.contacts.pull.queued: |-
-  👥 **Pull Contacts** job queued.
-
-  We'll share a progress update every **{{batch}}** contacts.
-  Pulling contacts may take a while - check the latest status anytime with `contacts status`.
 
 cli.cmd.options.job.attempts: |-
   Number of times to retry the job before marking it as failed.
@@ -421,33 +519,52 @@ cli.help.options.defaultGroup: |-
 cli.help.globalOptions.title: |-
   **Global Options:**
 
-task.contacts.status: |-
-  👤 Pull Contacts: **{{state}}**
-  - ✅ Successful: {{{progress.ok}}} contacts
-  - ⚪ Skipped: {{{progress.skipped}}} contacts
-  - ⚠️ Errors: {{{progress.errors}}} contacts
-
-  {{#job}}
-  ⌛ Timeline:
-  - Queued: {{{timestamp}}}
-  {{#processedOn}}
-  - Start At: {{{processedOn}}}
-  {{/processedOn}}
-  {{#finishedOn}}
-  - Finished At: {{{finishedOn}}}
-  {{/finishedOn}}
-  {{/job}}
-
-  {{#error}}
-  Details: 
-  [{{{details.text}}}]({{{details.url}}})
-  {{/error}}
-
 task.contacts.started: |-
-  Pulling contacts...
+  👤⏳ Pulling contacts... Send "contacts status" for more details.
 
 task.contacts.progress: |-
-  Pull Contacts: ✅ {{progress.ok}}, ⚪ {{progress.skipped}}, ⚠️ {{progress.errors}}
+  👤⏳ Contacts: 🆕 {{progress.created}}, 🔄 {{progress.updated}}, ⚪ {{progress.skipped}}, 🔴 {{progress.errors}}, 🖼️ {{progress.avatar.updated}}
+
+task.contacts.completed: |-
+  👤✅ Contacts Completed → 🆕 {{progress.created}}, 🔄 {{progress.updated}}, ⚪ {{progress.skipped}}, 🔴 {{progress.errors}}, 🖼️ {{progress.avatar.updated}}
+
+task.contacts.status: |-
+  👤 Contacts: **{{state}}**
+  - 🆕 Created: {{{progress.created}}} contacts
+  - 🔄 Updated: {{{progress.updated}}} contacts
+  - ⚪ Skipped: {{{progress.skipped}}} contacts
+  - 🔴 Errors: {{{progress.errors}}} contacts
+  - 🖼️ Avatar Updated: {{{progress.avatar.updated}}} contacts
+
+  Details: 
+  [{{{details.text}}}]({{{details.url}}})
+
+task.messages.started: |-
+  ⏳ Pulling messages 💬 {{{chat}}} ⏱️ {{{period}}}...
+
+task.messages.details: |-
+  Send "{{{prefix}}}messages status" to see more details.
+
+task.messages.progress: |-
+  ⏳ Messages {{{chat}}}: 🆕 {{progress.ok}}, 🟢 {{progress.exists}}, ⚪ {{progress.ignored}}, 🔴 {{progress.errors}}{{#last}} | 📅 {{{last}}}{{/last}}
+
+task.messages.completed: |-
+  ✅ Messages {{{chat}}} in {{{period}}} → 🆕 {{progress.ok}}, 🟢 {{progress.exists}}, ⚪ {{progress.ignored}}, 🔴 {{progress.errors}}
+
+task.messages.status: |-
+  Messages **{{{chat}}}** in ⏱️ **{{{period}}}** period:
+  - ⚙️ Job State: **{{state}}**
+  {{#last}}
+  - 📅 Last Processed: **{{{last}}}**
+  {{/last}}
+  - 💬 Created in: **{{{chats}}}** chats
+  - 🆕 Created: **{{{progress.ok}}}** messages 
+  - 🟢 Already exists: {{{progress.exists}}} messages
+  - ⚪ Ignored: {{{progress.ignored}}} messages
+  - 🔴 Errors: {{{progress.errors}}} messages
+
+  Details: 
+  [{{{details.text}}}]({{{details.url}}})
 
 app.help.reminder: |-
   Send **help** to get the list of available commands.

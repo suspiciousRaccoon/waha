@@ -8,7 +8,7 @@ import {
 } from '@waha/apps/chatwoot/consumers/inbox/base';
 import { QueueName } from '@waha/apps/chatwoot/consumers/QueueName';
 import { DIContainer } from '@waha/apps/chatwoot/di/DIContainer';
-import { WAHASessionAPI } from '@waha/apps/chatwoot/session/WAHASelf';
+import { WAHASessionAPI } from '@waha/apps/app_sdk/waha/WAHASelf';
 import { MessageMappingService } from '@waha/apps/chatwoot/storage';
 import { SessionManager } from '@waha/core/abc/manager.abc';
 import { RMutexService } from '@waha/modules/rmutex/rmutex.service';
@@ -56,6 +56,13 @@ class MessageDeletedHandler {
       message_id: body.id,
     });
     if (!messages || messages.length == 0) {
+      if (body.private) {
+        // Private notes can have no whatsapp messages
+        this.logger.info(
+          `No WhatsApp message to delete for private note '${body.id}'`,
+        );
+        return;
+      }
       throw Error(
         `No WhatsApp message found for Chatwoot message '${body.id}'`,
       );

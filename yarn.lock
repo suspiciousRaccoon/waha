@@ -11221,6 +11221,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"shell-quote@npm:^1.8.3":
+  version: 1.8.3
+  resolution: "shell-quote@npm:1.8.3"
+  checksum: 550dd84e677f8915eb013d43689c80bb114860649ec5298eb978f40b8f3d4bc4ccb072b82c094eb3548dc587144bb3965a8676f0d685c1cf4c40b5dc27166242
+  languageName: node
+  linkType: hard
+
 "side-channel-list@npm:^1.0.0":
   version: 1.0.0
   resolution: "side-channel-list@npm:1.0.0"
@@ -11547,13 +11554,6 @@ __metadata:
     bare-events:
       optional: true
   checksum: 26e66c75eca24bf00c0fe8392a67c5c5783450e2596a5bb598c25fd51241c42aaaa64c31ff89c97cdf77ee7c9e915d5e201bc0dd4f8d949ec0c66dad6bf7cd91
-  languageName: node
-  linkType: hard
-
-"string-argv@npm:^0.3.2":
-  version: 0.3.2
-  resolution: "string-argv@npm:0.3.2"
-  checksum: 8703ad3f3db0b2641ed2adbb15cf24d3945070d9a751f9e74a924966db9f325ac755169007233e8985a39a6a292f14d4fee20482989b89b96e473c4221508a0f
   languageName: node
   linkType: hard
 
@@ -12617,8 +12617,8 @@ __metadata:
     rimraf: ^4.3.0
     rxjs: ^7.8.1
     sharp: ^0.33.4
+    shell-quote: ^1.8.3
     sqlite3: ^5.1.7
-    string-argv: ^0.3.2
     supertest: ^4.0.2
     swagger-ui-express: ^4.1.4
     ts-jest: ^29.1.3

@@ -15,7 +15,7 @@ import { ChatWootInboxCommandsConsumer } from './consumers/inbox/commands';
 import { ChatWootInboxMessageCreatedConsumer } from './consumers/inbox/message_created';
 import { ChatWootInboxMessageDeletedConsumer } from './consumers/inbox/message_deleted';
 import { ChatWootInboxMessageUpdatedConsumer } from './consumers/inbox/message_updated';
-import { QueueName } from './consumers/QueueName';
+import { FlowProducerName, QueueName } from './consumers/QueueName';
 import { CheckVersionConsumer } from './consumers/scheduled/check.version';
 import { WAHAMessageAnyConsumer } from './consumers/waha/message.any';
 import { WAHAMessageEditedConsumer } from './consumers/waha/message.edited';
@@ -29,10 +29,15 @@ import { ChatWootWAHAQueueService } from './services/ChatWootWAHAQueueService';
 import { ChatWootConversationCreatedConsumer } from './consumers/inbox/conversation_created';
 import { ChatWootConversationStatusChangedConsumer } from '@waha/apps/chatwoot/consumers/inbox/conversation_status_changed';
 import { TaskContactsPullConsumer } from '@waha/apps/chatwoot/consumers/task/contacts.pull';
+import { TaskMessagesPullConsumer } from '@waha/apps/chatwoot/consumers/task/messages.pull';
+import { BullModule } from '@nestjs/bullmq';
 
 const CONTROLLERS = [ChatwootWebhookController, ChatwootLocalesController];
 
 const IMPORTS = lodash.flatten([
+  BullModule.registerFlowProducer({
+    name: FlowProducerName.MESSAGES_PULL_FLOW,
+  }),
   RegisterAppQueue({
     name: QueueName.SCHEDULED_MESSAGE_CLEANUP,
     defaultJobOptions: merge(ExponentialRetriesJobOptions, JobRemoveOptions),
@@ -43,6 +48,10 @@ const IMPORTS = lodash.flatten([
   }),
   RegisterAppQueue({
     name: QueueName.TASK_CONTACTS_PULL,
+    defaultJobOptions: merge(ExponentialRetriesJobOptions, JobRemoveOptions),
+  }),
+  RegisterAppQueue({
+    name: QueueName.TASK_MESSAGES_PULL,
     defaultJobOptions: merge(ExponentialRetriesJobOptions, JobRemoveOptions),
   }),
   RegisterAppQueue({
@@ -105,6 +114,7 @@ const PROVIDERS = [
   ChatWootInboxCommandsConsumer,
   // Tasks
   TaskContactsPullConsumer,
+  TaskMessagesPullConsumer,
   // WAHA
   WAHASessionStatusConsumer,
   WAHAMessageAnyConsumer,

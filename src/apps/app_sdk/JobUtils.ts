@@ -1,5 +1,5 @@
-import { Job } from 'bullmq';
-import { Backoffs } from 'bullmq';
+import { Backoffs, Job } from 'bullmq';
+import { FlowJob } from 'bullmq/dist/esm/interfaces';
 
 /**
  * Calculates the delay until the next attempt for a job.
@@ -64,4 +64,31 @@ export function JobLink(job: Job): { text: string; url: string } {
   const id = encodeURIComponent(job.id);
   const url = `${base}/jobs/queue/${queue}/${id}`;
   return { text: text, url: url };
+}
+
+/**
+ * Chain jobs so that they run one at a time
+ * A | B | C
+ * to
+ * A -> B -> C
+ */
+export function ChainJobsOneAtATime(jobs: FlowJob[]): FlowJob {
+  if (jobs.length == 0) {
+    throw new Error('No jobs provided');
+  }
+
+  for (const job of jobs) {
+    if (job.children.length != 0) {
+      throw new Error('Jobs with children are not supported');
+    }
+  }
+  const left = [...jobs];
+  const root = left.pop();
+  let parent = root;
+  while (left.length != 0) {
+    const job = left.pop();
+    parent.children = [job];
+    parent = job;
+  }
+  return root;
 }

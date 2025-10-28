@@ -10,7 +10,7 @@ import {
 } from '@waha/apps/chatwoot/consumers/waha/base';
 import { WhatsAppContactInfo } from '@waha/apps/chatwoot/contacts/WhatsAppContactInfo';
 import { Locale } from '@waha/apps/chatwoot/i18n/locale';
-import { WAHASessionAPI } from '@waha/apps/chatwoot/session/WAHASelf';
+import { WAHASessionAPI } from '@waha/apps/app_sdk/waha/WAHASelf';
 import { SessionManager } from '@waha/core/abc/manager.abc';
 import { RMutexService } from '@waha/modules/rmutex/rmutex.service';
 import { WAHAEvents } from '@waha/structures/enums.dto';

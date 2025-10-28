@@ -1,17 +1,21 @@
-import { WAHASelf } from '@waha/apps/chatwoot/session/WAHASelf';
+import { WAHASelf } from '@waha/apps/app_sdk/waha/WAHASelf';
 import { Locale } from '@waha/apps/chatwoot/i18n/locale';
 import { Conversation } from '../client/Conversation';
 import { ILogger } from '@waha/apps/app_sdk/ILogger';
-import { Queue } from 'bullmq';
+import { FlowProducer, Queue } from 'bullmq';
+import { InboxData } from '@waha/apps/chatwoot/consumers/types';
 
 export interface CommandContext {
-  app: string;
-  session: string;
+  data: InboxData;
   logger: ILogger;
   l: Locale;
   waha: WAHASelf;
   conversation: Conversation;
   queues: {
-    importContacts: Queue;
+    contactsPull: Queue;
+    messagesPull: Queue;
+  };
+  flows: {
+    messagesPull: FlowProducer;
   };
 }

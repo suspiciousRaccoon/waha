@@ -40,7 +40,7 @@ export class ConversationService {
       inboxIdentifier: this.config.inboxIdentifier,
       contactIdentifier: contact.sourceId,
     });
-    this.logger.info(
+    this.logger.debug(
       `Created conversation.id: ${conversation.id} for contact.id: ${contact.id}, contact.sourceId: ${contact.sourceId}`,
     );
     return conversation;
@@ -51,7 +51,7 @@ export class ConversationService {
     if (!conversation) {
       conversation = await this.create(contact);
     }
-    this.logger.info(
+    this.logger.debug(
       `Using conversation.id: ${conversation.id} for contact.id: ${contact.id}, contact.sourceId: ${contact.sourceId}`,
     );
     return conversation;
