@@ -1,5 +1,8 @@
-import { normalizeMessageContent, WAMessageKey } from '@adiwajshing/baileys';
-import { proto } from '@adiwajshing/baileys';
+import {
+  normalizeMessageContent,
+  proto,
+  WAMessageKey,
+} from '@adiwajshing/baileys';
 import * as grpc from '@grpc/grpc-js';
 import { connectivityState } from '@grpc/grpc-js';
 import { UnprocessableEntityException } from '@nestjs/common';
@@ -61,6 +64,7 @@ import {
   GetChatMessageQuery,
   GetChatMessagesFilter,
   GetChatMessagesQuery,
+  MessageSortField,
   OverviewFilter,
   ReadChatMessagesQuery,
   ReadChatMessagesResponse,
@@ -142,14 +146,13 @@ import {
   partition,
   retry,
   share,
+  Subject,
 } from 'rxjs';
-import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { promisify } from 'util';
 
 import * as gows from './types';
 import { MessageStatus } from './types';
-import MessageServiceClient = messages.MessageServiceClient;
 import { isFromFullSync } from '@waha/core/engines/gows/appstate';
 import { toVcardV3 } from '@waha/core/vcard';
 import { AckToStatus } from '@waha/core/utils/acks';
@@ -168,6 +171,7 @@ import {
 } from './labels.gows';
 import esm from '@waha/vendor/esm';
 import { IsEditedMessage } from '@waha/core/utils/pwa';
+import MessageServiceClient = messages.MessageServiceClient;
 
 enum WhatsMeowEvent {
   CONNECTED = 'gows.ConnectedEventData',
@@ -1775,6 +1779,13 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
         ),
         fromMe: optional(filter['filter.fromMe'], messages.OptionalBool),
         status: optional(status, messages.OptionalUInt32),
+      }),
+      sortBy: new messages.SortBy({
+        field: query.sortBy || MessageSortField.TIMESTAMP,
+        order:
+          query.sortOrder === SortOrder.ASC
+            ? messages.SortBy.Order.ASC
+            : messages.SortBy.Order.DESC,
       }),
       pagination: new messages.Pagination({
         limit: query.limit,

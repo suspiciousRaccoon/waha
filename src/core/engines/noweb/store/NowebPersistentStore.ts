@@ -601,7 +601,7 @@ export class NowebPersistentStore implements INowebStore {
     pagination: PaginationParams,
   ): Promise<any> {
     pagination.sortBy = 'messageTimestamp';
-    pagination.sortOrder = SortOrder.DESC;
+    pagination.sortOrder = pagination.sortOrder || SortOrder.DESC;
     return this.messagesRepo.getAllByJid(chatId, filter, pagination);
   }
 

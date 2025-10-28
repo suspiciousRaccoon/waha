@@ -18172,7 +18172,8 @@ proto.messages.GetMessagesRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     session: (f = msg.getSession()) && proto.messages.Session.toObject(includeInstance, f),
     filters: (f = msg.getFilters()) && proto.messages.MessageFilters.toObject(includeInstance, f),
-    pagination: (f = msg.getPagination()) && proto.messages.Pagination.toObject(includeInstance, f)
+    pagination: (f = msg.getPagination()) && proto.messages.Pagination.toObject(includeInstance, f),
+    sortby: (f = msg.getSortby()) && proto.messages.SortBy.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -18223,6 +18224,11 @@ proto.messages.GetMessagesRequest.deserializeBinaryFromReader = function(msg, re
       var value = new proto.messages.Pagination;
       reader.readMessage(value,proto.messages.Pagination.deserializeBinaryFromReader);
       msg.setPagination(value);
+      break;
+    case 4:
+      var value = new proto.messages.SortBy;
+      reader.readMessage(value,proto.messages.SortBy.deserializeBinaryFromReader);
+      msg.setSortby(value);
       break;
     default:
       reader.skipField();
@@ -18275,6 +18281,14 @@ proto.messages.GetMessagesRequest.serializeBinaryToWriter = function(message, wr
       3,
       f,
       proto.messages.Pagination.serializeBinaryToWriter
+    );
+  }
+  f = message.getSortby();
+  if (f != null) {
+    writer.writeMessage(
+      4,
+      f,
+      proto.messages.SortBy.serializeBinaryToWriter
     );
   }
 };
@@ -18388,6 +18402,43 @@ proto.messages.GetMessagesRequest.prototype.clearPagination = function() {
  */
 proto.messages.GetMessagesRequest.prototype.hasPagination = function() {
   return jspb.Message.getField(this, 3) != null;
+};
+
+
+/**
+ * optional SortBy sortBy = 4;
+ * @return {?proto.messages.SortBy}
+ */
+proto.messages.GetMessagesRequest.prototype.getSortby = function() {
+  return /** @type{?proto.messages.SortBy} */ (
+    jspb.Message.getWrapperField(this, proto.messages.SortBy, 4));
+};
+
+
+/**
+ * @param {?proto.messages.SortBy|undefined} value
+ * @return {!proto.messages.GetMessagesRequest} returns this
+*/
+proto.messages.GetMessagesRequest.prototype.setSortby = function(value) {
+  return jspb.Message.setWrapperField(this, 4, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.messages.GetMessagesRequest} returns this
+ */
+proto.messages.GetMessagesRequest.prototype.clearSortby = function() {
+  return this.setSortby(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.messages.GetMessagesRequest.prototype.hasSortby = function() {
+  return jspb.Message.getField(this, 4) != null;
 };
 
 

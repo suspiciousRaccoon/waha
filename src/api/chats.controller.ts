@@ -29,6 +29,7 @@ import {
   GetChatMessageQuery,
   GetChatMessagesFilter,
   GetChatMessagesQuery,
+  MessageSortField,
   OverviewBodyRequest,
   OverviewFilter,
   OverviewPaginationParams,
@@ -38,6 +39,7 @@ import {
   transformAck,
 } from '../structures/chats.dto';
 import { EditMessageRequest } from '../structures/chatting.dto';
+import { SortOrder } from '@waha/structures/pagination.dto';
 
 @ApiSecurity('api_key')
 @Controller('api/:session/chats')
@@ -120,6 +122,8 @@ class ChatsController {
     @WorkingSessionParam session: WhatsappSession,
     @Param('chatId') chatId: string,
   ) {
+    query.sortBy = query.sortBy || MessageSortField.TIMESTAMP;
+    query.sortOrder = query.sortOrder || SortOrder.DESC;
     filter = transformAck(filter);
     return session.getChatMessages(chatId, query, filter);
   }

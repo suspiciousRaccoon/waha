@@ -8718,6 +8718,7 @@ export namespace messages {
             session?: Session;
             filters?: MessageFilters;
             pagination?: Pagination;
+            sortBy?: SortBy;
         }) {
             super();
             pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
@@ -8730,6 +8731,9 @@ export namespace messages {
                 }
                 if ("pagination" in data && data.pagination != undefined) {
                     this.pagination = data.pagination;
+                }
+                if ("sortBy" in data && data.sortBy != undefined) {
+                    this.sortBy = data.sortBy;
                 }
             }
         }
@@ -8760,10 +8764,20 @@ export namespace messages {
         get has_pagination() {
             return pb_1.Message.getField(this, 3) != null;
         }
+        get sortBy() {
+            return pb_1.Message.getWrapperField(this, SortBy, 4) as SortBy;
+        }
+        set sortBy(value: SortBy) {
+            pb_1.Message.setWrapperField(this, 4, value);
+        }
+        get has_sortBy() {
+            return pb_1.Message.getField(this, 4) != null;
+        }
         static fromObject(data: {
             session?: ReturnType<typeof Session.prototype.toObject>;
             filters?: ReturnType<typeof MessageFilters.prototype.toObject>;
             pagination?: ReturnType<typeof Pagination.prototype.toObject>;
+            sortBy?: ReturnType<typeof SortBy.prototype.toObject>;
         }): GetMessagesRequest {
             const message = new GetMessagesRequest({});
             if (data.session != null) {
@@ -8775,6 +8789,9 @@ export namespace messages {
             if (data.pagination != null) {
                 message.pagination = Pagination.fromObject(data.pagination);
             }
+            if (data.sortBy != null) {
+                message.sortBy = SortBy.fromObject(data.sortBy);
+            }
             return message;
         }
         toObject() {
@@ -8782,6 +8799,7 @@ export namespace messages {
                 session?: ReturnType<typeof Session.prototype.toObject>;
                 filters?: ReturnType<typeof MessageFilters.prototype.toObject>;
                 pagination?: ReturnType<typeof Pagination.prototype.toObject>;
+                sortBy?: ReturnType<typeof SortBy.prototype.toObject>;
             } = {};
             if (this.session != null) {
                 data.session = this.session.toObject();
@@ -8791,6 +8809,9 @@ export namespace messages {
             }
             if (this.pagination != null) {
                 data.pagination = this.pagination.toObject();
+            }
+            if (this.sortBy != null) {
+                data.sortBy = this.sortBy.toObject();
             }
             return data;
         }
@@ -8804,6 +8825,8 @@ export namespace messages {
                 writer.writeMessage(2, this.filters, () => this.filters.serialize(writer));
             if (this.has_pagination)
                 writer.writeMessage(3, this.pagination, () => this.pagination.serialize(writer));
+            if (this.has_sortBy)
+                writer.writeMessage(4, this.sortBy, () => this.sortBy.serialize(writer));
             if (!w)
                 return writer.getResultBuffer();
         }
@@ -8821,6 +8844,9 @@ export namespace messages {
                         break;
                     case 3:
                         reader.readMessage(message.pagination, () => message.pagination = Pagination.deserialize(reader));
+                        break;
+                    case 4:
+                        reader.readMessage(message.sortBy, () => message.sortBy = SortBy.deserialize(reader));
                         break;
                     default: reader.skipField();
                 }

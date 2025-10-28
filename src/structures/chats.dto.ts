@@ -7,7 +7,6 @@ import {
   PaginationParams,
 } from '@waha/structures/pagination.dto';
 import { ChatIdProperty } from '@waha/structures/properties.dto';
-import { SessionConfig } from '@waha/structures/sessions.dto';
 import { Transform, Type } from 'class-transformer';
 import {
   IsArray,
@@ -93,16 +92,23 @@ export class ChatPictureResponse {
   url: string;
 }
 
-export class GetChatMessagesQuery {
+export enum MessageSortField {
+  TIMESTAMP = 'timestamp',
+}
+
+export class GetChatMessagesQuery extends PaginationParams {
   @IsNumber()
   @IsOptional()
   @Type(() => Number)
   limit: number = 10;
 
-  @IsNumber()
+  @ApiProperty({
+    description: 'Sort by field',
+    enum: MessageSortField,
+  })
   @IsOptional()
-  @Type(() => Number)
-  offset?: number;
+  @IsEnum(MessageSortField)
+  sortBy?: string = MessageSortField.TIMESTAMP;
 
   @ApiProperty({
     example: false,
