@@ -21,7 +21,7 @@ export class AxiosLogging {
       : '';
     const body = config.data ? JSON.stringify(config.data) : '';
 
-    this.logger.info(`${method} ${url}${query} ${body}`);
+    this.logger.debug(`${method} ${url}${query} ${body}`);
     return config;
   }
 
@@ -32,8 +32,8 @@ export class AxiosLogging {
     const responseData = JSON.stringify(response.data);
 
     if (status >= 200 && status < 400) {
-      this.logger.info(`${methodStr} ${status}:OK ${url}`);
-      this.logger.debug(`${methodStr} ${status}:OK ${url} ${responseData}`);
+      this.logger.debug(`${methodStr} ${status}:OK ${url}`);
+      this.logger.trace(`${methodStr} ${status}:OK ${url} ${responseData}`);
     } else {
       this.logger.warn(`${methodStr} ${status} ${url} ${responseData}`);
     }
