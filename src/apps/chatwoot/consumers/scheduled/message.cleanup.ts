@@ -19,7 +19,7 @@ import { TKey } from '@waha/apps/chatwoot/i18n/templates';
   concurrency: JOB_CONCURRENCY,
 })
 export class MessageCleanupConsumer extends ChatWootScheduledConsumer {
-  REMOVE_AFTER_DAYS = 14;
+  REMOVE_AFTER_DAYS = 365;
 
   constructor(manager: SessionManager, log: PinoLogger, rmutex: RMutexService) {
     super(manager, log, rmutex, MessageCleanupConsumer.name);
