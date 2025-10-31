@@ -299,13 +299,18 @@ export class WebjsClientCore extends Client {
           }
         }
 
-        if (msgs.length > pagination.limit + pagination.offset) {
-          // sort by t - new first
-          msgs = msgs.sort((a, b) => b.t - a.t);
-          msgs = msgs.slice(
-            pagination.offset,
-            pagination.limit + pagination.offset,
-          );
+        // Always sort newest first before applying the pagination window.
+        msgs = msgs.sort((a, b) => b.t - a.t);
+
+        const offset = Math.max(0, pagination.offset);
+        const limit = pagination.limit;
+
+        if (Number.isFinite(limit)) {
+          const end = Math.min(offset + limit, msgs.length);
+          msgs = msgs.slice(offset, end);
+        } else if (offset > 0) {
+          // When the limit is unbounded we still need to respect the offset.
+          msgs = msgs.slice(offset);
         }
 
         // @ts-ignore
