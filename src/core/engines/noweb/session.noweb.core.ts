@@ -199,7 +199,10 @@ import { NowebPersistentStore } from './store/NowebPersistentStore';
 import { NowebStorageFactoryCore } from './store/NowebStorageFactoryCore';
 import { ensureNumber, extractMediaContent } from './utils';
 import { Agents } from '@waha/core/engines/noweb/types';
-import { IsEditedMessage } from '@waha/core/utils/pwa';
+import {
+  IsEditedMessage,
+  IsHistorySyncNotification,
+} from '@waha/core/utils/pwa';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const promiseRetry = require('promise-retry');
 
@@ -2198,6 +2201,10 @@ export class WhatsappSessionNoWebCore extends WhatsappSession {
       return;
     // Ignore edit, we have a dedicated event for that
     if (IsEditedMessage(message.message)) return;
+
+    // Ignore history sync notifications
+    if (IsHistorySyncNotification(message.message)) return;
+
     if (
       message.message?.protocolMessage?.type ===
       proto.Message.ProtocolMessage.Type.EPHEMERAL_SYNC_RESPONSE

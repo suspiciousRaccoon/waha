@@ -20,3 +20,20 @@ export function IsEditedMessage(message: proto.IMessage): boolean {
   }
   return true;
 }
+
+export function IsHistorySyncNotification(message: proto.IMessage): boolean {
+  message = normalizeMessageContent(message);
+  if (!message) {
+    return false;
+  }
+  if (
+    message?.protocolMessage?.type !==
+    proto.Message.ProtocolMessage.Type.HISTORY_SYNC_NOTIFICATION
+  ) {
+    return false;
+  }
+  if (message?.protocolMessage?.historySyncNotification == null) {
+    return false;
+  }
+  return true;
+}
