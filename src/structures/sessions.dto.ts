@@ -12,7 +12,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-import { WAHASessionStatus } from './enums.dto';
+import { WAHAPresenceStatus, WAHASessionStatus } from './enums.dto';
 import { ChatIdProperty } from './properties.dto';
 import { WebhookConfig } from './webhooks.config.dto';
 
@@ -237,6 +237,9 @@ export class MeInfo {
 export class SessionInfo extends SessionDTO {
   me?: MeInfo;
   assignedWorker?: string;
+  // Timestamp of the last activity in milliseconds
+  presence: WAHAPresenceStatus.ONLINE | WAHAPresenceStatus.OFFLINE | null;
+  lastActivityTimestamp: number | null;
 }
 
 export class SessionDetailedInfo extends SessionInfo {

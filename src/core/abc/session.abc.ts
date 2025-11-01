@@ -131,6 +131,11 @@ import { IMediaManager } from '../media/IMediaManager';
 import { QR } from '../QR';
 import { DataStore } from './DataStore';
 import { fetchBuffer } from '@waha/utils/fetch';
+import {
+  PRESENCE_AUTO_ONLINE,
+  PRESENCE_AUTO_ONLINE_DURATION_SECONDS,
+} from '@waha/core/env';
+import { Activity } from '@waha/core/abc/activity';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const qrcode = require('qrcode-terminal');
@@ -184,6 +189,16 @@ export abstract class WhatsappSession {
   protected jids: JidFilter;
 
   private _status: WAHASessionStatus;
+  private _presence:
+    | WAHAPresenceStatus.ONLINE
+    | WAHAPresenceStatus.OFFLINE
+    | null = null;
+  private lastActivityTimestamp?: number;
+  protected presenceAutoOnlineConfig = {
+    enabled: PRESENCE_AUTO_ONLINE,
+    duration: PRESENCE_AUTO_ONLINE_DURATION_SECONDS * 1000,
+  };
+
   private shouldPrintQR: boolean;
   protected events2: DefaultMap<WAHAEvents, SwitchObservable<any>>;
   private status$: Subject<WAHASessionStatus>;
@@ -196,6 +211,8 @@ export abstract class WhatsappSession {
   private sentMessageIds: NodeCache = new NodeCache({
     stdTTL: 10 * 60, // 10 minutes
   });
+
+  private presenceOfflineTimeout?: ReturnType<typeof setTimeout>;
 
   public mediaConverter: IMediaConverter = new CoreMediaConverter();
 
@@ -315,6 +332,27 @@ export abstract class WhatsappSession {
 
   public get status() {
     return this._status;
+  }
+
+  protected set presence(value: WAHAPresenceStatus) {
+    switch (value) {
+      case WAHAPresenceStatus.ONLINE:
+        this._presence = WAHAPresenceStatus.ONLINE;
+        break;
+      case WAHAPresenceStatus.OFFLINE:
+        this._presence = WAHAPresenceStatus.OFFLINE;
+        break;
+      default:
+        // Ignore chat relates presence
+        return;
+    }
+  }
+
+  public get presence():
+    | WAHAPresenceStatus.ONLINE
+    | WAHAPresenceStatus.OFFLINE
+    | null {
+    return this._presence;
   }
 
   getBrowserExecutablePath() {
@@ -535,9 +573,77 @@ export abstract class WhatsappSession {
 
   abstract sendSeen(chat: SendSeenRequest);
 
-  abstract startTyping(chat: ChatRequest);
+  abstract startTyping(chat: ChatRequest): Promise<void>;
 
   abstract stopTyping(chat: ChatRequest);
+
+  /**
+   * Activity tracking and presence management
+   */
+
+  /**
+   * Returns the timestamp of the last "activity" in the session
+   * @returns Timestamp in milliseconds or undefined if there was never any activity
+   */
+  public getLastActivityTimestamp(): number | undefined {
+    return this.lastActivityTimestamp;
+  }
+
+  /**
+   * Maintains ONLINE presence active while there is activity
+   * Resets the timer on each activity, only goes OFFLINE after Xs without activity
+   */
+  async maintainPresenceOnline(): Promise<void> {
+    if (!this.presenceAutoOnlineConfig.enabled) {
+      return;
+    }
+    if (this.status !== WAHASessionStatus.WORKING) {
+      return;
+    }
+    this.lastActivityTimestamp = Date.now();
+    // If not ONLINE yet, send ONLINE
+    if (this._presence !== WAHAPresenceStatus.ONLINE) {
+      try {
+        // Force set ONLINE in case of many requests comes at the same time
+        // So we'll set ONLINE exactly once
+        this.presence = WAHAPresenceStatus.ONLINE;
+        await this.setPresence(WAHAPresenceStatus.ONLINE);
+        this.logger.debug('Set presence to ONLINE due to activity');
+      } catch (error) {
+        this.logger.debug('Failed to set presence ONLINE', error);
+        return;
+      }
+    }
+    // Cancel the previous timeout (if exists)
+    this.cleanupPresenceTimeout();
+
+    // Schedule to go back OFFLINE after timeout without activity
+    this.presenceOfflineTimeout = setTimeout(async () => {
+      try {
+        const working = this.status === WAHASessionStatus.WORKING;
+        const online = this.presence === WAHAPresenceStatus.ONLINE;
+        if (!working || !online) {
+          // Nothing to do
+          return;
+        }
+        await this.setPresence(WAHAPresenceStatus.OFFLINE);
+        this.logger.debug(
+          'Auto-set presence to OFFLINE after time without activity',
+        );
+      } catch (error) {
+        this.logger.debug('Failed to set presence OFFLINE', error);
+      }
+      this.cleanupPresenceTimeout();
+    }, this.presenceAutoOnlineConfig.duration);
+  }
+
+  /**
+   * Cleans up the timeout when the session stops
+   */
+  protected cleanupPresenceTimeout() {
+    clearTimeout(this.presenceOfflineTimeout);
+    this.presenceOfflineTimeout = null;
+  }
 
   abstract setReaction(request: MessageReactionRequest);
 
@@ -923,7 +1029,10 @@ export abstract class WhatsappSession {
     throw new NotImplementedByEngineError();
   }
 
-  public setPresence(presence: WAHAPresenceStatus, chatId?: string) {
+  public setPresence(
+    presence: WAHAPresenceStatus,
+    chatId?: string,
+  ): Promise<void> {
     throw new NotImplementedByEngineError();
   }
 

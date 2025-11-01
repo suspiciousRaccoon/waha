@@ -349,6 +349,8 @@ export class SessionManagerCore extends SessionManager implements OnModuleInit {
           status: WAHASessionStatus.STOPPED,
           config: this.sessionConfig,
           me: null,
+          presence: null,
+          lastActivityTimestamp: null,
         },
       ];
     }
@@ -367,6 +369,8 @@ export class SessionManagerCore extends SessionManager implements OnModuleInit {
         status: session.status,
         config: session.sessionConfig,
         me: me,
+        presence: session.presence,
+        lastActivityTimestamp: session?.getLastActivityTimestamp(),
       },
     ];
   }
@@ -400,7 +404,10 @@ export class SessionManagerCore extends SessionManager implements OnModuleInit {
     }
     const session = sessions[0];
     const engine = await this.fetchEngineInfo();
-    return { ...session, engine: engine };
+    return {
+      ...session,
+      engine: engine,
+    };
   }
 
   protected stopEvents() {
