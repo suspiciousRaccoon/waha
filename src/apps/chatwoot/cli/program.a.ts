@@ -9,6 +9,7 @@ import { AddSessionCommand } from '@waha/apps/chatwoot/cli/program.session';
 import { AddContactsCommand } from '@waha/apps/chatwoot/cli/program.contacts';
 import { AddMessagesCommand } from '@waha/apps/chatwoot/cli/program.messages';
 import { AddServerCommand } from '@waha/apps/chatwoot/cli/program.server';
+import { AddQueueCommand } from '@waha/apps/chatwoot/cli/program.queue';
 
 function Program(ctx: CommandContext, output: OutputConfiguration) {
   const l = ctx.l;
@@ -62,7 +63,8 @@ export function BuildProgram(
   const program = Program(ctx, output);
   AddSessionCommand(program, ctx);
   AddContactsCommand(program, ctx);
-  AddMessagesCommand(program, ctx);
+  AddMessagesCommand(program, ctx, commands.queue);
+  AddQueueCommand(program, ctx, commands.queue);
   AddServerCommand(program, ctx, commands.server);
   return program;
 }

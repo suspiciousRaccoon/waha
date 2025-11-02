@@ -35,6 +35,7 @@ import { IgnoreJidConfig, isNullJid, JidFilter } from '@waha/core/utils/jids';
 import { ErrorRenderer } from '@waha/apps/chatwoot/error/ErrorRenderer';
 import { IsCommandsChat } from '@waha/apps/chatwoot/client/ids';
 import { CommandPrefix } from '@waha/apps/chatwoot/cli';
+import { QueueManager } from '@waha/apps/chatwoot/services/QueueManager';
 
 export enum ChatID {
   ALL = 'all',
@@ -50,6 +51,7 @@ export type MessagesPullOptions = {
     end: number;
   };
   force: boolean;
+  pause: boolean;
   timeout: {
     media: number;
   };
@@ -84,7 +86,12 @@ function total(progress: Progress) {
  */
 @Processor(QueueName.TASK_MESSAGES_PULL, { concurrency: JOB_CONCURRENCY })
 export class TaskMessagesPullConsumer extends ChatWootTaskConsumer {
-  constructor(manager: SessionManager, log: PinoLogger, rmutex: RMutexService) {
+  constructor(
+    manager: SessionManager,
+    log: PinoLogger,
+    rmutex: RMutexService,
+    protected queueManager: QueueManager,
+  ) {
     super(manager, log, rmutex, TaskMessagesPullConsumer.name);
   }
 
@@ -103,6 +110,7 @@ export class TaskMessagesPullConsumer extends ChatWootTaskConsumer {
     const waha = container.WAHASelf();
     const session = new WAHASessionAPI(job.data.session, waha);
     const handler = new MessagesPullHandler(
+      this.queueManager,
       container,
       signal,
       container.Logger(),
@@ -110,11 +118,9 @@ export class TaskMessagesPullConsumer extends ChatWootTaskConsumer {
       session,
       locale,
     );
-    if (options.chat === ChatID.SUMMARY) {
-      return await handler.summary(options, job);
-    }
-
-    return await handler.handle(options, job);
+    await handler.start(options, job);
+    job = await handler.handle(options, job);
+    return await handler.end(options, job);
   }
 }
 
@@ -122,6 +128,7 @@ class MessagesPullHandler {
   private activity: TaskActivity;
 
   constructor(
+    protected queueManager: QueueManager,
     protected container: DIContainer,
     protected signal: AbortSignal,
     protected logger: ILogger,
@@ -158,14 +165,42 @@ class MessagesPullHandler {
     return progress;
   }
 
-  async summary(options: MessagesPullOptions, job: Job): Promise<Progress> {
+  async start(options: MessagesPullOptions, job: Job) {
+    const { ignored, processed, unprocessed, failed } =
+      await job.getDependenciesCount();
+    const total = ignored + processed + unprocessed + failed;
+    const hasChildren = total > 0;
+    if (hasChildren) {
+      return;
+    }
+
+    // Perform some actions before any job started
+    if (options.pause) {
+      await this.queueManager.pause();
+      await this.activity.queue(true);
+    }
+  }
+
+  async end(options: MessagesPullOptions, job: Job) {
+    if (job.parentKey) {
+      return await this.summaryProgress(job);
+    }
+    // Perform some actions after all jobs are done
     const progress = await this.summaryProgress(job);
     await job.updateProgress(progress);
     await this.activity.completed(progress, options);
+    if (options.pause) {
+      await this.queueManager.resume();
+      await this.activity.queue(false);
+    }
     return progress;
   }
 
-  async handle(options: MessagesPullOptions, job: Job): Promise<Progress> {
+  async handle(options: MessagesPullOptions, job: Job): Promise<Job> {
+    if (options.chat === ChatID.SUMMARY) {
+      // Do nothing for "summary" chat
+      return job;
+    }
     const jids = new JidFilter(options.ignore);
     let progress = lodash.merge({}, NullProgress, job.progress);
     const batch = options.batch ?? 100;
@@ -287,11 +322,8 @@ class MessagesPullHandler {
       // update progress before signal fails
       await job.updateProgress(progress);
     }
-
-    if (job.parentKey) {
-      return await this.summaryProgress(job);
-    }
-    return await this.summary(options, job);
+    job.progress = progress;
+    return job;
   }
 }
 
@@ -300,6 +332,15 @@ export class TaskActivity {
     private l: Locale,
     private conversation: Conversation,
   ) {}
+  public async queue(paused: boolean) {
+    let msg: string;
+    if (paused) {
+      msg = this.l.r('cli.cmd.queue.paused');
+    } else {
+      msg = this.l.r('cli.cmd.queue.resumed');
+    }
+    await this.conversation.activity(msg);
+  }
 
   public async details(data) {
     await this.conversation.activity(

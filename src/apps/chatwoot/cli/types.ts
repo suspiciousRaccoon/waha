@@ -4,6 +4,7 @@ import { Conversation } from '../client/Conversation';
 import { ILogger } from '@waha/apps/app_sdk/ILogger';
 import { FlowProducer, Queue } from 'bullmq';
 import { InboxData } from '@waha/apps/chatwoot/consumers/types';
+import { QueueRegistry } from '@waha/apps/chatwoot/services/QueueRegistry';
 
 export interface CommandContext {
   data: InboxData;
@@ -12,6 +13,7 @@ export interface CommandContext {
   waha: WAHASelf;
   conversation: Conversation;
   queues: {
+    registry: QueueRegistry;
     contactsPull: Queue;
     messagesPull: Queue;
   };

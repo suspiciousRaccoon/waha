@@ -212,6 +212,7 @@ export class DIContainer {
       linkPreview: LinkPreview.OFF,
       commands: {
         server: true,
+        queue: false,
       },
       conversations: {
         sort: ConversationSort.created_newest,

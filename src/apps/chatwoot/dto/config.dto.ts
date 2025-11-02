@@ -20,6 +20,10 @@ export const DEFAULT_LOCALE = 'en-US';
 export class ChatWootCommandsConfig {
   @IsBoolean()
   server: boolean = true;
+
+  @IsOptional()
+  @IsBoolean()
+  queue?: boolean = false;
 }
 
 export enum LinkPreview {

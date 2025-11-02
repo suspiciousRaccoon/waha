@@ -15,7 +15,11 @@ import { MessagesPullOptions } from '@waha/apps/chatwoot/consumers/task/messages
 import { JobsOptions } from 'bullmq';
 import { JobDataTimeout } from '@waha/apps/app_sdk/AppConsumer';
 
-export function AddMessagesCommand(program: Command, ctx: CommandContext) {
+export function AddMessagesCommand(
+  program: Command,
+  ctx: CommandContext,
+  queue: boolean,
+) {
   const l = ctx.l;
   const SyncGroup = l.r('cli.cmd.root.sub.sync');
   program.commandsGroup(SyncGroup);
@@ -53,6 +57,7 @@ export function AddMessagesCommand(program: Command, ctx: CommandContext) {
     .option('-s, --status', l.r('cli.cmd.messages.pull.option.status'))
     .option('--bc, --broadcast', l.r('cli.cmd.messages.pull.option.broadcast'))
     .option('-m, --media', l.r('cli.cmd.messages.pull.option.media'))
+    .option('--pause', l.r('cli.cmd.messages.pull.option.pause'))
     .option(
       '-b, --batch <number>',
       l.r('cli.cmd.messages.pull.option.batch'),
@@ -92,6 +97,13 @@ export function AddMessagesCommand(program: Command, ctx: CommandContext) {
         start = tmp;
       }
 
+      if (opts.pause && !queue) {
+        await ctx.conversation.incoming(
+          l.r('cli.cmd.messages.pull.error.pause-no-queue'),
+        );
+        return;
+      }
+
       const options: MessagesPullOptions = {
         chat: opts.chat,
         progress: opts.progress,
@@ -101,6 +113,7 @@ export function AddMessagesCommand(program: Command, ctx: CommandContext) {
         },
         media: opts.media,
         force: opts.force,
+        pause: !!opts.pause,
         timeout: {
           media: opts.timeoutMedia,
         },

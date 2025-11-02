@@ -1,4 +1,3 @@
-import { InjectQueue } from '@nestjs/bullmq';
 import { Injectable } from '@nestjs/common';
 import { ListenEventsForChatWoot } from '@waha/apps/chatwoot/consumers/waha/base';
 import { populateSessionInfo } from '@waha/core/abc/manager.abc';
@@ -7,6 +6,7 @@ import { WAHAEvents } from '@waha/structures/enums.dto';
 import { Queue } from 'bullmq';
 
 import { QueueName } from '../consumers/QueueName';
+import { QueueRegistry } from './QueueRegistry';
 
 /**
  * Service for managing ChatWoot queues for WAHA events
@@ -14,20 +14,7 @@ import { QueueName } from '../consumers/QueueName';
  */
 @Injectable()
 export class ChatWootWAHAQueueService {
-  constructor(
-    @InjectQueue(QueueName.WAHA_MESSAGE_ANY)
-    private readonly queueMessageAny: Queue,
-    @InjectQueue(QueueName.WAHA_MESSAGE_REACTION)
-    private readonly queueMessageReaction: Queue,
-    @InjectQueue(QueueName.WAHA_MESSAGE_EDITED)
-    private readonly queueMessageEdited: Queue,
-    @InjectQueue(QueueName.WAHA_MESSAGE_REVOKED)
-    private readonly queueMessageRevoked: Queue,
-    @InjectQueue(QueueName.WAHA_MESSAGE_ACK)
-    private readonly queueMessageAck: Queue,
-    @InjectQueue(QueueName.WAHA_SESSION_STATUS)
-    private readonly queueSessionStatus: Queue,
-  ) {}
+  constructor(private readonly queueRegistry: QueueRegistry) {}
 
   /**
    * Get the specific queue for an event
@@ -37,17 +24,17 @@ export class ChatWootWAHAQueueService {
   private getQueueForEvent(event: WAHAEvents): Queue | null {
     switch (event) {
       case WAHAEvents.MESSAGE_ANY:
-        return this.queueMessageAny;
+        return this.queueRegistry.queue(QueueName.WAHA_MESSAGE_ANY);
       case WAHAEvents.MESSAGE_REACTION:
-        return this.queueMessageReaction;
+        return this.queueRegistry.queue(QueueName.WAHA_MESSAGE_REACTION);
       case WAHAEvents.MESSAGE_EDITED:
-        return this.queueMessageEdited;
+        return this.queueRegistry.queue(QueueName.WAHA_MESSAGE_EDITED);
       case WAHAEvents.MESSAGE_REVOKED:
-        return this.queueMessageRevoked;
+        return this.queueRegistry.queue(QueueName.WAHA_MESSAGE_REVOKED);
       case WAHAEvents.MESSAGE_ACK:
-        return this.queueMessageAck;
+        return this.queueRegistry.queue(QueueName.WAHA_MESSAGE_ACK);
       case WAHAEvents.SESSION_STATUS:
-        return this.queueSessionStatus;
+        return this.queueRegistry.queue(QueueName.WAHA_SESSION_STATUS);
       default:
         return null;
     }

@@ -14,6 +14,7 @@ import { TKey } from '@waha/apps/chatwoot/i18n/templates';
 import { CommandPrefix, runText } from '@waha/apps/chatwoot/cli';
 import { CommandContext } from '@waha/apps/chatwoot/cli/types';
 import { IsCommandsChat } from '@waha/apps/chatwoot/client/ids';
+import { QueueRegistry } from '@waha/apps/chatwoot/services/QueueRegistry';
 
 @Processor(QueueName.INBOX_COMMANDS, { concurrency: JOB_CONCURRENCY })
 export class ChatWootInboxCommandsConsumer extends ChatWootInboxMessageConsumer {
@@ -21,10 +22,7 @@ export class ChatWootInboxCommandsConsumer extends ChatWootInboxMessageConsumer 
     protected readonly manager: SessionManager,
     log: PinoLogger,
     rmutex: RMutexService,
-    @InjectQueue(QueueName.TASK_CONTACTS_PULL)
-    private readonly contactsPullQueue: Queue,
-    @InjectQueue(QueueName.TASK_MESSAGES_PULL)
-    private readonly messagesPullQueue: Queue,
+    private readonly queueRegistry: QueueRegistry,
     @InjectFlowProducer(FlowProducerName.MESSAGES_PULL_FLOW)
     private readonly messagesPullFlow: FlowProducer,
   ) {
@@ -61,8 +59,9 @@ export class ChatWootInboxCommandsConsumer extends ChatWootInboxMessageConsumer 
       waha: container.WAHASelf(),
       conversation: conversation,
       queues: {
-        contactsPull: this.contactsPullQueue,
-        messagesPull: this.messagesPullQueue,
+        registry: this.queueRegistry,
+        contactsPull: this.queueRegistry.queue(QueueName.TASK_CONTACTS_PULL),
+        messagesPull: this.queueRegistry.queue(QueueName.TASK_MESSAGES_PULL),
       },
       flows: {
         messagesPull: this.messagesPullFlow,

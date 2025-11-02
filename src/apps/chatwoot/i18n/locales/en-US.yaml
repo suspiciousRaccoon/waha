@@ -353,8 +353,11 @@ cli.cmd.root.description: |-
 cli.cmd.root.sub.session: |-
   🖥️ **Session**:
 
+cli.cmd.root.sub.queue: |-
+  🧩 **Queue**:
+
 cli.cmd.root.sub.server: |-
-  🖥️ **Session**:
+  🔧 **Server**:
 
 cli.cmd.root.sub.sync: |-
   🔄️ **Sync**:
@@ -419,11 +422,50 @@ cli.cmd.messages.pull.option.broadcast: |-
 cli.cmd.messages.pull.option.media: |-
   Fetch media attachments (images, videos, files) when pulling history.
 
+cli.cmd.messages.pull.option.pause: |-
+  Enqueue the messages pull job in a paused state, halting new WhatsApp message processing until the pull completes.
+
+cli.cmd.messages.pull.error.pause-no-queue: |-
+  ⛔ Cannot use `--pause` because the **queue** command is disabled in this app configuration.
+
+cli.cmd.queue.description: |-
+  Manage queues.
+
+cli.cmd.queue.summary: |-
+  Perform queue actions.
+
+cli.cmd.queue.action.description: |-
+  Choose an action.
+
+cli.cmd.queue.status.description: |-
+  Show the status of a queue.
+
+cli.cmd.queue.argument.name: |-
+  Queue name: `inbox` or `whatsapp` (optional).
+
+cli.cmd.queue.start.description: |-
+  Start a queue by name.
+
+cli.cmd.queue.stop.description: |-
+  Stop a queue by name.
+
+cli.cmd.queue.paused: |-
+  ⚪🧩 Queues has been paused. Send `queue status` to check the status.
+
+cli.cmd.queue.resumed: |-
+  🟢🧩 Queues has been resumed. Send `queue status` to check the status.
+
+cli.cmd.queue.status.result: |-
+  📊 Queue Status:
+  {{#queues}}
+  - **{{name}}**: {{#locked}}🔒{{/locked}}{{#paused}}⚪ Paused{{/paused}}{{^paused}}🟢 Running{{/paused}}
+  {{/queues}}
+
 cli.cmd.messages.pull.option.timeout-media: |-
-  Set how long to try downloading media for each message (defaults to `30s`).
+  Set how long to try downloading media for each message.
 
 cli.cmd.messages.pull.argument.end: |-
-  Set how far back the pull window ends, e.g., `2d` stops at two days ago (defaults to `1d`).
+  Set how far back the pull window ends, e.g., `2d` stops at two days ago.
 
 cli.cmd.messages.pull.argument.start: |-
   Set where the pull window starts, e.g., `1d` begins one day ago (defaults to `0d`, meaning now).

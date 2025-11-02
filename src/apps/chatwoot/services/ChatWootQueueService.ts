@@ -1,10 +1,10 @@
-import { InjectQueue } from '@nestjs/bullmq';
 import { Injectable } from '@nestjs/common';
 import { EventName } from '@waha/apps/chatwoot/client/types';
 import { InboxData } from '@waha/apps/chatwoot/consumers/types';
 import { Queue } from 'bullmq';
 
 import { QueueName } from '../consumers/QueueName';
+import { QueueRegistry } from './QueueRegistry';
 
 /**
  * Service for managing ChatWoot queues for inbox events
@@ -12,20 +12,7 @@ import { QueueName } from '../consumers/QueueName';
  */
 @Injectable()
 export class ChatWootQueueService {
-  constructor(
-    @InjectQueue(QueueName.INBOX_MESSAGE_CREATED)
-    private readonly messageCreatedQueue: Queue,
-    @InjectQueue(QueueName.INBOX_MESSAGE_UPDATED)
-    private readonly messageUpdatedQueue: Queue,
-    @InjectQueue(QueueName.INBOX_MESSAGE_DELETED)
-    private readonly messageDeletedQueue: Queue,
-    @InjectQueue(QueueName.INBOX_CONVERSATION_CREATED)
-    private readonly conversationCreatedQueue: Queue,
-    @InjectQueue(QueueName.INBOX_CONVERSATION_STATUS_CHANGED)
-    private readonly conversationStatusChanged: Queue,
-    @InjectQueue(QueueName.INBOX_COMMANDS)
-    private readonly commandsQueue: Queue,
-  ) {}
+  constructor(private readonly queueRegistry: QueueRegistry) {}
 
   /**
    * Generic method to add a job to a queue
@@ -46,17 +33,19 @@ export class ChatWootQueueService {
   private getQueueForEvent(event: string): Queue | null {
     switch (event) {
       case EventName.CONVERSATION_CREATED:
-        return this.conversationCreatedQueue;
+        return this.queueRegistry.queue(QueueName.INBOX_CONVERSATION_CREATED);
       case EventName.MESSAGE_CREATED:
-        return this.messageCreatedQueue;
+        return this.queueRegistry.queue(QueueName.INBOX_MESSAGE_CREATED);
       case EventName.MESSAGE_UPDATED:
-        return this.messageUpdatedQueue;
+        return this.queueRegistry.queue(QueueName.INBOX_MESSAGE_UPDATED);
       case EventName.CONVERSATION_STATUS_CHANGED:
-        return this.conversationStatusChanged;
+        return this.queueRegistry.queue(
+          QueueName.INBOX_CONVERSATION_STATUS_CHANGED,
+        );
       case 'message_deleted':
-        return this.messageDeletedQueue;
+        return this.queueRegistry.queue(QueueName.INBOX_MESSAGE_DELETED);
       case 'commands':
-        return this.commandsQueue;
+        return this.queueRegistry.queue(QueueName.INBOX_COMMANDS);
       default:
         return null;
     }
@@ -67,7 +56,7 @@ export class ChatWootQueueService {
    */
   async addMessageCreatedJob(data: InboxData): Promise<any> {
     return await this.add(
-      this.messageCreatedQueue,
+      this.queueRegistry.queue(QueueName.INBOX_MESSAGE_CREATED),
       EventName.MESSAGE_CREATED,
       data,
     );
@@ -78,7 +67,7 @@ export class ChatWootQueueService {
    */
   async addMessageUpdatedJob(data: InboxData): Promise<any> {
     return await this.add(
-      this.messageUpdatedQueue,
+      this.queueRegistry.queue(QueueName.INBOX_MESSAGE_UPDATED),
       EventName.MESSAGE_UPDATED,
       data,
     );
@@ -88,14 +77,22 @@ export class ChatWootQueueService {
    * Add a job to the message deleted queue
    */
   async addMessageDeletedJob(data: InboxData): Promise<any> {
-    return await this.add(this.messageDeletedQueue, 'message_deleted', data);
+    return await this.add(
+      this.queueRegistry.queue(QueueName.INBOX_MESSAGE_DELETED),
+      'message_deleted',
+      data,
+    );
   }
 
   /**
    * Add a job to the commands queue
    */
   async addCommandsJob(event: string, data: InboxData): Promise<any> {
-    return await this.add(this.commandsQueue, event, data);
+    return await this.add(
+      this.queueRegistry.queue(QueueName.INBOX_COMMANDS),
+      event,
+      data,
+    );
   }
 
   /**

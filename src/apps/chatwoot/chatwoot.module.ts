@@ -26,11 +26,13 @@ import { WAHASessionStatusConsumer } from './consumers/waha/session.status';
 import { ChatWootQueueService } from './services/ChatWootQueueService';
 import { ChatWootScheduleService } from './services/ChatWootScheduleService';
 import { ChatWootWAHAQueueService } from './services/ChatWootWAHAQueueService';
+import { QueueRegistry } from './services/QueueRegistry';
 import { ChatWootConversationCreatedConsumer } from './consumers/inbox/conversation_created';
 import { ChatWootConversationStatusChangedConsumer } from '@waha/apps/chatwoot/consumers/inbox/conversation_status_changed';
 import { TaskContactsPullConsumer } from '@waha/apps/chatwoot/consumers/task/contacts.pull';
 import { TaskMessagesPullConsumer } from '@waha/apps/chatwoot/consumers/task/messages.pull';
 import { BullModule } from '@nestjs/bullmq';
+import { QueueManager } from '@waha/apps/chatwoot/services/QueueManager';
 
 const CONTROLLERS = [ChatwootWebhookController, ChatwootLocalesController];
 
@@ -130,6 +132,8 @@ const PROVIDERS = [
   ChatWootQueueService,
   ChatWootScheduleService,
   ChatWootAppService,
+  QueueRegistry,
+  QueueManager,
 ];
 
 export const ChatWootExports = {
