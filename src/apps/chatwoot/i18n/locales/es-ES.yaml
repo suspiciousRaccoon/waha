@@ -193,9 +193,6 @@ cli.cmd.contacts.pull.option.avatar: |-
 cli.cmd.contacts.pull.option.groups: |-
   Incluir contactos de grupos de WhatsApp en la sincronización.
 
-cli.cmd.contacts.pull.option.no-lids: |-
-  Omitir contactos LID de WhatsApp (JID de dispositivo vinculado) en la sincronización.
-
 cli.cmd.contacts.pull.option.no-attributes: |-
   No obtengas los atributos del contacto si ya existe (acelera el proceso).
 
@@ -203,12 +200,6 @@ cli.cmd.contacts.pull.already-running: |-
   ⏳ El trabajo **Pull Contacts** ya se está ejecutando. Espera a que finalice o deténlo antes de iniciar uno nuevo.
 
   Envía `contacts status` para más detalles.
-
-cli.cmd.contacts.pull.queued: |-
-  👥 Trabajo **Pull Contacts** en cola.
-
-  Compartiremos una actualización de progreso cada **{{batch}}** contactos.
-  La importación puede tardar; consulta el estado más reciente en cualquier momento con `contacts status`.
 
 cli.cmd.options.job.attempts: |-
   Número de intentos antes de marcar el trabajo como fallido.
@@ -512,3 +503,145 @@ whatsapp.to.chatwoot.message.facebook.ad: |-
   ---
   💬 **Mensaje del cliente:**
   {{{payload.body}}}
+whatsapp.history.message.wrapper: |-
+  {{{content}}}
+  {{^payload.fromMe}}
+
+  {{/payload.fromMe}}
+  `🗓️ {{{timestamp}}}`
+UNKNOWN: Desconocido
+ERROR: Error
+PENDING: Enviando
+SERVER: Servidor
+DEVICE: Dispositivo
+READ: Leído
+PLAYED: Reproducido
+whatsapp.to.chatwoot.message.has.media.no.media: >-
+  {{#content}}
+
+  {{{content}}}
+
+
+  {{/content}}
+
+  🖼️⚠️ **El mensaje contiene contenido multimedia, pero no pudimos descargarlo**
+
+  📱 Abre **WhatsApp** para verlo.
+
+
+  {{^content}}
+
+  Detalles: [{{{details.text}}}]({{{details.url}}})
+
+  {{/content}}
+cli.cmd.root.sub.queue: '🧩 **Cola**:'
+cli.cmd.messages.summary: Extrae mensajes de WhatsApp.
+cli.cmd.messages.description:
+  💬 Ejecuta `messages pull` para solicitar la sincronización de mensajes o
+  `messages status` para revisar el progreso.
+cli.cmd.messages.action.description:
+  '`pull` para iniciar la extracción de mensajes o `status` para revisar el
+  trabajo activo.'
+cli.cmd.messages.pull.option.chat:
+  Limita la extracción a un ID de chat de WhatsApp específico.
+cli.cmd.messages.pull.option.force:
+  Obliga a la bandeja de entrada a crear mensajes incluso cuando el mensaje de
+  WhatsApp ya existe en el mapeo de la conversación.
+cli.cmd.messages.pull.option.batch:
+  Número de mensajes que se extraen en cada lote.
+cli.cmd.messages.pull.option.progress:
+  Informa el progreso cada N mensajes. Establécelo en 0 para desactivar los
+  informes de progreso.
+cli.cmd.messages.pull.option.no-dm:
+  Omite los mensajes directos al extraer el historial.
+cli.cmd.messages.pull.option.groups:
+  Incluye chats de grupo de WhatsApp al extraer el historial.
+cli.cmd.messages.pull.option.channels:
+  Incluye canales de WhatsApp al extraer el historial.
+cli.cmd.messages.pull.option.status:
+  Incluye actualizaciones de estado de WhatsApp al extraer el historial.
+cli.cmd.messages.pull.option.broadcast:
+  Incluye listas de difusión al extraer el historial.
+cli.cmd.messages.pull.option.media:
+  Descarga archivos multimedia (imágenes, videos, archivos) al extraer el
+  historial.
+cli.cmd.messages.pull.option.pause:
+  Encola el trabajo de extracción de mensajes en estado pausado, deteniendo el
+  procesamiento de nuevos mensajes de WhatsApp hasta que finalice.
+cli.cmd.messages.pull.error.pause-no-queue:
+  ⛔ No se puede usar `--pause` porque el comando **queue** está deshabilitado
+  en esta configuración de la aplicación.
+cli.cmd.queue.description: Gestiona las colas.
+cli.cmd.queue.summary: Realiza acciones sobre las colas.
+cli.cmd.queue.action.description: Elige una acción.
+cli.cmd.queue.status.description: Muestra el estado de una cola.
+cli.cmd.queue.argument.name:
+  'Nombre de la cola: `inbox` o `whatsapp` (opcional).'
+cli.cmd.queue.start.description: Inicia una cola por nombre.
+cli.cmd.queue.stop.description: Detiene una cola por nombre.
+cli.cmd.queue.paused:
+  ⚪🧩 Las colas se han pausado. Envía `queue status` para comprobar el estado.
+cli.cmd.queue.resumed:
+  🟢🧩 Las colas se han reanudado. Envía `queue status` para comprobar el
+  estado.
+cli.cmd.queue.status.result: >-
+  📊 Estado de la cola:
+
+  {{#queues}}
+
+  - **{{name}}**: {{#locked}}🔒{{/locked}}{{#paused}}⚪ En
+  pausa{{/paused}}{{^paused}}🟢 En ejecución{{/paused}}
+
+  {{/queues}}
+cli.cmd.messages.pull.option.timeout-media:
+  Define cuánto tiempo se intenta descargar los archivos multimedia de cada
+  mensaje.
+cli.cmd.messages.pull.argument.end:
+  Define dónde termina la ventana de extracción; por ejemplo, `2d` se detiene
+  hace dos días.
+cli.cmd.messages.pull.argument.start:
+  Define desde dónde comienza la ventana de extracción; por ejemplo, `1d`
+  empieza hace un día (el valor predeterminado es `0d`, es decir, ahora).
+cli.cmd.messages.pull.already-running: >-
+  ⏳ El trabajo **Pull Messages** ya se está ejecutando para **{{{chat}}}**.
+  Espera a que termine o deténlo antes de iniciar uno nuevo.
+
+
+  Envía `messages status` para obtener detalles.
+cli.cmd.messages.status.not-found:
+  ℹ️ No se encontró ningún trabajo activo de **Pull Messages**. Inicia uno con
+  `messages pull`.
+cli.cmd.messages.pull.no-chats-found:
+  No se encontraron chats de WhatsApp de los que extraer mensajes en el período.
+cli.cmd.contacts.pull.option.progress:
+  Informa el progreso cada N contactos. Establécelo en 0 para desactivar los
+  informes de progreso.
+cli.cmd.contacts.pull.option.lids:
+  Incluye contactos LID de WhatsApp (contactos anónimos) en la sincronización.
+task.contacts.completed:
+  👤✅ Contactos completados → 🆕 {{progress.created}}, 🔄 {{progress.updated}},
+  ⚪ {{progress.skipped}}, 🔴 {{progress.errors}}, 🖼️
+  {{progress.avatar.updated}}
+task.messages.started: ⏳ Extrayendo mensajes 💬 {{{chat}}} ⏱️ {{{period}}}...
+task.messages.details:
+  Envía "{{{prefix}}}messages status" para ver más detalles.
+task.messages.progress:
+  '⏳ Mensajes {{{chat}}}: 🆕 {{progress.ok}}, 🟢 {{progress.exists}}, ⚪
+  {{progress.ignored}}, 🔴 {{progress.errors}}{{#last}} | 📅 {{{last}}}{{/last}}'
+task.messages.completed:
+  ✅ Mensajes {{{chat}}} en {{{period}}} → 🆕 {{progress.ok}}, 🟢
+  {{progress.exists}}, ⚪ {{progress.ignored}}, 🔴 {{progress.errors}}
+task.messages.status: |-
+  Mensajes **{{{chat}}}** en el periodo ⏱️ **{{{period}}}**:
+  - ⚙️ Estado del trabajo: **{{state}}**
+  {{#last}}
+  - 📅 Último procesado: **{{{last}}}**
+  {{/last}}
+  - 💬 Creados en: **{{{chats}}}** chats
+  - 🆕 Creados: **{{{progress.ok}}}** mensajes 
+  - 🟢 Ya existen: {{{progress.exists}}} mensajes
+  - ⚪ Ignorados: {{{progress.ignored}}} mensajes
+  - 🔴 Errores: {{{progress.errors}}} mensajes
+
+  Detalles: 
+  [{{{details.text}}}]({{{details.url}}})

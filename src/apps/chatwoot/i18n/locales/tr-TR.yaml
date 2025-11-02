@@ -193,9 +193,6 @@ cli.cmd.contacts.pull.option.avatar: |-
 cli.cmd.contacts.pull.option.groups: |-
   WhatsApp grup kişilerini senkronizasyona dahil et.
 
-cli.cmd.contacts.pull.option.no-lids: |-
-  WhatsApp LID kişilerini (bağlı cihaz JID'leri) senkronizasyonda atla.
-
 cli.cmd.contacts.pull.option.no-attributes: |-
   Kişi zaten varsa özelliklerini çekmeyin (süreci hızlandırır).
 
@@ -203,12 +200,6 @@ cli.cmd.contacts.pull.already-running: |-
   ⏳ **Pull Contacts** görevi zaten çalışıyor. Bitmesini bekleyin veya yenisini başlatmadan önce durdurun.
 
   Ayrıntılar için `contacts status` gönderin.
-
-cli.cmd.contacts.pull.queued: |-
-  👥 **Pull Contacts** görevi sıraya alındı.
-
-  Her **{{batch}}** kişide bir ilerleme güncellemesi paylaşacağız.
-  Kişileri çekmek zaman alabilir — en güncel durumu istediğiniz zaman `contacts status` ile kontrol edin.
 
 cli.cmd.options.job.attempts: |-
   Görevi başarısız saymadan önce yapılacak yeniden deneme sayısı.
@@ -512,3 +503,130 @@ whatsapp.to.chatwoot.message.facebook.ad: |-
   ---
   💬 **Müşteri Mesajı:**
   {{{payload.body}}}
+whatsapp.history.message.wrapper: |-
+  {{{content}}}
+  {{^payload.fromMe}}
+
+  {{/payload.fromMe}}
+  `🗓️ {{{timestamp}}}`
+UNKNOWN: Bilinmiyor
+ERROR: Hata
+PENDING: Gönderiliyor
+SERVER: Sunucu
+DEVICE: Cihaz
+READ: Okundu
+PLAYED: Oynatıldı
+whatsapp.to.chatwoot.message.has.media.no.media: |-
+  {{#content}}
+  {{{content}}}
+
+  {{/content}}
+  🖼️⚠️ **Mesajda medya var ancak indirilemedi**
+  📱 Görüntülemek için lütfen **WhatsApp** uygulamasını açın.
+
+  {{^content}}
+  Detaylar: [{{{details.text}}}]({{{details.url}}})
+  {{/content}}
+cli.cmd.root.sub.queue: '🧩 **Kuyruk**:'
+cli.cmd.messages.summary: WhatsApp mesajlarını çek.
+cli.cmd.messages.description:
+  💬 Mesaj senkronizasyonu başlatmak için `messages pull`, ilerlemeyi görmek
+  için `messages status` komutunu çalıştırın.
+cli.cmd.messages.action.description:
+  '`pull` ile mesaj çekmeyi başlatın, `status` ile çalışan işi inceleyin.'
+cli.cmd.messages.pull.option.chat:
+  Çekimi belirli bir WhatsApp sohbet kimliğiyle sınırlandırır.
+cli.cmd.messages.pull.option.force:
+  WhatsApp mesajı konuşma eşlemesinde olsa bile gelen kutusunun mesaj
+  oluşturmasını zorlar.
+cli.cmd.messages.pull.option.batch: Her partide çekilecek mesaj sayısı.
+cli.cmd.messages.pull.option.progress:
+  Her N mesajda ilerlemeyi bildirir. 0 değeri raporları kapatır.
+cli.cmd.messages.pull.option.no-dm: Geçmişi çekerken direkt mesajları atlar.
+cli.cmd.messages.pull.option.groups:
+  Geçmişi çekerken WhatsApp grup sohbetlerini dahil eder.
+cli.cmd.messages.pull.option.channels:
+  Geçmişi çekerken WhatsApp Kanallarını dahil eder.
+cli.cmd.messages.pull.option.status:
+  Geçmişi çekerken WhatsApp durum güncellemelerini dahil eder.
+cli.cmd.messages.pull.option.broadcast:
+  Geçmişi çekerken yayın listelerini dahil eder.
+cli.cmd.messages.pull.option.media:
+  Geçmişi çekerken medya eklerini (görseller, videolar, dosyalar) indirir.
+cli.cmd.messages.pull.option.pause:
+  Mesaj çekme işini duraklatılmış olarak kuyruklar ve tamamlanana kadar yeni
+  WhatsApp mesajlarının işlenmesini durdurur.
+cli.cmd.messages.pull.error.pause-no-queue:
+  ⛔ `--pause` kullanılamaz çünkü **queue** komutu bu yapılandırmada devre dışı.
+cli.cmd.queue.description: Kuyrukları yönetin.
+cli.cmd.queue.summary: Kuyruklarda işlemler gerçekleştirin.
+cli.cmd.queue.action.description: Bir eylem seçin.
+cli.cmd.queue.status.description: Bir kuyruğun durumunu gösterir.
+cli.cmd.queue.argument.name:
+  'Kuyruk adı: `inbox` veya `whatsapp` (isteğe bağlı).'
+cli.cmd.queue.start.description: Adı verilen kuyruğu başlatın.
+cli.cmd.queue.stop.description: Adı verilen kuyruğu durdurun.
+cli.cmd.queue.paused:
+  ⚪🧩 Kuyruklar duraklatıldı. Durumu kontrol etmek için `queue status`
+  gönderin.
+cli.cmd.queue.resumed:
+  🟢🧩 Kuyruklar devam ettirildi. Durumu kontrol etmek için `queue status`
+  gönderin.
+cli.cmd.queue.status.result: >-
+  📊 Kuyruk durumu:
+
+  {{#queues}}
+
+  - **{{name}}**: {{#locked}}🔒{{/locked}}{{#paused}}⚪
+  Duraklatıldı{{/paused}}{{^paused}}🟢 Çalışıyor{{/paused}}
+
+  {{/queues}}
+cli.cmd.messages.pull.option.timeout-media:
+  Her mesaj için medya indirme süresini belirler.
+cli.cmd.messages.pull.argument.end:
+  Çekim penceresinin nerede biteceğini belirler; örneğin `2d` iki gün öncesinde
+  durur.
+cli.cmd.messages.pull.argument.start:
+  Çekim penceresinin nerede başlayacağını belirler; örneğin `1d` bir gün
+  öncesinden başlar (varsayılan `0d`, yani şimdi).
+cli.cmd.messages.pull.already-running: >-
+  ⏳ **Pull Messages** işi zaten **{{{chat}}}** için çalışıyor. Bitmesini
+  bekleyin veya yenisini başlatmadan önce durdurun.
+
+
+  Ayrıntılar için `messages status` gönderin.
+cli.cmd.messages.status.not-found:
+  ℹ️ Aktif **Pull Messages** işi bulunamadı. `messages pull` ile bir tane
+  başlatın.
+cli.cmd.messages.pull.no-chats-found:
+  Belirtilen dönemde çekilecek WhatsApp sohbeti bulunamadı.
+cli.cmd.contacts.pull.option.progress:
+  Her N kişide ilerlemeyi bildirir. 0 değeri raporları kapatır.
+cli.cmd.contacts.pull.option.lids:
+  Senkronizasyona WhatsApp LID (anonim) kişilerini dahil eder.
+task.contacts.completed:
+  👤✅ Kişiler tamamlandı → 🆕 {{progress.created}}, 🔄 {{progress.updated}}, ⚪
+  {{progress.skipped}}, 🔴 {{progress.errors}}, 🖼️ {{progress.avatar.updated}}
+task.messages.started: ⏳ Mesajlar çekiliyor 💬 {{{chat}}} ⏱️ {{{period}}}...
+task.messages.details:
+  Daha fazla ayrıntı için "{{{prefix}}}messages status" gönderin.
+task.messages.progress:
+  '⏳ Mesajlar {{{chat}}}: 🆕 {{progress.ok}}, 🟢 {{progress.exists}}, ⚪
+  {{progress.ignored}}, 🔴 {{progress.errors}}{{#last}} | 📅 {{{last}}}{{/last}}'
+task.messages.completed:
+  ✅ Mesajlar {{{chat}}} {{{period}}} içinde → 🆕 {{progress.ok}}, 🟢
+  {{progress.exists}}, ⚪ {{progress.ignored}}, 🔴 {{progress.errors}}
+task.messages.status: |-
+  **{{{chat}}}** sohbetinin mesajları ⏱️ **{{{period}}}** döneminde:
+  - ⚙️ İş durumu: **{{state}}**
+  {{#last}}
+  - 📅 Son işlenen: **{{{last}}}**
+  {{/last}}
+  - 💬 Şu sohbetlerde oluşturuldu: **{{{chats}}}**
+  - 🆕 Oluşturulan: **{{{progress.ok}}}** mesaj
+  - 🟢 Zaten mevcut: {{{progress.exists}}} mesaj
+  - ⚪ Yok sayılan: {{{progress.ignored}}} mesaj
+  - 🔴 Hatalar: {{{progress.errors}}} mesaj
+
+  Detaylar:
+  [{{{details.text}}}]({{{details.url}}})

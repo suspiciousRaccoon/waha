@@ -396,7 +396,7 @@ cli.cmd.messages.pull.option.chat: |-
   Limit the pull to a specific WhatsApp Chat ID.
 
 cli.cmd.messages.pull.option.force: |-
-  Force ChatWoot to create messages even when the WhatsApp message is already present in the inbox mapping.
+  Force the inbox to create messages even when the WhatsApp message already exists in the conversation mapping.
 
 cli.cmd.messages.pull.option.batch: |-
   Number of messages to pull in each batch.

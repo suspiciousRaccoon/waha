@@ -193,9 +193,6 @@ cli.cmd.contacts.pull.option.avatar: |-
 cli.cmd.contacts.pull.option.groups: |-
   Sertakan kontak grup WhatsApp dalam sinkronisasi.
 
-cli.cmd.contacts.pull.option.no-lids: |-
-  Lewati kontak LID WhatsApp (JID perangkat terhubung) saat sinkronisasi.
-
 cli.cmd.contacts.pull.option.no-attributes: |-
   Jangan ambil atribut kontak jika kontak sudah ada (mempercepat proses).
 
@@ -203,12 +200,6 @@ cli.cmd.contacts.pull.already-running: |-
   ⏳ Pekerjaan **Pull Contacts** sudah berjalan. Tunggu hingga selesai atau hentikan sebelum memulai yang baru.
 
   Kirim `contacts status` untuk detail.
-
-cli.cmd.contacts.pull.queued: |-
-  👥 Pekerjaan **Pull Contacts** masuk antrean.
-
-  Kami akan membagikan pembaruan progres setiap **{{batch}}** kontak.
-  Penarikan kontak bisa memakan waktu—periksa status terbaru kapan saja dengan `contacts status`.
 
 cli.cmd.options.job.attempts: |-
   Jumlah percobaan ulang sebelum pekerjaan dianggap gagal.
@@ -512,3 +503,129 @@ whatsapp.to.chatwoot.message.facebook.ad: |-
   ---
   💬 **Pesan Pelanggan:**
   {{{payload.body}}}
+whatsapp.history.message.wrapper: |-
+  {{{content}}}
+  {{^payload.fromMe}}
+
+  {{/payload.fromMe}}
+  `🗓️ {{{timestamp}}}`
+UNKNOWN: Tidak diketahui
+ERROR: Kesalahan
+PENDING: Mengirim
+SERVER: Server
+DEVICE: Perangkat
+READ: Dibaca
+PLAYED: Diputar
+whatsapp.to.chatwoot.message.has.media.no.media: |-
+  {{#content}}
+  {{{content}}}
+
+  {{/content}}
+  🖼️⚠️ **Pesan memiliki media, tetapi kami tidak dapat mengunduhnya**
+  📱 Buka **WhatsApp** untuk melihatnya.
+
+  {{^content}}
+  Detail: [{{{details.text}}}]({{{details.url}}})
+  {{/content}}
+cli.cmd.root.sub.queue: '🧩 **Antrian**:'
+cli.cmd.messages.summary: Tarik pesan WhatsApp.
+cli.cmd.messages.description:
+  💬 Jalankan `messages pull` untuk memulai sinkronisasi pesan atau `messages
+  status` untuk memantau progres.
+cli.cmd.messages.action.description:
+  '`pull` untuk memulai penarikan pesan atau `status` untuk memeriksa pekerjaan
+  yang berjalan.'
+cli.cmd.messages.pull.option.chat:
+  Batasi penarikan pada ID chat WhatsApp tertentu.
+cli.cmd.messages.pull.option.force:
+  Paksa kotak masuk membuat pesan meskipun pesan WhatsApp sudah ada di pemetaan
+  percakapan.
+cli.cmd.messages.pull.option.batch: Jumlah pesan yang ditarik di setiap batch.
+cli.cmd.messages.pull.option.progress:
+  Laporkan progres setiap N pesan. Setel ke 0 untuk menonaktifkan laporan.
+cli.cmd.messages.pull.option.no-dm: Lewati pesan langsung saat menarik riwayat.
+cli.cmd.messages.pull.option.groups:
+  Sertakan grup WhatsApp saat menarik riwayat.
+cli.cmd.messages.pull.option.channels:
+  Sertakan Channel WhatsApp saat menarik riwayat.
+cli.cmd.messages.pull.option.status:
+  Sertakan pembaruan status WhatsApp saat menarik riwayat.
+cli.cmd.messages.pull.option.broadcast:
+  Sertakan daftar siaran saat menarik riwayat.
+cli.cmd.messages.pull.option.media:
+  Unduh lampiran media (gambar, video, file) saat menarik riwayat.
+cli.cmd.messages.pull.option.pause:
+  Masukkan pekerjaan penarikan pesan ke antrian dalam keadaan jeda dan hentikan
+  pemrosesan pesan WhatsApp baru sampai selesai.
+cli.cmd.messages.pull.error.pause-no-queue:
+  ⛔ Tidak dapat menggunakan `--pause` karena perintah **queue** dinonaktifkan
+  pada konfigurasi ini.
+cli.cmd.queue.description: Kelola antrian.
+cli.cmd.queue.summary: Jalankan tindakan pada antrian.
+cli.cmd.queue.action.description: Pilih sebuah tindakan.
+cli.cmd.queue.status.description: Tampilkan status sebuah antrian.
+cli.cmd.queue.argument.name: 'Nama antrian: `inbox` atau `whatsapp` (opsional).'
+cli.cmd.queue.start.description: Mulai antrian berdasarkan nama.
+cli.cmd.queue.stop.description: Hentikan antrian berdasarkan nama.
+cli.cmd.queue.paused:
+  ⚪🧩 Antrian dijeda. Kirim `queue status` untuk memeriksa status.
+cli.cmd.queue.resumed:
+  🟢🧩 Antrian dilanjutkan. Kirim `queue status` untuk memeriksa status.
+cli.cmd.queue.status.result: >-
+  📊 Status antrian:
+
+  {{#queues}}
+
+  - **{{name}}**: {{#locked}}🔒{{/locked}}{{#paused}}⚪
+  Dijeda{{/paused}}{{^paused}}🟢 Berjalan{{/paused}}
+
+  {{/queues}}
+cli.cmd.messages.pull.option.timeout-media:
+  Tetapkan berapa lama mencoba mengunduh media untuk setiap pesan.
+cli.cmd.messages.pull.argument.end:
+  Tetapkan titik akhir jendela penarikan; misalnya `2d` berhenti dua hari yang
+  lalu.
+cli.cmd.messages.pull.argument.start:
+  Tetapkan titik awal jendela penarikan; misalnya `1d` dimulai satu hari yang
+  lalu (default `0d`, yaitu sekarang).
+cli.cmd.messages.pull.already-running: >-
+  ⏳ Pekerjaan **Pull Messages** sudah berjalan untuk **{{{chat}}}**. Tunggu
+  hingga selesai atau hentikan sebelum memulai yang baru.
+
+
+  Kirim `messages status` untuk detail.
+cli.cmd.messages.status.not-found:
+  ℹ️ Tidak ada pekerjaan **Pull Messages** aktif yang ditemukan. Mulai dengan
+  `messages pull`.
+cli.cmd.messages.pull.no-chats-found:
+  Tidak ada chat WhatsApp yang ditemukan untuk periode tersebut.
+cli.cmd.contacts.pull.option.progress:
+  Laporkan progres setiap N kontak. Setel ke 0 untuk menonaktifkan laporan.
+cli.cmd.contacts.pull.option.lids:
+  Sertakan kontak WhatsApp LID (kontak anonim) dalam sinkronisasi.
+task.contacts.completed:
+  👤✅ Kontak selesai → 🆕 {{progress.created}}, 🔄 {{progress.updated}}, ⚪
+  {{progress.skipped}}, 🔴 {{progress.errors}}, 🖼️ {{progress.avatar.updated}}
+task.messages.started: ⏳ Menarik pesan 💬 {{{chat}}} ⏱️ {{{period}}}...
+task.messages.details:
+  Kirim "{{{prefix}}}messages status" untuk melihat rincian.
+task.messages.progress:
+  '⏳ Pesan {{{chat}}}: 🆕 {{progress.ok}}, 🟢 {{progress.exists}}, ⚪
+  {{progress.ignored}}, 🔴 {{progress.errors}}{{#last}} | 📅 {{{last}}}{{/last}}'
+task.messages.completed:
+  ✅ Pesan {{{chat}}} selama {{{period}}} → 🆕 {{progress.ok}}, 🟢
+  {{progress.exists}}, ⚪ {{progress.ignored}}, 🔴 {{progress.errors}}
+task.messages.status: |-
+  Pesan **{{{chat}}}** dalam periode ⏱️ **{{{period}}}**:
+  - ⚙️ Status pekerjaan: **{{state}}**
+  {{#last}}
+  - 📅 Terakhir diproses: **{{{last}}}**
+  {{/last}}
+  - 💬 Dibuat di: **{{{chats}}}** percakapan
+  - 🆕 Dibuat: **{{{progress.ok}}}** pesan
+  - 🟢 Sudah ada: {{{progress.exists}}} pesan
+  - ⚪ Diabaikan: {{{progress.ignored}}} pesan
+  - 🔴 Kesalahan: {{{progress.errors}}} pesan
+
+  Detail:
+  [{{{details.text}}}]({{{details.url}}})

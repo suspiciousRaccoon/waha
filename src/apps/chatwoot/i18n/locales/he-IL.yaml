@@ -193,9 +193,6 @@ cli.cmd.contacts.pull.option.avatar: |-
 cli.cmd.contacts.pull.option.groups: |-
   כלול בסנכרון אנשי קשר של קבוצות WhatsApp.
 
-cli.cmd.contacts.pull.option.no-lids: |-
-  דלג בסנכרון על אנשי קשר מסוג LID של WhatsApp (כתובות JID של מכשירים מקושרים).
-
 cli.cmd.contacts.pull.option.no-attributes: |-
   אל תמשוך מאפייני איש קשר אם הוא כבר קיים (מאיץ את התהליך).
 
@@ -203,12 +200,6 @@ cli.cmd.contacts.pull.already-running: |-
   ⏳ המשימה **Pull Contacts** כבר פועלת. המתן שתסתיים או עצור אותה לפני שמתחילים חדשה.
 
   שלח `contacts status` לקבלת פרטים.
-
-cli.cmd.contacts.pull.queued: |-
-  👥 המשימה **Pull Contacts** בתור.
-
-  נעדכן בהתקדמות כל **{{batch}}** אנשי קשר.
-  משיכת אנשי קשר יכולה לקחת זמן – בדוק בכל עת את הסטטוס האחרון עם `contacts status`.
 
 cli.cmd.options.job.attempts: |-
   מספר ניסיונות החזרה לפני שסימנים את המשימה ככושלת.
@@ -512,3 +503,116 @@ whatsapp.to.chatwoot.message.facebook.ad: |-
   ---
   💬 **הודעת הלקוח:**
   {{{payload.body}}}
+whatsapp.history.message.wrapper: |-
+  {{{content}}}
+  {{^payload.fromMe}}
+
+  {{/payload.fromMe}}
+  `🗓️ {{{timestamp}}}`
+UNKNOWN: לא ידוע
+ERROR: שגיאה
+PENDING: נשלח
+SERVER: שרת
+DEVICE: מכשיר
+READ: נקרא
+PLAYED: הושמע
+whatsapp.to.chatwoot.message.has.media.no.media: |-
+  {{#content}}
+  {{{content}}}
+
+  {{/content}}
+  🖼️⚠️ **להודעה יש מדיה אך לא הצלחנו להוריד אותה**
+  📱 פתחו את **WhatsApp** כדי לצפות.
+
+  {{^content}}
+  פרטים: [{{{details.text}}}]({{{details.url}}})
+  {{/content}}
+cli.cmd.root.sub.queue: '🧩 **תור**:'
+cli.cmd.messages.summary: משיכת הודעות WhatsApp.
+cli.cmd.messages.description:
+  💬 הפעילו `messages pull` כדי להתחיל סנכרון הודעות או `messages status` למעקב
+  אחר ההתקדמות.
+cli.cmd.messages.action.description:
+  '`pull` להתחיל משיכה או `status` לבדיקת המשימה הפעילה.'
+cli.cmd.messages.pull.option.chat: הגבלת המשיכה למזהה שיחה מסוים ב-WhatsApp.
+cli.cmd.messages.pull.option.force:
+  אילוץ תיבת הדואר הנכנס ליצור הודעות גם אם ההודעה כבר קיימת במיפוי השיחה.
+cli.cmd.messages.pull.option.batch: כמות ההודעות הנמשכות בכל אצווה.
+cli.cmd.messages.pull.option.progress:
+  דיווח על ההתקדמות כל N הודעות. ערך 0 מבטל את הדוחות.
+cli.cmd.messages.pull.option.no-dm: דילוג על הודעות פרטיות בעת משיכת ההיסטוריה.
+cli.cmd.messages.pull.option.groups: הכללת קבוצות WhatsApp בעת משיכת ההיסטוריה.
+cli.cmd.messages.pull.option.channels: הכללת ערוצי WhatsApp בעת משיכת ההיסטוריה.
+cli.cmd.messages.pull.option.status:
+  הכללת סטטוסים של WhatsApp בעת משיכת ההיסטוריה.
+cli.cmd.messages.pull.option.broadcast: הכללת רשימות שידור בעת משיכת ההיסטוריה.
+cli.cmd.messages.pull.option.media:
+  הורדת קבצי מדיה (תמונות, סרטונים, קבצים) בעת משיכת ההיסטוריה.
+cli.cmd.messages.pull.option.pause:
+  הכנסת משימת המשיכה לתור במצב מושהה ועצירת עיבוד הודעות WhatsApp חדשות עד
+  לסיום.
+cli.cmd.messages.pull.error.pause-no-queue:
+  ⛔ לא ניתן להשתמש ב-`--pause` כי הפקודה **queue** מושבתת בתצורה זו.
+cli.cmd.queue.description: ניהול תורים.
+cli.cmd.queue.summary: ביצוע פעולות על תורים.
+cli.cmd.queue.action.description: בחרו פעולה.
+cli.cmd.queue.status.description: הצגת מצב התור.
+cli.cmd.queue.argument.name: 'שם התור: `inbox` או `whatsapp` (רשות).'
+cli.cmd.queue.start.description: הפעלת תור לפי שם.
+cli.cmd.queue.stop.description: עצירת תור לפי שם.
+cli.cmd.queue.paused: ⚪🧩 התורים הושהו. שלחו `queue status` כדי לבדוק את המצב.
+cli.cmd.queue.resumed: 🟢🧩 התורים חודשו. שלחו `queue status` כדי לבדוק את המצב.
+cli.cmd.queue.status.result: >-
+  📊 מצב התור:
+
+  {{#queues}}
+
+  - **{{name}}**: {{#locked}}🔒{{/locked}}{{#paused}}⚪
+  מושהה{{/paused}}{{^paused}}🟢 פעיל{{/paused}}
+
+  {{/queues}}
+cli.cmd.messages.pull.option.timeout-media:
+  הגדרת משך הניסיון להוריד מדיה לכל הודעה.
+cli.cmd.messages.pull.argument.end:
+  הגדרת נקודת הסיום של חלון המשיכה; למשל `2d` נעצר יומיים אחורה.
+cli.cmd.messages.pull.argument.start:
+  הגדרת נקודת ההתחלה של החלון; למשל `1d` מתחיל יום אחורה (ברירת המחדל `0d`,
+  כלומר עכשיו).
+cli.cmd.messages.pull.already-running: >-
+  ⏳ המשימה **Pull Messages** כבר פועלת עבור **{{{chat}}}**. המתינו לסיום או
+  עצרו לפני התחלת משימה חדשה.
+
+
+  שלחו `messages status` לפרטים.
+cli.cmd.messages.status.not-found:
+  ℹ️ לא נמצאה משימת **Pull Messages** פעילה. התחילו אחת עם `messages pull`.
+cli.cmd.messages.pull.no-chats-found: לא נמצאו שיחות WhatsApp למשיכה בתקופה זו.
+cli.cmd.contacts.pull.option.progress:
+  דיווח על התקדמות כל N אנשי קשר. ערך 0 מבטל את הדוחות.
+cli.cmd.contacts.pull.option.lids:
+  הכללת אנשי קשר אנונימיים של WhatsApp (LID) בסנכרון.
+task.contacts.completed:
+  👤✅ השלמת אנשי קשר → 🆕 {{progress.created}}, 🔄 {{progress.updated}}, ⚪
+  {{progress.skipped}}, 🔴 {{progress.errors}}, 🖼️ {{progress.avatar.updated}}
+task.messages.started: ⏳ מושכים הודעות 💬 {{{chat}}} ⏱️ {{{period}}}...
+task.messages.details: שלחו "{{{prefix}}}messages status" לעוד פרטים.
+task.messages.progress:
+  '⏳ הודעות {{{chat}}}: 🆕 {{progress.ok}}, 🟢 {{progress.exists}}, ⚪
+  {{progress.ignored}}, 🔴 {{progress.errors}}{{#last}} | 📅 {{{last}}}{{/last}}'
+task.messages.completed:
+  ✅ הודעות {{{chat}}} במהלך {{{period}}} → 🆕 {{progress.ok}}, 🟢
+  {{progress.exists}}, ⚪ {{progress.ignored}}, 🔴 {{progress.errors}}
+task.messages.status: |-
+  הודעות **{{{chat}}}** בתקופה ⏱️ **{{{period}}}**:
+  - ⚙️ מצב המשימה: **{{state}}**
+  {{#last}}
+  - 📅 תאריך עיבוד אחרון: **{{{last}}}**
+  {{/last}}
+  - 💬 נוצרו ב-**{{{chats}}}** שיחות
+  - 🆕 נוצרו: **{{{progress.ok}}}** הודעות
+  - 🟢 קיימות כבר: {{{progress.exists}}} הודעות
+  - ⚪ הוזנחו: {{{progress.ignored}}} הודעות
+  - 🔴 שגיאות: {{{progress.errors}}} הודעות
+
+  פרטים:
+  [{{{details.text}}}]({{{details.url}}})

@@ -193,9 +193,6 @@ cli.cmd.contacts.pull.option.avatar: |-
 cli.cmd.contacts.pull.option.groups: |-
   在同步中包含 WhatsApp 群组联系人。
 
-cli.cmd.contacts.pull.option.no-lids: |-
-  在同步中跳过 WhatsApp LID 联系人（关联设备 JID）。
-
 cli.cmd.contacts.pull.option.no-attributes: |-
   如果联系人已存在，则不要拉取其属性（可加快流程）。
 
@@ -203,12 +200,6 @@ cli.cmd.contacts.pull.already-running: |-
   ⏳ **Pull Contacts** 任务已在运行。请等待完成或先停止再启动新的。
 
   发送 `contacts status` 获取详情。
-
-cli.cmd.contacts.pull.queued: |-
-  👥 **Pull Contacts** 任务已排队。
-
-  我们会每 **{{batch}}** 个联系人更新一次进度。
-  拉取联系人可能需要一些时间——随时使用 `contacts status` 查看最新状态。
 
 cli.cmd.options.job.attempts: |-
   任务标记为失败前的最大重试次数。
@@ -512,3 +503,107 @@ whatsapp.to.chatwoot.message.facebook.ad: |-
   ---
   💬 **客户消息:**
   {{{payload.body}}}
+whatsapp.history.message.wrapper: |-
+  {{{content}}}
+  {{^payload.fromMe}}
+
+  {{/payload.fromMe}}
+  `🗓️ {{{timestamp}}}`
+UNKNOWN: 未知
+ERROR: 错误
+PENDING: 正在发送
+SERVER: 服务器
+DEVICE: 设备
+READ: 已读
+PLAYED: 已播放
+whatsapp.to.chatwoot.message.has.media.no.media: |-
+  {{#content}}
+  {{{content}}}
+
+  {{/content}}
+  🖼️⚠️ **该消息包含媒体，但我们无法下载**
+  📱 请打开 **WhatsApp** 查看。
+
+  {{^content}}
+  详情：[{{{details.text}}}]({{{details.url}}})
+  {{/content}}
+cli.cmd.root.sub.queue: 🧩 **队列**：
+cli.cmd.messages.summary: 拉取 WhatsApp 消息。
+cli.cmd.messages.description:
+  💬 运行 `messages pull` 开始同步，或运行 `messages status` 查看进度。
+cli.cmd.messages.action.description:
+  使用 `pull` 开始拉取或 `status` 查看正在执行的任务。
+cli.cmd.messages.pull.option.chat: 将拉取限制为特定 WhatsApp 聊天 ID。
+cli.cmd.messages.pull.option.force:
+  即使该 WhatsApp 消息已存在于会话映射中，也强制收件箱创建消息。
+cli.cmd.messages.pull.option.batch: 每个批次要拉取的消息数量。
+cli.cmd.messages.pull.option.progress:
+  每隔 N 条消息报告进度。设置为 0 可关闭报告。
+cli.cmd.messages.pull.option.no-dm: 拉取历史时跳过私聊消息。
+cli.cmd.messages.pull.option.groups: 拉取历史时包含 WhatsApp 群聊。
+cli.cmd.messages.pull.option.channels: 拉取历史时包含 WhatsApp 频道。
+cli.cmd.messages.pull.option.status: 拉取历史时包含 WhatsApp 状态更新。
+cli.cmd.messages.pull.option.broadcast: 拉取历史时包含群发列表。
+cli.cmd.messages.pull.option.media: 拉取历史时下载媒体附件（图片、视频、文件）。
+cli.cmd.messages.pull.option.pause:
+  将拉取任务以暂停状态加入队列，并在完成前暂停新的 WhatsApp 消息处理。
+cli.cmd.messages.pull.error.pause-no-queue:
+  ⛔ 无法使用 `--pause`，因为此配置中 **queue** 命令已禁用。
+cli.cmd.queue.description: 管理队列。
+cli.cmd.queue.summary: 对队列执行操作。
+cli.cmd.queue.action.description: 选择一个操作。
+cli.cmd.queue.status.description: 显示队列状态。
+cli.cmd.queue.argument.name: 队列名称：`inbox` 或 `whatsapp`（可选）。
+cli.cmd.queue.start.description: 按名称启动队列。
+cli.cmd.queue.stop.description: 按名称停止队列。
+cli.cmd.queue.paused: ⚪🧩 队列已暂停。发送 `queue status` 查看状态。
+cli.cmd.queue.resumed: 🟢🧩 队列已恢复。发送 `queue status` 查看状态。
+cli.cmd.queue.status.result: >-
+  📊 队列状态：
+
+  {{#queues}}
+
+  - **{{name}}**：{{#locked}}🔒{{/locked}}{{#paused}}⚪
+  暂停{{/paused}}{{^paused}}🟢 运行中{{/paused}}
+
+  {{/queues}}
+cli.cmd.messages.pull.option.timeout-media: 设置每条消息尝试下载媒体的时长。
+cli.cmd.messages.pull.argument.end:
+  设置拉取窗口结束时间，例如 `2d` 表示截至两天前。
+cli.cmd.messages.pull.argument.start:
+  设置拉取窗口开始时间，例如 `1d` 表示从一天前开始（默认 `0d`，即现在）。
+cli.cmd.messages.pull.already-running: |-
+  ⏳ **Pull Messages** 任务已在 **{{{chat}}}** 上运行。请等待完成或先停止后再启动新的任务。
+
+  发送 `messages status` 获取详情。
+cli.cmd.messages.status.not-found:
+  ℹ️ 未找到活动的 **Pull Messages** 任务。请使用 `messages pull` 启动。
+cli.cmd.messages.pull.no-chats-found: 在该时间段内未找到可拉取的 WhatsApp 聊天。
+cli.cmd.contacts.pull.option.progress:
+  每隔 N 个联系人报告进度。设置为 0 关闭报告。
+cli.cmd.contacts.pull.option.lids: 在同步中包含 WhatsApp LID（匿名）联系人。
+task.contacts.completed:
+  👤✅ 联系人同步完成 → 🆕 {{progress.created}}，🔄 {{progress.updated}}，⚪
+  {{progress.skipped}}，🔴 {{progress.errors}}，🖼️ {{progress.avatar.updated}}
+task.messages.started: ⏳ 正在拉取消息 💬 {{{chat}}} ⏱️ {{{period}}}...
+task.messages.details: 发送 "{{{prefix}}}messages status" 查看更多详情。
+task.messages.progress:
+  ⏳ 消息 {{{chat}}}：🆕 {{progress.ok}}，🟢 {{progress.exists}}，⚪
+  {{progress.ignored}}，🔴 {{progress.errors}}{{#last}} | 📅 {{{last}}}{{/last}}
+task.messages.completed:
+  ✅ 消息 {{{chat}}} 于 {{{period}}} → 🆕 {{progress.ok}}，🟢
+  {{progress.exists}}，⚪ {{progress.ignored}}，🔴 {{progress.errors}}
+task.messages.status: |-
+  **{{{chat}}}** 的消息在 ⏱️ **{{{period}}}** 内：
+  - ⚙️ 任务状态：**{{state}}**
+  {{#last}}
+  - 📅 上次处理：**{{{last}}}**
+  {{/last}}
+  - 💬 创建于：**{{{chats}}}** 个会话
+  - 🆕 新建：**{{{progress.ok}}}** 条消息
+  - 🟢 已存在：{{{progress.exists}}} 条消息
+  - ⚪ 忽略：{{{progress.ignored}}} 条消息
+  - 🔴 错误：{{{progress.errors}}} 条消息
+
+  详情：
+  [{{{details.text}}}]({{{details.url}}})
