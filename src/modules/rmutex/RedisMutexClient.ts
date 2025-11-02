@@ -29,15 +29,15 @@ export class RedisMutexClient implements RMutexClient {
     lockId: string,
     ttl: number,
   ): Promise<boolean> {
-    this.logger.debug({ key, lockId, ttl }, 'Attempting to acquire lock');
+    this.logger.trace({ key, lockId, ttl }, 'Attempting to acquire lock');
     const result = await this.redis.set(key, lockId, 'PX', ttl, 'NX');
 
     if (result !== 'OK') {
-      this.logger.debug({ key }, 'Failed to acquire lock');
+      this.logger.trace({ key }, 'Failed to acquire lock');
       return false;
     }
 
-    this.logger.debug({ key, lockId }, 'Successfully acquired lock');
+    this.logger.trace({ key, lockId }, 'Successfully acquired lock');
     return true;
   }
 
@@ -48,16 +48,16 @@ export class RedisMutexClient implements RMutexClient {
    * @returns true if the lock was released, false otherwise
    */
   async releaseLock(key: string, lockId: string): Promise<boolean> {
-    this.logger.debug({ key, lockId }, 'Unlocking key');
+    this.logger.trace({ key, lockId }, 'Unlocking key');
 
     // Use Lua script to ensure atomicity and ownership verification
     const result = await this.redis.eval(LUA_UNLOCK_SCRIPT, 1, key, lockId);
 
     const success = result === 1;
     if (!success) {
-      this.logger.debug({ key }, 'Failed to unlock key');
+      this.logger.trace({ key }, 'Failed to unlock key');
     } else {
-      this.logger.debug({ key, lockId, success }, 'Unlock result');
+      this.logger.trace({ key, lockId, success }, 'Unlock result');
     }
 
     return success;
@@ -71,7 +71,7 @@ export class RedisMutexClient implements RMutexClient {
    * @returns true if the TTL was extended, false otherwise
    */
   async extendLock(key: string, lockId: string, ttl: number): Promise<boolean> {
-    this.logger.debug({ key, lockId, ttl }, 'Extending TTL for key');
+    this.logger.trace({ key, lockId, ttl }, 'Extending TTL for key');
 
     // Use Lua script to ensure atomicity and ownership verification
     const result = await this.redis.eval(
@@ -84,9 +84,9 @@ export class RedisMutexClient implements RMutexClient {
 
     const success = result === 1;
     if (!success) {
-      this.logger.debug({ key }, 'Failed to extend TTL for key');
+      this.logger.trace({ key }, 'Failed to extend TTL for key');
     } else {
-      this.logger.debug({ key, lockId, ttl, success }, 'TTL extension result');
+      this.logger.trace({ key, lockId, ttl, success }, 'TTL extension result');
     }
 
     return success;
