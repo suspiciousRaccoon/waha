@@ -293,12 +293,22 @@ export abstract class MessageBaseHandler<Payload extends WAMessageBase> {
     let content = message.content;
 
     // Format the content if the message from me
-    if (payload.fromMe && payload.source === MessageSource.APP) {
-      const key = TKey.MESSAGE_FROM_WHATSAPP;
-      content = this.l.key(key).render({ text: content });
-    } else if (payload.fromMe && payload.source === MessageSource.API) {
-      const key = TKey.MESSAGE_FROM_API;
-      content = this.l.key(key).render({ text: content });
+    if (payload.fromMe) {
+      const key = parseMessageIdSerialized(payload.id);
+      const chatwoot = await this.mappingService.getChatWootMessage({
+        chat_id: toCusFormat(key.remoteJid),
+        message_id: key.id,
+      });
+      const exists = !!chatwoot;
+      if (exists) {
+        //   No additional content required
+      } else if (payload.source === MessageSource.APP) {
+        const key = TKey.MESSAGE_FROM_WHATSAPP;
+        content = this.l.key(key).render({ text: content });
+      } else if (payload.source === MessageSource.API) {
+        const key = TKey.MESSAGE_FROM_API;
+        content = this.l.key(key).render({ text: content });
+      }
     }
 
     const chatId = EngineHelper.ChatID(payload);
