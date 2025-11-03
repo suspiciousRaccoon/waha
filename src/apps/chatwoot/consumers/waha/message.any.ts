@@ -28,6 +28,7 @@ import {
   ShareContactMessage,
   TextMessage,
   UnsupportedMessage,
+  AlbumMessage,
   resolveProtoMessage,
 } from '@waha/apps/chatwoot/messages/to/chatwoot';
 import { EngineHelper } from '@waha/apps/chatwoot/waha';
@@ -122,6 +123,12 @@ export class MessageAnyHandler extends MessageBaseHandler<WAMessage> {
     }
 
     converter = new PixMessage(this.l, this.logger);
+    msg = await converter.convert(payload, protoMessage);
+    if (msg) {
+      return msg;
+    }
+
+    converter = new AlbumMessage(this.l);
     msg = await converter.convert(payload, protoMessage);
     if (msg) {
       return msg;

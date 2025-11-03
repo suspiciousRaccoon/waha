@@ -489,6 +489,21 @@ whatsapp.to.chatwoot.message.unsupported: |-
 
   التفاصيل: [{{{details.text}}}]({{{details.url}}})
 
+whatsapp.to.chatwoot.message.album: |-
+  📷 **تم استلام رسالة ألبوم**
+
+  {{#totalCount}}
+  تم استلام ألبوم يحتوي على **{{totalCount}}** ملف وسائط.
+  {{#expectedImageCount}}
+  📸 صور: **{{expectedImageCount}}**
+  {{/expectedImageCount}}
+  {{#expectedVideoCount}}
+  🎥 فيديوهات: **{{expectedVideoCount}}**
+  {{/expectedVideoCount}}
+
+  سيتم تسليم ملفات الوسائط في الرسائل التالية.
+  {{/totalCount}}
+
 whatsapp.to.chatwoot.message.facebook.ad: |-
   📢 **إعلان فيسبوك**
 

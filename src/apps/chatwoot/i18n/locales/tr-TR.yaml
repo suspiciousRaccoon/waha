@@ -489,6 +489,21 @@ whatsapp.to.chatwoot.message.unsupported: |-
 
   Ayrıntılar: [{{{details.text}}}]({{{details.url}}})
 
+whatsapp.to.chatwoot.message.album: |-
+  📷 **Albüm Mesajı Alındı**
+
+  {{#totalCount}}
+  **{{totalCount}}** medya dosyası içeren bir albüm alındı.
+  {{#expectedImageCount}}
+  📸 Resimler: **{{expectedImageCount}}**
+  {{/expectedImageCount}}
+  {{#expectedVideoCount}}
+  🎥 Videolar: **{{expectedVideoCount}}**
+  {{/expectedVideoCount}}
+
+  Medya dosyaları aşağıdaki mesajlarda teslim edilecek.
+  {{/totalCount}}
+
 whatsapp.to.chatwoot.message.facebook.ad: |-
   📢 **FACEBOOK İLANI**
 

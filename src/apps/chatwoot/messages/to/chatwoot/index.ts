@@ -13,6 +13,7 @@ export { PollMessage } from './PollMessage';
 export { EventMessage } from './EventMessage';
 export { PixMessage } from './PixMessage';
 export { ListMessage } from './ListMessage';
+export { AlbumMessage } from './AlbumMessage';
 
 export type Awaitable<T> = T | Promise<T>;
 

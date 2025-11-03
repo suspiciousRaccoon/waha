@@ -492,6 +492,21 @@ whatsapp.to.chatwoot.message.unsupported: |-
 
   Details: [{{{details.text}}}]({{{details.url}}})
 
+whatsapp.to.chatwoot.message.album: |-
+  📷 **Album-Nachricht Empfangen**
+
+  {{#totalCount}}
+  Ein Album mit **{{totalCount}}** Mediendatei(en) erhalten.
+  {{#expectedImageCount}}
+  📸 Bilder: **{{expectedImageCount}}**
+  {{/expectedImageCount}}
+  {{#expectedVideoCount}}
+  🎥 Videos: **{{expectedVideoCount}}**
+  {{/expectedVideoCount}}
+
+  Die Mediendateien werden in den folgenden Nachrichten geliefert.
+  {{/totalCount}}
+
 whatsapp.to.chatwoot.message.facebook.ad: |-
   📢 **FACEBOOK-ANZEIGE**
 

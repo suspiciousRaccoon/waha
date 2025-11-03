@@ -489,6 +489,21 @@ whatsapp.to.chatwoot.message.unsupported: |-
 
   פרטים: [{{{details.text}}}]({{{details.url}}})
 
+whatsapp.to.chatwoot.message.album: |-
+  📷 **הודעת אלבום התקבלה**
+
+  {{#totalCount}}
+  התקבל אלבום עם **{{totalCount}}** קובץ/קבצי מדיה.
+  {{#expectedImageCount}}
+  📸 תמונות: **{{expectedImageCount}}**
+  {{/expectedImageCount}}
+  {{#expectedVideoCount}}
+  🎥 סרטונים: **{{expectedVideoCount}}**
+  {{/expectedVideoCount}}
+
+  קבצי המדיה יועברו בהודעות הבאות.
+  {{/totalCount}}
+
 whatsapp.to.chatwoot.message.facebook.ad: |-
   📢 **מודעת פייסבוק**
 

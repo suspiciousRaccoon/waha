@@ -489,6 +489,21 @@ whatsapp.to.chatwoot.message.unsupported: |-
 
   详情: [{{{details.text}}}]({{{details.url}}})
 
+whatsapp.to.chatwoot.message.album: |-
+  📷 **收到相册消息**
+
+  {{#totalCount}}
+  收到一个包含 **{{totalCount}}** 个媒体文件的相册。
+  {{#expectedImageCount}}
+  📸 图片: **{{expectedImageCount}}**
+  {{/expectedImageCount}}
+  {{#expectedVideoCount}}
+  🎥 视频: **{{expectedVideoCount}}**
+  {{/expectedVideoCount}}
+
+  媒体文件将在以下消息中送达。
+  {{/totalCount}}
+
 whatsapp.to.chatwoot.message.facebook.ad: |-
   📢 **Facebook 广告**
 

@@ -489,6 +489,21 @@ whatsapp.to.chatwoot.message.unsupported: |-
 
   Detail: [{{{details.text}}}]({{{details.url}}})
 
+whatsapp.to.chatwoot.message.album: |-
+  📷 **Pesan Album Diterima**
+
+  {{#totalCount}}
+  Menerima album dengan **{{totalCount}}** file media.
+  {{#expectedImageCount}}
+  📸 Gambar: **{{expectedImageCount}}**
+  {{/expectedImageCount}}
+  {{#expectedVideoCount}}
+  🎥 Video: **{{expectedVideoCount}}**
+  {{/expectedVideoCount}}
+
+  File media akan dikirimkan dalam pesan berikutnya.
+  {{/totalCount}}
+
 whatsapp.to.chatwoot.message.facebook.ad: |-
   📢 **IKLAN FACEBOOK**
 

@@ -489,6 +489,21 @@ whatsapp.to.chatwoot.message.unsupported: |-
 
   विवरण: [{{{details.text}}}]({{{details.url}}})
 
+whatsapp.to.chatwoot.message.album: |-
+  📷 **एल्बम संदेश प्राप्त हुआ**
+
+  {{#totalCount}}
+  **{{totalCount}}** मीडिया फ़ाइल(ओं) वाला एक एल्बम प्राप्त हुआ।
+  {{#expectedImageCount}}
+  📸 छवियाँ: **{{expectedImageCount}}**
+  {{/expectedImageCount}}
+  {{#expectedVideoCount}}
+  🎥 वीडियो: **{{expectedVideoCount}}**
+  {{/expectedVideoCount}}
+
+  मीडिया फ़ाइलें अगले संदेशों में वितरित की जाएंगी।
+  {{/totalCount}}
+
 whatsapp.to.chatwoot.message.facebook.ad: |-
   📢 **फेसबुक विज्ञापन**
 

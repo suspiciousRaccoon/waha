@@ -489,6 +489,21 @@ whatsapp.to.chatwoot.message.unsupported: |-
 
   Подробности: [{{{details.text}}}]({{{details.url}}})
 
+whatsapp.to.chatwoot.message.album: |-
+  📷 **Получено сообщение с альбомом**
+
+  {{#totalCount}}
+  Получен альбом с **{{totalCount}}** медиафайлом(ами).
+  {{#expectedImageCount}}
+  📸 Изображений: **{{expectedImageCount}}**
+  {{/expectedImageCount}}
+  {{#expectedVideoCount}}
+  🎥 Видео: **{{expectedVideoCount}}**
+  {{/expectedVideoCount}}
+
+  Медиафайлы будут доставлены в следующих сообщениях.
+  {{/totalCount}}
+
 whatsapp.to.chatwoot.message.facebook.ad: |-
   📢 **РЕКЛАМА FACEBOOK**
 
