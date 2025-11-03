@@ -332,6 +332,7 @@ export class TaskActivity {
     private l: Locale,
     private conversation: Conversation,
   ) {}
+
   public async queue(paused: boolean) {
     let msg: string;
     if (paused) {
@@ -390,6 +391,10 @@ export class TaskActivity {
 class MessageAnyHistoryHandler extends MessageAnyHandler {
   public force: boolean = false;
   public shouldLogUnsupported = true;
+
+  protected get shouldAddFromTag() {
+    return false;
+  }
 
   protected get delayFromMeAPI() {
     return 0;
