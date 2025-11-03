@@ -52,14 +52,14 @@ whatsapp.message.removing.error: حذف پیام از واتساپ امکان‌
 job.scheduled.error.header: اجرای کار زمان‌بندی شده ناموفق بود
 
 message.from.whatsapp: |-
-  {{{text}}}
+  *📱 ارسال شده از واتساپ*
 
-  📱 *ارسال شده از واتساپ*
+  {{{text}}}
 
 message.from.api: |-
-  {{{text}}}
+  *📱 ارسال شده از طریق API*
 
-  📱 *ارسال شده از طریق API*
+  {{{text}}}
 
 message.removed.in.whatsapp: |-
   ❌ *این پیام در واتساپ حذف شده است*
@@ -520,10 +520,8 @@ whatsapp.to.chatwoot.message.facebook.ad: |-
   {{{payload.body}}}
 whatsapp.history.message.wrapper: |-
   {{{content}}}
-  {{^payload.fromMe}}
-
-  {{/payload.fromMe}}
   `🗓️ {{{timestamp}}}`
+
 UNKNOWN: ناشناخته
 ERROR: خطا
 PENDING: در حال ارسال

@@ -52,14 +52,14 @@ whatsapp.message.removing.error: Tidak dapat menghapus pesan dari WhatsApp
 job.scheduled.error.header: Tugas terjadwal gagal dijalankan
 
 message.from.whatsapp: |-
-  {{{text}}}
+  *📱 Dikirim dari WhatsApp*
 
-  📱 *Dikirim dari WhatsApp*
+  {{{text}}}
 
 message.from.api: |-
-  {{{text}}}
+  *📱 Dikirim melalui API*
 
-  📱 *Dikirim melalui API*
+  {{{text}}}
 
 message.removed.in.whatsapp: |-
   ❌ *Pesan ini telah dihapus di WhatsApp*
@@ -520,10 +520,8 @@ whatsapp.to.chatwoot.message.facebook.ad: |-
   {{{payload.body}}}
 whatsapp.history.message.wrapper: |-
   {{{content}}}
-  {{^payload.fromMe}}
-
-  {{/payload.fromMe}}
   `🗓️ {{{timestamp}}}`
+
 UNKNOWN: Tidak diketahui
 ERROR: Kesalahan
 PENDING: Mengirim

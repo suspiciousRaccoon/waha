@@ -52,14 +52,14 @@ whatsapp.message.removing.error: לא ניתן להסיר הודעה מוואט�
 job.scheduled.error.header: המשימה המתוזמנת נכשלה בביצוע
 
 message.from.whatsapp: |-
-  {{{text}}}
+  *📱 נשלח מוואטסאפ*
 
-  📱 *נשלח מוואטסאפ*
+  {{{text}}}
 
 message.from.api: |-
-  {{{text}}}
+  *📱 נשלח דרך API*
 
-  📱 *נשלח דרך API*
+  {{{text}}}
 
 message.removed.in.whatsapp: |-
   ❌ *הודעה זו נמחקה בוואטסאפ*
@@ -520,10 +520,8 @@ whatsapp.to.chatwoot.message.facebook.ad: |-
   {{{payload.body}}}
 whatsapp.history.message.wrapper: |-
   {{{content}}}
-  {{^payload.fromMe}}
-
-  {{/payload.fromMe}}
   `🗓️ {{{timestamp}}}`
+
 UNKNOWN: לא ידוע
 ERROR: שגיאה
 PENDING: נשלח

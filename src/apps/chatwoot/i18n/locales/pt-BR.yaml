@@ -53,14 +53,14 @@ whatsapp.message.removing.error:
 job.scheduled.error.header: Falha ao executar tarefa agendada
 
 message.from.whatsapp: |-
-  {{{text}}}
+  *📱 Enviado do WhatsApp*
 
-  📱 *Enviado do WhatsApp*
+  {{{text}}}
 
 message.from.api: |-
-  {{{text}}}
+  *📱 Enviado via API*
 
-  📱 *Enviado via API*
+  {{{text}}}
 
 message.removed.in.whatsapp: |-
   ❌ *Esta mensagem foi excluída no WhatsApp*
@@ -525,10 +525,8 @@ whatsapp.to.chatwoot.message.facebook.ad: |-
   {{{payload.body}}}
 whatsapp.history.message.wrapper: |-
   {{{content}}}
-  {{^payload.fromMe}}
-
-  {{/payload.fromMe}}
   `🗓️ {{{timestamp}}}`
+
 UNKNOWN: Desconhecido
 ERROR: Erro
 PENDING: Enviando

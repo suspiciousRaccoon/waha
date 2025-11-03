@@ -52,14 +52,14 @@ whatsapp.message.removing.error: No se pudo eliminar un mensaje de WhatsApp
 job.scheduled.error.header: La tarea programada no se pudo ejecutar
 
 message.from.whatsapp: |-
-  {{{text}}}
+  *📱 Enviado desde WhatsApp*
 
-  📱 *Enviado desde WhatsApp*
+  {{{text}}}
 
 message.from.api: |-
-  {{{text}}}
+  *📱 Enviado a través de API*
 
-  📱 *Enviado a través de API*
+  {{{text}}}
 
 message.removed.in.whatsapp: |-
   ❌ *Este mensaje fue eliminado en WhatsApp*
@@ -520,10 +520,8 @@ whatsapp.to.chatwoot.message.facebook.ad: |-
   {{{payload.body}}}
 whatsapp.history.message.wrapper: |-
   {{{content}}}
-  {{^payload.fromMe}}
-
-  {{/payload.fromMe}}
   `🗓️ {{{timestamp}}}`
+
 UNKNOWN: Desconocido
 ERROR: Error
 PENDING: Enviando

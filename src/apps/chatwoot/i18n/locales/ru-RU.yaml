@@ -52,14 +52,14 @@ whatsapp.message.removing.error: Не удалось удалить сообще
 job.scheduled.error.header: Запланированная задача не выполнена
 
 message.from.whatsapp: |-
-  {{{text}}}
+  *📱 Отправлено из WhatsApp*
 
-  📱 *Отправлено из WhatsApp*
+  {{{text}}}
 
 message.from.api: |-
-  {{{text}}}
+  *📱 Отправлено через API*
 
-  📱 *Отправлено через API*
+  {{{text}}}
 
 message.removed.in.whatsapp: |-
   ❌ *Это сообщение было удалено в WhatsApp*
@@ -520,10 +520,8 @@ whatsapp.to.chatwoot.message.facebook.ad: |-
   {{{payload.body}}}
 whatsapp.history.message.wrapper: |-
   {{{content}}}
-  {{^payload.fromMe}}
-
-  {{/payload.fromMe}}
   `🗓️ {{{timestamp}}}`
+
 UNKNOWN: Неизвестно
 ERROR: Ошибка
 PENDING: Отправляется

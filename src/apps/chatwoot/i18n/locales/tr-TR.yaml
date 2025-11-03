@@ -52,14 +52,14 @@ whatsapp.message.removing.error: WhatsApp'tan mesaj kaldırılamadı
 job.scheduled.error.header: Zamanlanmış görev yürütülemedi
 
 message.from.whatsapp: |-
-  {{{text}}}
+  *📱 WhatsApp'tan gönderildi*
 
-  📱 *WhatsApp'tan gönderildi*
+  {{{text}}}
 
 message.from.api: |-
-  {{{text}}}
+  *📱 API aracılığıyla gönderildi*
 
-  📱 *API aracılığıyla gönderildi*
+  {{{text}}}
 
 message.removed.in.whatsapp: |-
   ❌ *Bu mesaj WhatsApp'ta silindi*
@@ -520,10 +520,8 @@ whatsapp.to.chatwoot.message.facebook.ad: |-
   {{{payload.body}}}
 whatsapp.history.message.wrapper: |-
   {{{content}}}
-  {{^payload.fromMe}}
-
-  {{/payload.fromMe}}
   `🗓️ {{{timestamp}}}`
+
 UNKNOWN: Bilinmiyor
 ERROR: Hata
 PENDING: Gönderiliyor

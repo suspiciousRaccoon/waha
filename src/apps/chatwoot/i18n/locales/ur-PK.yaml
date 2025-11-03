@@ -52,14 +52,14 @@ whatsapp.message.removing.error: واٹس ایپ سے پیغام ہٹا نہیں
 job.scheduled.error.header: شیڈول کردہ کام انجام دینے میں ناکام رہا
 
 message.from.whatsapp: |-
-  {{{text}}}
+  *📱 واٹس ایپ سے بھیجا گیا*
 
-  📱 *واٹس ایپ سے بھیجا گیا*
+  {{{text}}}
 
 message.from.api: |-
-  {{{text}}}
+  *📱 API کے ذریعے بھیجا گیا*
 
-  📱 *API کے ذریعے بھیجا گیا*
+  {{{text}}}
 
 message.removed.in.whatsapp: |-
   ❌ *یہ پیغام واٹس ایپ میں حذف کر دیا گیا تھا*
@@ -520,10 +520,8 @@ whatsapp.to.chatwoot.message.facebook.ad: |-
   {{{payload.body}}}
 whatsapp.history.message.wrapper: |-
   {{{content}}}
-  {{^payload.fromMe}}
-
-  {{/payload.fromMe}}
   `🗓️ {{{timestamp}}}`
+
 UNKNOWN: نامعلوم
 ERROR: خرابی
 PENDING: بھجوایا جا رہا ہے

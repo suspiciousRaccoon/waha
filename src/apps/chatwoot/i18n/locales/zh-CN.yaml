@@ -52,14 +52,14 @@ whatsapp.message.removing.error: 无法从 WhatsApp 中删除消息
 job.scheduled.error.header: 计划任务执行失败
 
 message.from.whatsapp: |-
-  {{{text}}}
+  *📱 通过 WhatsApp 发送*
 
-  📱 *通过 WhatsApp 发送*
+  {{{text}}}
 
 message.from.api: |-
-  {{{text}}}
+  *📱 通过 API 发送*
 
-  📱 *通过 API 发送*
+  {{{text}}}
 
 message.removed.in.whatsapp: |-
   ❌ *此消息已在 WhatsApp 中被删除*
@@ -520,10 +520,8 @@ whatsapp.to.chatwoot.message.facebook.ad: |-
   {{{payload.body}}}
 whatsapp.history.message.wrapper: |-
   {{{content}}}
-  {{^payload.fromMe}}
-
-  {{/payload.fromMe}}
   `🗓️ {{{timestamp}}}`
+
 UNKNOWN: 未知
 ERROR: 错误
 PENDING: 正在发送

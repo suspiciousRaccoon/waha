@@ -51,14 +51,14 @@ whatsapp.message.removing.error: Couldn't remove a message from WhatsApp
 job.scheduled.error.header: Scheduled job failed to execute
 
 message.from.whatsapp: |-
-  {{{text}}}
-
   *📱 Sent from WhatsApp*
 
-message.from.api: |-
   {{{text}}}
 
+message.from.api: |-
   *📱 Sent via API*
+
+  {{{text}}}
 
 message.removed.in.whatsapp: |-
   ❌ *This message was deleted in WhatsApp*
@@ -75,9 +75,6 @@ whatsapp.group.message: |-
 
 whatsapp.history.message.wrapper: |-
   {{{content}}}
-  {{^payload.fromMe}}
-
-  {{/payload.fromMe}}
   `🗓️ {{{timestamp}}}`
 
 # WhatsApp Messages Ack

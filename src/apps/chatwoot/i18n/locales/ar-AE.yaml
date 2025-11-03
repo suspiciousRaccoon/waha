@@ -52,14 +52,14 @@ whatsapp.message.removing.error: تعذر إزالة رسالة من واتسا�
 job.scheduled.error.header: فشل تنفيذ المهمة المجدولة
 
 message.from.whatsapp: |-
-  {{{text}}}
+  *📱 أرسلت من واتساب*
 
-  📱 *أرسلت من واتساب*
+  {{{text}}}
 
 message.from.api: |-
-  {{{text}}}
+  *📱 أرسلت عبر API*
 
-  📱 *أرسلت عبر API*
+  {{{text}}}
 
 message.removed.in.whatsapp: |-
   ❌ *تم حذف هذه الرسالة في واتساب*
@@ -520,10 +520,8 @@ whatsapp.to.chatwoot.message.facebook.ad: |-
   {{{payload.body}}}
 whatsapp.history.message.wrapper: |-
   {{{content}}}
-  {{^payload.fromMe}}
-
-  {{/payload.fromMe}}
   `🗓️ {{{timestamp}}}`
+
 UNKNOWN: غير معروف
 ERROR: خطأ
 PENDING: جارٍ الإرسال

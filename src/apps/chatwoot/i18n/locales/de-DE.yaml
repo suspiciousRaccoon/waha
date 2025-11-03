@@ -55,14 +55,14 @@ whatsapp.message.removing.error:
 job.scheduled.error.header: Geplante Aufgabe konnte nicht ausgeführt werden
 
 message.from.whatsapp: |-
-  {{{text}}}
+  *📱 Von WhatsApp gesendet*
 
-  📱 *Von WhatsApp gesendet*
+  {{{text}}}
 
 message.from.api: |-
-  {{{text}}}
+  *📱 Über API gesendet*
 
-  📱 *Über API gesendet*
+  {{{text}}}
 
 message.removed.in.whatsapp: |-
   ❌ *Diese Nachricht wurde in WhatsApp gelöscht*
@@ -523,10 +523,8 @@ whatsapp.to.chatwoot.message.facebook.ad: |-
   {{{payload.body}}}
 whatsapp.history.message.wrapper: |-
   {{{content}}}
-  {{^payload.fromMe}}
-
-  {{/payload.fromMe}}
   `🗓️ {{{timestamp}}}`
+
 UNKNOWN: Unbekannt
 ERROR: Fehler
 PENDING: Wird gesendet
