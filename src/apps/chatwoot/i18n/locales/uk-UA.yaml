@@ -570,6 +570,8 @@ cli.cmd.messages.pull.option.media:
 cli.cmd.messages.pull.option.pause:
   Поставити завдання отримання повідомлень у чергу на паузі й зупинити обробку
   нових WhatsApp до завершення.
+cli.cmd.messages.pull.option.resolve-conversations:
+  Позначає розмови як завершені після обробки всієї історії повідомлень.
 cli.cmd.messages.pull.error.pause-no-queue:
   ⛔ Неможливо використати `--pause`, оскільки команда **queue** вимкнена для
   цієї конфігурації.
@@ -625,21 +627,36 @@ task.messages.details:
   Надішліть "{{{prefix}}}messages status", щоб побачити деталі.
 task.messages.progress:
   '⏳ Повідомлення {{{chat}}}: 🆕 {{progress.ok}}, 🟢 {{progress.exists}}, ⚪
-  {{progress.ignored}}, 🔴 {{progress.errors}}{{#last}} | 📅 {{{last}}}{{/last}}'
+  {{progress.ignored}}, 🔴 {{progress.errors}}{{#messages.last}} | 📅
+  {{{messages.last}}}{{/messages.last}}'
 task.messages.completed:
   ✅ Повідомлення {{{chat}}} за {{{period}}} → 🆕 {{progress.ok}}, 🟢
   {{progress.exists}}, ⚪ {{progress.ignored}}, 🔴 {{progress.errors}}
 task.messages.status: |-
-  Повідомлення **{{{chat}}}** у період ⏱️ **{{{period}}}**:
-  - ⚙️ Стан завдання: **{{state}}**
-  {{#last}}
-  - 📅 Остання обробка: **{{{last}}}**
-  {{/last}}
-  - 💬 Створено в: **{{{chats}}}** чатах
-  - 🆕 Створено: **{{{progress.ok}}}** повідомлень
-  - 🟢 Уже є: {{{progress.exists}}} повідомлень
-  - ⚪ Пропущено: {{{progress.ignored}}} повідомлень
-  - 🔴 Помилки: {{{progress.errors}}} повідомлень
+  Повідомлення **{{{chat}}}** у період ⏱️ **{{{period}}}**. ⚙️ Стан завдання: **{{state}}**.
+
+  🗨️ Повідомлення:
+  - 🆕 Створено: **{{{progress.ok}}}**
+  - 🟢 Уже є: {{{progress.exists}}}
+  - ⚪ Пропущено: {{{progress.ignored}}}
+  - 🔴 Помилки: {{{progress.errors}}}
+  {{#messages.first}}
+  - 🗓️ Найраніше: **{{{messages.first}}}**
+  {{/messages.first}}
+  {{#messages.last}}
+  - 🗓️ Найпізніше: **{{{messages.last}}}**
+  {{/messages.last}}
+
+  💬 Чати WhatsApp:
+  - 🆕 Нові повідомлення в **{{{chats}}}** чатах
+  {{#options.resolveConversations}}
+
+  🗣️ Розмови:
+  - 🟢 Закрито: **{{{progress.conversationResolve.success}}}**
+  {{#progress.conversationResolve.error}}
+  - 🔴 Помилки: **{{{progress.conversationResolve.error}}}**
+  {{/progress.conversationResolve.error}}
+  {{/options.resolveConversations}}
 
   Деталі:
   [{{{details.text}}}]({{{details.url}}})

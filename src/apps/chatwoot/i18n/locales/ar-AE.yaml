@@ -564,6 +564,8 @@ cli.cmd.messages.pull.option.media:
 cli.cmd.messages.pull.option.pause:
   وضع مهمة سحب الرسائل في قائمة الانتظار وهي متوقفة مؤقتًا وإيقاف معالجة رسائل
   واتساب الجديدة حتى تكتمل.
+cli.cmd.messages.pull.option.resolve-conversations:
+  وضع علامة على المحادثات كمحلولة بعد معالجة كل رسائل السجل.
 cli.cmd.messages.pull.error.pause-no-queue:
   ⛔ لا يمكن استخدام `--pause` لأن أمر **queue** معطَّل في هذا التكوين.
 cli.cmd.queue.description: إدارة قوائم الانتظار.
@@ -618,21 +620,36 @@ task.messages.details:
   أرسل "{{{prefix}}}messages status" للاطلاع على المزيد من التفاصيل.
 task.messages.progress:
   '⏳ رسائل {{{chat}}}: 🆕 {{progress.ok}}، 🟢 {{progress.exists}}، ⚪
-  {{progress.ignored}}، 🔴 {{progress.errors}}{{#last}} | 📅 {{{last}}}{{/last}}'
+  {{progress.ignored}}، 🔴 {{progress.errors}}{{#messages.last}} | 📅
+  {{{messages.last}}}{{/messages.last}}'
 task.messages.completed:
   ✅ رسائل {{{chat}}} خلال {{{period}}} → 🆕 {{progress.ok}}، 🟢
   {{progress.exists}}، ⚪ {{progress.ignored}}، 🔴 {{progress.errors}}
 task.messages.status: |-
-  رسائل **{{{chat}}}** خلال الفترة ⏱️ **{{{period}}}**:
-  - ⚙️ حالة المهمة: **{{state}}**
-  {{#last}}
-  - 📅 آخر معالجة: **{{{last}}}**
-  {{/last}}
-  - 💬 تم إنشاؤها في: **{{{chats}}}** دردشات
-  - 🆕 تم إنشاؤها: **{{{progress.ok}}}** رسائل
-  - 🟢 موجودة مسبقًا: {{{progress.exists}}} رسائل
-  - ⚪ تم تجاهلها: {{{progress.ignored}}} رسائل
-  - 🔴 أخطاء: {{{progress.errors}}} رسائل
+  رسائل **{{{chat}}}** خلال الفترة ⏱️ **{{{period}}}**. ⚙️ حالة المهمة: **{{state}}**.
 
-  التفاصيل:
+  🗨️ الرسائل:
+  - 🆕 تم الإنشاء: **{{{progress.ok}}}**
+  - 🟢 موجودة مسبقًا: {{{progress.exists}}}
+  - ⚪ تم تجاهلها: {{{progress.ignored}}}
+  - 🔴 أخطاء: {{{progress.errors}}}
+  {{#messages.first}}
+  - 🗓️ الأقدم: **{{{messages.first}}}**
+  {{/messages.first}}
+  {{#messages.last}}
+  - 🗓️ الأحدث: **{{{messages.last}}}**
+  {{/messages.last}}
+
+  💬 دردشات واتساب:
+  - 🆕 رسائل جديدة في **{{{chats}}}** دردشات
+  {{#options.resolveConversations}}
+
+  🗣️ المحادثات:
+  - 🟢 تم حلها: **{{{progress.conversationResolve.success}}}**
+  {{#progress.conversationResolve.error}}
+  - 🔴 أخطاء: **{{{progress.conversationResolve.error}}}**
+  {{/progress.conversationResolve.error}}
+  {{/options.resolveConversations}}
+
+  التفاصيل: 
   [{{{details.text}}}]({{{details.url}}})

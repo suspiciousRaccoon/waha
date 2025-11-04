@@ -569,6 +569,9 @@ cli.cmd.messages.pull.option.media:
 cli.cmd.messages.pull.option.pause:
   پیغامات کھینچنے کے کام کو معطل حالت میں قطار میں ڈالیں اور مکمل ہونے تک نئے
   WhatsApp پیغامات کی پروسیسنگ روک دیں۔
+cli.cmd.messages.pull.option.resolve-conversations:
+  تمام تاریخی پیغامات کے پراسیس ہونے کے بعد گفتگوؤں کو حل شدہ کے طور پر نشان زد
+  کرتا ہے۔
 cli.cmd.messages.pull.error.pause-no-queue:
   ⛔ `--pause` استعمال نہیں کیا جا سکتا کیونکہ اس ترتیب میں **queue** کمانڈ غیر
   فعال ہے۔
@@ -622,21 +625,36 @@ task.messages.started:
 task.messages.details: مزید تفصیلات کے لیے "{{{prefix}}}messages status" بھیجیں۔
 task.messages.progress:
   '⏳ پیغامات {{{chat}}}: 🆕 {{progress.ok}}, 🟢 {{progress.exists}}, ⚪
-  {{progress.ignored}}, 🔴 {{progress.errors}}{{#last}} | 📅 {{{last}}}{{/last}}'
+  {{progress.ignored}}, 🔴 {{progress.errors}}{{#messages.last}} | 📅
+  {{{messages.last}}}{{/messages.last}}'
 task.messages.completed:
   ✅ پیغامات {{{chat}}} میں {{{period}}} → 🆕 {{progress.ok}}, 🟢
   {{progress.exists}}, ⚪ {{progress.ignored}}, 🔴 {{progress.errors}}
 task.messages.status: |-
-  **{{{chat}}}** کے پیغامات ⏱️ **{{{period}}}** کے دوران:
-  - ⚙️ کام کی حالت: **{{state}}**
-  {{#last}}
-  - 📅 آخری پراسیسنگ: **{{{last}}}**
-  {{/last}}
-  - 💬 بنائے گئے چیٹس: **{{{chats}}}**
-  - 🆕 بنے: **{{{progress.ok}}}** پیغامات
-  - 🟢 پہلے سے موجود: {{{progress.exists}}} پیغامات
-  - ⚪ نظر انداز: {{{progress.ignored}}} پیغامات
-  - 🔴 خامیاں: {{{progress.errors}}} پیغامات
+  **{{{chat}}}** کے پیغامات ⏱️ **{{{period}}}** کے دوران۔ ⚙️ کام کی حالت: **{{state}}**۔
+
+  🗨️ پیغامات:
+  - 🆕 بنے: **{{{progress.ok}}}**
+  - 🟢 پہلے سے موجود: {{{progress.exists}}}
+  - ⚪ نظر انداز: {{{progress.ignored}}}
+  - 🔴 خامیاں: {{{progress.errors}}}
+  {{#messages.first}}
+  - 🗓️ قدیم ترین: **{{{messages.first}}}**
+  {{/messages.first}}
+  {{#messages.last}}
+  - 🗓️ تازہ ترین: **{{{messages.last}}}**
+  {{/messages.last}}
+
+  💬 WhatsApp چیٹس:
+  - 🆕 **{{{chats}}}** چیٹس میں نئے پیغامات
+  {{#options.resolveConversations}}
+
+  🗣️ گفتگوئیں:
+  - 🟢 حل شدہ: **{{{progress.conversationResolve.success}}}**
+  {{#progress.conversationResolve.error}}
+  - 🔴 خامیاں: **{{{progress.conversationResolve.error}}}**
+  {{/progress.conversationResolve.error}}
+  {{/options.resolveConversations}}
 
   تفصیلات:
   [{{{details.text}}}]({{{details.url}}})

@@ -570,6 +570,8 @@ cli.cmd.messages.pull.option.media:
 cli.cmd.messages.pull.option.pause:
   संदेश खींचने के कार्य को रोके गए अवस्था में कतार में डालें और पूरा होने तक नए
   WhatsApp संदेशों की प्रोसेसिंग रोकें।
+cli.cmd.messages.pull.option.resolve-conversations:
+  सभी इतिहास संदेश संसाधित होने के बाद बातचीत को हल किया हुआ चिह्नित करता है।
 cli.cmd.messages.pull.error.pause-no-queue:
   ⛔ `--pause` का उपयोग नहीं किया जा सकता क्योंकि इस कॉन्फ़िगरेशन में **queue**
   कमांड अक्षम है।
@@ -624,21 +626,36 @@ task.messages.started:
 task.messages.details: और जानकारी के लिए "{{{prefix}}}messages status" भेजें।
 task.messages.progress:
   '⏳ संदेश {{{chat}}}: 🆕 {{progress.ok}}, 🟢 {{progress.exists}}, ⚪
-  {{progress.ignored}}, 🔴 {{progress.errors}}{{#last}} | 📅 {{{last}}}{{/last}}'
+  {{progress.ignored}}, 🔴 {{progress.errors}}{{#messages.last}} | 📅
+  {{{messages.last}}}{{/messages.last}}'
 task.messages.completed:
   ✅ संदेश {{{chat}}} में {{{period}}} → 🆕 {{progress.ok}}, 🟢
   {{progress.exists}}, ⚪ {{progress.ignored}}, 🔴 {{progress.errors}}
 task.messages.status: |-
-  **{{{chat}}}** के संदेश ⏱️ **{{{period}}}** अवधि में:
-  - ⚙️ कार्य की स्थिति: **{{state}}**
-  {{#last}}
-  - 📅 अंतिम संसाधित: **{{{last}}}**
-  {{/last}}
-  - 💬 बनाए गए चैट: **{{{chats}}}**
-  - 🆕 बनाए गए: **{{{progress.ok}}}** संदेश
-  - 🟢 पहले से मौजूद: {{{progress.exists}}} संदेश
-  - ⚪ अनदेखा: {{{progress.ignored}}} संदेश
-  - 🔴 त्रुटियाँ: {{{progress.errors}}} संदेश
+  **{{{chat}}}** के संदेश ⏱️ **{{{period}}}** अवधि में। ⚙️ कार्य की स्थिति: **{{state}}**.
+
+  🗨️ संदेश:
+  - 🆕 बनाए गए: **{{{progress.ok}}}**
+  - 🟢 पहले से मौजूद: {{{progress.exists}}}
+  - ⚪ अनदेखा: {{{progress.ignored}}}
+  - 🔴 त्रुटियाँ: {{{progress.errors}}}
+  {{#messages.first}}
+  - 🗓️ सबसे पुराना: **{{{messages.first}}}**
+  {{/messages.first}}
+  {{#messages.last}}
+  - 🗓️ नवीनतम: **{{{messages.last}}}**
+  {{/messages.last}}
+
+  💬 WhatsApp चैट:
+  - 🆕 **{{{chats}}}** चैट में नए संदेश
+  {{#options.resolveConversations}}
+
+  🗣️ बातचीत:
+  - 🟢 हल हुईं: **{{{progress.conversationResolve.success}}}**
+  {{#progress.conversationResolve.error}}
+  - 🔴 त्रुटियाँ: **{{{progress.conversationResolve.error}}}**
+  {{/progress.conversationResolve.error}}
+  {{/options.resolveConversations}}
 
   विवरण:
   [{{{details.text}}}]({{{details.url}}})

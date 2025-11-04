@@ -570,6 +570,8 @@ cli.cmd.messages.pull.option.media:
 cli.cmd.messages.pull.option.pause:
   Masukkan pekerjaan penarikan pesan ke antrian dalam keadaan jeda dan hentikan
   pemrosesan pesan WhatsApp baru sampai selesai.
+cli.cmd.messages.pull.option.resolve-conversations:
+  Menandai percakapan sebagai selesai setelah semua pesan riwayat diproses.
 cli.cmd.messages.pull.error.pause-no-queue:
   ⛔ Tidak dapat menggunakan `--pause` karena perintah **queue** dinonaktifkan
   pada konfigurasi ini.
@@ -624,21 +626,36 @@ task.messages.details:
   Kirim "{{{prefix}}}messages status" untuk melihat rincian.
 task.messages.progress:
   '⏳ Pesan {{{chat}}}: 🆕 {{progress.ok}}, 🟢 {{progress.exists}}, ⚪
-  {{progress.ignored}}, 🔴 {{progress.errors}}{{#last}} | 📅 {{{last}}}{{/last}}'
+  {{progress.ignored}}, 🔴 {{progress.errors}}{{#messages.last}} | 📅
+  {{{messages.last}}}{{/messages.last}}'
 task.messages.completed:
   ✅ Pesan {{{chat}}} selama {{{period}}} → 🆕 {{progress.ok}}, 🟢
   {{progress.exists}}, ⚪ {{progress.ignored}}, 🔴 {{progress.errors}}
 task.messages.status: |-
-  Pesan **{{{chat}}}** dalam periode ⏱️ **{{{period}}}**:
-  - ⚙️ Status pekerjaan: **{{state}}**
-  {{#last}}
-  - 📅 Terakhir diproses: **{{{last}}}**
-  {{/last}}
-  - 💬 Dibuat di: **{{{chats}}}** percakapan
-  - 🆕 Dibuat: **{{{progress.ok}}}** pesan
-  - 🟢 Sudah ada: {{{progress.exists}}} pesan
-  - ⚪ Diabaikan: {{{progress.ignored}}} pesan
-  - 🔴 Kesalahan: {{{progress.errors}}} pesan
+  Pesan **{{{chat}}}** dalam periode ⏱️ **{{{period}}}**. ⚙️ Status pekerjaan: **{{state}}**.
+
+  🗨️ Pesan:
+  - 🆕 Dibuat: **{{{progress.ok}}}**
+  - 🟢 Sudah ada: {{{progress.exists}}}
+  - ⚪ Diabaikan: {{{progress.ignored}}}
+  - 🔴 Kesalahan: {{{progress.errors}}}
+  {{#messages.first}}
+  - 🗓️ Paling awal: **{{{messages.first}}}**
+  {{/messages.first}}
+  {{#messages.last}}
+  - 🗓️ Terbaru: **{{{messages.last}}}**
+  {{/messages.last}}
+
+  💬 Chat WhatsApp:
+  - 🆕 Pesan baru di **{{{chats}}}** chat
+  {{#options.resolveConversations}}
+
+  🗣️ Percakapan:
+  - 🟢 Selesai: **{{{progress.conversationResolve.success}}}**
+  {{#progress.conversationResolve.error}}
+  - 🔴 Kesalahan: **{{{progress.conversationResolve.error}}}**
+  {{/progress.conversationResolve.error}}
+  {{/options.resolveConversations}}
 
   Detail:
   [{{{details.text}}}]({{{details.url}}})

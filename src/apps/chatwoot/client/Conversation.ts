@@ -1,7 +1,6 @@
 import ChatwootClient from '@figuro/chatwoot-sdk';
 import type { conversation_message_create } from '@figuro/chatwoot-sdk/dist/models/conversation_message_create';
 import { MessageType } from '@waha/apps/chatwoot/client/types';
-import { IsCommandsChat } from '@waha/apps/chatwoot/client/ids';
 
 export class Conversation {
   public onError: (e: any) => void;

@@ -75,4 +75,14 @@ export class ConversationService {
       throw error;
     }
   }
+
+  async resolve(conversationId: number): Promise<any> {
+    return this.accountAPI.conversations.toggleStatus({
+      accountId: this.config.accountId,
+      conversationId: conversationId,
+      data: {
+        status: 'resolved',
+      },
+    });
+  }
 }

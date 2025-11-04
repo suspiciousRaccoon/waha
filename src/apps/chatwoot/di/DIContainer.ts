@@ -133,7 +133,7 @@ export class DIContainer {
    * @returns ConversationService instance
    */
   @CacheSync()
-  private ConversationService(): ConversationService {
+  public ConversationService(): ConversationService {
     return new ConversationService(
       this.config,
       this.AccountAPI(),

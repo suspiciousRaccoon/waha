@@ -570,6 +570,8 @@ cli.cmd.messages.pull.option.media:
 cli.cmd.messages.pull.option.pause:
   Поставить задачу загрузки сообщений в очередь на паузу и остановить обработку
   новых сообщений WhatsApp до завершения.
+cli.cmd.messages.pull.option.resolve-conversations:
+  Отмечает беседы как завершённые после обработки всей истории сообщений.
 cli.cmd.messages.pull.error.pause-no-queue:
   ⛔ Невозможно использовать `--pause`, потому что команда **queue** отключена в
   этой конфигурации.
@@ -626,21 +628,36 @@ task.messages.details:
   Отправьте "{{{prefix}}}messages status", чтобы увидеть подробности.
 task.messages.progress:
   '⏳ Сообщения {{{chat}}}: 🆕 {{progress.ok}}, 🟢 {{progress.exists}}, ⚪
-  {{progress.ignored}}, 🔴 {{progress.errors}}{{#last}} | 📅 {{{last}}}{{/last}}'
+  {{progress.ignored}}, 🔴 {{progress.errors}}{{#messages.last}} | 📅
+  {{{messages.last}}}{{/messages.last}}'
 task.messages.completed:
   ✅ Сообщения {{{chat}}} за {{{period}}} → 🆕 {{progress.ok}}, 🟢
   {{progress.exists}}, ⚪ {{progress.ignored}}, 🔴 {{progress.errors}}
 task.messages.status: |-
-  Сообщения **{{{chat}}}** за период ⏱️ **{{{period}}}**:
-  - ⚙️ Статус задачи: **{{state}}**
-  {{#last}}
-  - 📅 Последняя обработка: **{{{last}}}**
-  {{/last}}
-  - 💬 Создано в: **{{{chats}}}** чатах
-  - 🆕 Создано: **{{{progress.ok}}}** сообщений
-  - 🟢 Уже есть: {{{progress.exists}}} сообщений
-  - ⚪ Пропущено: {{{progress.ignored}}} сообщений
-  - 🔴 Ошибки: {{{progress.errors}}} сообщений
+  Сообщения **{{{chat}}}** за период ⏱️ **{{{period}}}**. ⚙️ Статус задачи: **{{state}}**.
+
+  🗨️ Сообщения:
+  - 🆕 Создано: **{{{progress.ok}}}**
+  - 🟢 Уже есть: {{{progress.exists}}}
+  - ⚪ Пропущено: {{{progress.ignored}}}
+  - 🔴 Ошибки: {{{progress.errors}}}
+  {{#messages.first}}
+  - 🗓️ Самое раннее: **{{{messages.first}}}**
+  {{/messages.first}}
+  {{#messages.last}}
+  - 🗓️ Самое позднее: **{{{messages.last}}}**
+  {{/messages.last}}
+
+  💬 Чаты WhatsApp:
+  - 🆕 Новые сообщения в **{{{chats}}}** чатах
+  {{#options.resolveConversations}}
+
+  🗣️ Беседы:
+  - 🟢 Закрыто: **{{{progress.conversationResolve.success}}}**
+  {{#progress.conversationResolve.error}}
+  - 🔴 Ошибки: **{{{progress.conversationResolve.error}}}**
+  {{/progress.conversationResolve.error}}
+  {{/options.resolveConversations}}
 
   Подробности:
   [{{{details.text}}}]({{{details.url}}})

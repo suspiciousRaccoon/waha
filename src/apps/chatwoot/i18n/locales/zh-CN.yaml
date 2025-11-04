@@ -560,6 +560,7 @@ cli.cmd.messages.pull.option.broadcast: 拉取历史时包含群发列表。
 cli.cmd.messages.pull.option.media: 拉取历史时下载媒体附件（图片、视频、文件）。
 cli.cmd.messages.pull.option.pause:
   将拉取任务以暂停状态加入队列，并在完成前暂停新的 WhatsApp 消息处理。
+cli.cmd.messages.pull.option.resolve-conversations: 在处理完所有历史消息后将会话标记为已解决。
 cli.cmd.messages.pull.error.pause-no-queue:
   ⛔ 无法使用 `--pause`，因为此配置中 **queue** 命令已禁用。
 cli.cmd.queue.description: 管理队列。
@@ -602,21 +603,36 @@ task.messages.started: ⏳ 正在拉取消息 💬 {{{chat}}} ⏱️ {{{period}}
 task.messages.details: 发送 "{{{prefix}}}messages status" 查看更多详情。
 task.messages.progress:
   ⏳ 消息 {{{chat}}}：🆕 {{progress.ok}}，🟢 {{progress.exists}}，⚪
-  {{progress.ignored}}，🔴 {{progress.errors}}{{#last}} | 📅 {{{last}}}{{/last}}
+  {{progress.ignored}}，🔴 {{progress.errors}}{{#messages.last}} | 📅
+  {{{messages.last}}}{{/messages.last}}
 task.messages.completed:
   ✅ 消息 {{{chat}}} 于 {{{period}}} → 🆕 {{progress.ok}}，🟢
   {{progress.exists}}，⚪ {{progress.ignored}}，🔴 {{progress.errors}}
 task.messages.status: |-
-  **{{{chat}}}** 的消息在 ⏱️ **{{{period}}}** 内：
-  - ⚙️ 任务状态：**{{state}}**
-  {{#last}}
-  - 📅 上次处理：**{{{last}}}**
-  {{/last}}
-  - 💬 创建于：**{{{chats}}}** 个会话
-  - 🆕 新建：**{{{progress.ok}}}** 条消息
-  - 🟢 已存在：{{{progress.exists}}} 条消息
-  - ⚪ 忽略：{{{progress.ignored}}} 条消息
-  - 🔴 错误：{{{progress.errors}}} 条消息
+  **{{{chat}}}** 的消息在 ⏱️ **{{{period}}}** 内。⚙️ 任务状态：**{{state}}**。
+
+  🗨️ 消息：
+  - 🆕 新建：**{{{progress.ok}}}**
+  - 🟢 已存在：{{{progress.exists}}}
+  - ⚪ 忽略：{{{progress.ignored}}}
+  - 🔴 错误：{{{progress.errors}}}
+  {{#messages.first}}
+  - 🗓️ 最早：**{{{messages.first}}}**
+  {{/messages.first}}
+  {{#messages.last}}
+  - 🗓️ 最新：**{{{messages.last}}}**
+  {{/messages.last}}
+
+  💬 WhatsApp 会话：
+  - 🆕 **{{{chats}}}** 个会话出现新消息
+  {{#options.resolveConversations}}
+
+  🗣️ 会话：
+  - 🟢 已解决：**{{{progress.conversationResolve.success}}}**
+  {{#progress.conversationResolve.error}}
+  - 🔴 错误：**{{{progress.conversationResolve.error}}}**
+  {{/progress.conversationResolve.error}}
+  {{/options.resolveConversations}}
 
   详情：
   [{{{details.text}}}]({{{details.url}}})

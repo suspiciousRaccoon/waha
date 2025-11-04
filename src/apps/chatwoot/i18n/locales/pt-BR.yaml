@@ -578,6 +578,9 @@ cli.cmd.messages.pull.option.media:
 cli.cmd.messages.pull.option.pause:
   Enfileira o trabalho de busca de mensagens em estado pausado, interrompendo o
   processamento de novos WhatsApp até finalizar.
+cli.cmd.messages.pull.option.resolve-conversations:
+  Marca as conversas como resolvidas depois que todas as mensagens do histórico
+  forem processadas.
 cli.cmd.messages.pull.error.pause-no-queue:
   ⛔ Não é possível usar `--pause` porque o comando **queue** está desabilitado
   nesta configuração.
@@ -634,21 +637,36 @@ task.messages.details:
   Envie "{{{prefix}}}messages status" para ver mais detalhes.
 task.messages.progress:
   '⏳ Mensagens {{{chat}}}: 🆕 {{progress.ok}}, 🟢 {{progress.exists}}, ⚪
-  {{progress.ignored}}, 🔴 {{progress.errors}}{{#last}} | 📅 {{{last}}}{{/last}}'
+  {{progress.ignored}}, 🔴 {{progress.errors}}{{#messages.last}} | 📅
+  {{{messages.last}}}{{/messages.last}}'
 task.messages.completed:
   ✅ Mensagens {{{chat}}} em {{{period}}} → 🆕 {{progress.ok}}, 🟢
   {{progress.exists}}, ⚪ {{progress.ignored}}, 🔴 {{progress.errors}}
 task.messages.status: |-
-  Mensagens **{{{chat}}}** no período ⏱️ **{{{period}}}**:
-  - ⚙️ Estado do trabalho: **{{state}}**
-  {{#last}}
-  - 📅 Último processado: **{{{last}}}**
-  {{/last}}
-  - 💬 Criadas em: **{{{chats}}}** conversas
-  - 🆕 Criadas: **{{{progress.ok}}}** mensagens
-  - 🟢 Já existem: {{{progress.exists}}} mensagens
-  - ⚪ Ignoradas: {{{progress.ignored}}} mensagens
-  - 🔴 Erros: {{{progress.errors}}} mensagens
+  Mensagens **{{{chat}}}** no período ⏱️ **{{{period}}}**. ⚙️ Estado do trabalho: **{{state}}**.
+
+  🗨️ Mensagens:
+  - 🆕 Criadas: **{{{progress.ok}}}**
+  - 🟢 Já existem: {{{progress.exists}}}
+  - ⚪ Ignoradas: {{{progress.ignored}}}
+  - 🔴 Erros: {{{progress.errors}}}
+  {{#messages.first}}
+  - 🗓️ Mais antiga: **{{{messages.first}}}**
+  {{/messages.first}}
+  {{#messages.last}}
+  - 🗓️ Mais recente: **{{{messages.last}}}**
+  {{/messages.last}}
+
+  💬 Conversas do WhatsApp:
+  - 🆕 Novas mensagens em **{{{chats}}}** conversas
+  {{#options.resolveConversations}}
+
+  🗣️ Conversas:
+  - 🟢 Resolvidas: **{{{progress.conversationResolve.success}}}**
+  {{#progress.conversationResolve.error}}
+  - 🔴 Erros: **{{{progress.conversationResolve.error}}}**
+  {{/progress.conversationResolve.error}}
+  {{/options.resolveConversations}}
 
   Detalhes:
   [{{{details.text}}}]({{{details.url}}})

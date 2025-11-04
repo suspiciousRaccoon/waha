@@ -569,6 +569,8 @@ cli.cmd.messages.pull.option.media:
 cli.cmd.messages.pull.option.pause:
   Mesaj çekme işini duraklatılmış olarak kuyruklar ve tamamlanana kadar yeni
   WhatsApp mesajlarının işlenmesini durdurur.
+cli.cmd.messages.pull.option.resolve-conversations:
+  Tüm geçmiş mesajlar işlendiğinde konuşmaları çözüldü olarak işaretler.
 cli.cmd.messages.pull.error.pause-no-queue:
   ⛔ `--pause` kullanılamaz çünkü **queue** komutu bu yapılandırmada devre dışı.
 cli.cmd.queue.description: Kuyrukları yönetin.
@@ -625,21 +627,36 @@ task.messages.details:
   Daha fazla ayrıntı için "{{{prefix}}}messages status" gönderin.
 task.messages.progress:
   '⏳ Mesajlar {{{chat}}}: 🆕 {{progress.ok}}, 🟢 {{progress.exists}}, ⚪
-  {{progress.ignored}}, 🔴 {{progress.errors}}{{#last}} | 📅 {{{last}}}{{/last}}'
+  {{progress.ignored}}, 🔴 {{progress.errors}}{{#messages.last}} | 📅
+  {{{messages.last}}}{{/messages.last}}'
 task.messages.completed:
   ✅ Mesajlar {{{chat}}} {{{period}}} içinde → 🆕 {{progress.ok}}, 🟢
   {{progress.exists}}, ⚪ {{progress.ignored}}, 🔴 {{progress.errors}}
 task.messages.status: |-
-  **{{{chat}}}** sohbetinin mesajları ⏱️ **{{{period}}}** döneminde:
-  - ⚙️ İş durumu: **{{state}}**
-  {{#last}}
-  - 📅 Son işlenen: **{{{last}}}**
-  {{/last}}
-  - 💬 Şu sohbetlerde oluşturuldu: **{{{chats}}}**
-  - 🆕 Oluşturulan: **{{{progress.ok}}}** mesaj
-  - 🟢 Zaten mevcut: {{{progress.exists}}} mesaj
-  - ⚪ Yok sayılan: {{{progress.ignored}}} mesaj
-  - 🔴 Hatalar: {{{progress.errors}}} mesaj
+  **{{{chat}}}** sohbetinin mesajları ⏱️ **{{{period}}}** döneminde. ⚙️ İş durumu: **{{state}}**.
+
+  🗨️ Mesajlar:
+  - 🆕 Oluşturulan: **{{{progress.ok}}}**
+  - 🟢 Zaten mevcut: {{{progress.exists}}}
+  - ⚪ Yok sayılan: {{{progress.ignored}}}
+  - 🔴 Hatalar: {{{progress.errors}}}
+  {{#messages.first}}
+  - 🗓️ En eski: **{{{messages.first}}}**
+  {{/messages.first}}
+  {{#messages.last}}
+  - 🗓️ En yeni: **{{{messages.last}}}**
+  {{/messages.last}}
+
+  💬 WhatsApp sohbetleri:
+  - 🆕 **{{{chats}}}** sohbette yeni mesajlar
+  {{#options.resolveConversations}}
+
+  🗣️ Konuşmalar:
+  - 🟢 Çözüldü: **{{{progress.conversationResolve.success}}}**
+  {{#progress.conversationResolve.error}}
+  - 🔴 Hatalar: **{{{progress.conversationResolve.error}}}**
+  {{/progress.conversationResolve.error}}
+  {{/options.resolveConversations}}
 
   Detaylar:
   [{{{details.text}}}]({{{details.url}}})

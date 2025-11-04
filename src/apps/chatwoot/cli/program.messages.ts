@@ -59,6 +59,10 @@ export function AddMessagesCommand(
     .option('-m, --media', l.r('cli.cmd.messages.pull.option.media'))
     .option('--pause', l.r('cli.cmd.messages.pull.option.pause'))
     .option(
+      '--rc, --resolve-conversations',
+      l.r('cli.cmd.messages.pull.option.resolve-conversations'),
+    )
+    .option(
       '-b, --batch <number>',
       l.r('cli.cmd.messages.pull.option.batch'),
       NotNegativeNumber,
@@ -113,7 +117,7 @@ export function AddMessagesCommand(
         },
         media: opts.media,
         force: opts.force,
-        pause: !!opts.pause,
+        pause: opts.pause,
         timeout: {
           media: opts.timeoutMedia,
         },
@@ -125,6 +129,7 @@ export function AddMessagesCommand(
           channels: !opts.channels,
           broadcast: !opts.broadcast,
         },
+        resolveConversations: opts.resolveConversations,
       };
       const jobOptions: JobsOptions & JobDataTimeout = {
         attempts: opts.attempts,

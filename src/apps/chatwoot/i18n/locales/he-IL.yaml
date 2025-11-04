@@ -564,6 +564,8 @@ cli.cmd.messages.pull.option.media:
 cli.cmd.messages.pull.option.pause:
   הכנסת משימת המשיכה לתור במצב מושהה ועצירת עיבוד הודעות WhatsApp חדשות עד
   לסיום.
+cli.cmd.messages.pull.option.resolve-conversations:
+  מסמן את השיחות כפתורות לאחר שכל הודעות ההיסטוריה עובדו.
 cli.cmd.messages.pull.error.pause-no-queue:
   ⛔ לא ניתן להשתמש ב-`--pause` כי הפקודה **queue** מושבתת בתצורה זו.
 cli.cmd.queue.description: ניהול תורים.
@@ -611,21 +613,36 @@ task.messages.started: ⏳ מושכים הודעות 💬 {{{chat}}} ⏱️ {{{p
 task.messages.details: שלחו "{{{prefix}}}messages status" לעוד פרטים.
 task.messages.progress:
   '⏳ הודעות {{{chat}}}: 🆕 {{progress.ok}}, 🟢 {{progress.exists}}, ⚪
-  {{progress.ignored}}, 🔴 {{progress.errors}}{{#last}} | 📅 {{{last}}}{{/last}}'
+  {{progress.ignored}}, 🔴 {{progress.errors}}{{#messages.last}} | 📅
+  {{{messages.last}}}{{/messages.last}}'
 task.messages.completed:
   ✅ הודעות {{{chat}}} במהלך {{{period}}} → 🆕 {{progress.ok}}, 🟢
   {{progress.exists}}, ⚪ {{progress.ignored}}, 🔴 {{progress.errors}}
 task.messages.status: |-
-  הודעות **{{{chat}}}** בתקופה ⏱️ **{{{period}}}**:
-  - ⚙️ מצב המשימה: **{{state}}**
-  {{#last}}
-  - 📅 תאריך עיבוד אחרון: **{{{last}}}**
-  {{/last}}
-  - 💬 נוצרו ב-**{{{chats}}}** שיחות
-  - 🆕 נוצרו: **{{{progress.ok}}}** הודעות
-  - 🟢 קיימות כבר: {{{progress.exists}}} הודעות
-  - ⚪ הוזנחו: {{{progress.ignored}}} הודעות
-  - 🔴 שגיאות: {{{progress.errors}}} הודעות
+  הודעות **{{{chat}}}** בתקופה ⏱️ **{{{period}}}**. ⚙️ מצב המשימה: **{{state}}**.
+
+  🗨️ הודעות:
+  - 🆕 נוצרו: **{{{progress.ok}}}**
+  - 🟢 קיימות כבר: {{{progress.exists}}}
+  - ⚪ הוזנחו: {{{progress.ignored}}}
+  - 🔴 שגיאות: {{{progress.errors}}}
+  {{#messages.first}}
+  - 🗓️ ישן ביותר: **{{{messages.first}}}**
+  {{/messages.first}}
+  {{#messages.last}}
+  - 🗓️ חדש ביותר: **{{{messages.last}}}**
+  {{/messages.last}}
+
+  💬 שיחות WhatsApp:
+  - 🆕 הודעות חדשות ב-**{{{chats}}}** שיחות
+  {{#options.resolveConversations}}
+
+  🗣️ שיחות:
+  - 🟢 נפתרו: **{{{progress.conversationResolve.success}}}**
+  {{#progress.conversationResolve.error}}
+  - 🔴 שגיאות: **{{{progress.conversationResolve.error}}}**
+  {{/progress.conversationResolve.error}}
+  {{/options.resolveConversations}}
 
   פרטים:
   [{{{details.text}}}]({{{details.url}}})

@@ -36,6 +36,7 @@ import { ErrorRenderer } from '@waha/apps/chatwoot/error/ErrorRenderer';
 import { IsCommandsChat } from '@waha/apps/chatwoot/client/ids';
 import { CommandPrefix } from '@waha/apps/chatwoot/cli';
 import { QueueManager } from '@waha/apps/chatwoot/services/QueueManager';
+import { addUnique } from '@waha/utils/list';
 
 export enum ChatID {
   ALL = 'all',
@@ -57,6 +58,7 @@ export type MessagesPullOptions = {
   };
   media: boolean;
   ignore: IgnoreJidConfig;
+  resolveConversations: boolean;
 };
 
 interface Progress {
@@ -65,7 +67,16 @@ interface Progress {
   ignored: number;
   errors: number;
   chats: string[];
-  last?: number;
+  messages: {
+    first?: number;
+    last?: number;
+  };
+  // Conversations
+  conversations: number[];
+  conversationResolve: {
+    success: number;
+    error: number;
+  };
 }
 
 const NullProgress: Progress = {
@@ -74,6 +85,15 @@ const NullProgress: Progress = {
   ignored: 0,
   errors: 0,
   chats: [],
+  messages: {
+    first: 0,
+    last: 0,
+  },
+  conversations: [],
+  conversationResolve: {
+    success: 0,
+    error: 0,
+  },
 };
 
 function total(progress: Progress) {
@@ -154,13 +174,29 @@ class MessagesPullHandler {
       progress.exists += p.exists;
       progress.ignored += p.ignored;
       progress.errors += p.errors;
+      progress.conversationResolve.success += p.conversationResolve.success;
+      progress.conversationResolve.error += p.conversationResolve.error;
     }
     // Chats
     progress.chats = lodash.uniq(lodash.flatten(values.map((p) => p.chats)));
-    // Last timestamp
-    progress.last = lodash.max(values.map((p) => p.last || 0));
-    if (progress.last === 0) {
-      progress.last = undefined;
+
+    // Conversations
+    progress.conversations = lodash.uniq(
+      lodash.flatten(values.map((p) => p.conversations)),
+    );
+
+    // Messages timestamps
+    progress.messages.first = lodash.min(
+      values.map((p) => p.messages.first || Infinity),
+    );
+    if (progress.messages.first === Infinity) {
+      progress.messages.first = undefined;
+    }
+    progress.messages.last = lodash.max(
+      values.map((p) => p.messages.last || 0),
+    );
+    if (progress.messages.last === 0) {
+      progress.messages.last = undefined;
     }
     return progress;
   }
@@ -181,19 +217,45 @@ class MessagesPullHandler {
     }
   }
 
+  /**
+   * Perform actions after all jobs are done
+   */
   async end(options: MessagesPullOptions, job: Job) {
     if (job.parentKey) {
+      // Not end yet, have parent tasks to process
       return await this.summaryProgress(job);
     }
-    // Perform some actions after all jobs are done
-    const progress = await this.summaryProgress(job);
-    await job.updateProgress(progress);
-    await this.activity.completed(progress, options);
+
+    // Resume queues if paused
     if (options.pause) {
       await this.queueManager.resume();
       await this.activity.queue(false);
     }
+    // Progress summary
+    const progress = await this.summaryProgress(job);
+    await job.updateProgress(progress);
+
+    // Resolve conversations
+    if (options.resolveConversations) {
+      await this.resolveConversations(progress);
+      await job.updateProgress(progress);
+    }
+
+    // Report completed
+    await this.activity.completed(progress, options);
     return progress;
+  }
+
+  protected async resolveConversations(progress: Progress) {
+    const service = this.container.ConversationService();
+    for (const conversationId of progress.conversations) {
+      try {
+        await service.resolve(conversationId);
+        progress.conversationResolve.success += 1;
+      } catch (err) {
+        progress.conversationResolve.error += 1;
+      }
+    }
   }
 
   async handle(options: MessagesPullOptions, job: Job): Promise<Job> {
@@ -271,7 +333,8 @@ class MessagesPullHandler {
 
       // Process
       try {
-        progress.last = message.timestamp;
+        progress.messages.first = progress.messages.first || message.timestamp;
+        progress.messages.last = message.timestamp;
         if (all && !jids.include(EngineHelper.ChatID(message))) {
           progress.ignored += 1;
           continue;
@@ -296,13 +359,14 @@ class MessagesPullHandler {
         }
 
         const chatwoot = await handler.handle(message);
-        progress.ok += chatwoot ? 1 : 0;
-        progress.exists += chatwoot ? 0 : 1;
-        if (
-          chatwoot &&
-          !progress.chats.includes(EngineHelper.ChatID(message))
-        ) {
-          progress.chats.push(EngineHelper.ChatID(message));
+        if (chatwoot) {
+          progress.ok += 1;
+          addUnique(progress.chats, EngineHelper.ChatID(message));
+          if (info.conversationId) {
+            addUnique(progress.conversations, info.conversationId);
+          }
+        } else {
+          progress.exists += 1;
         }
       } catch (error) {
         const renderer = new ErrorRenderer();
@@ -370,7 +434,18 @@ export class TaskActivity {
       this.l.r('task.messages.progress', {
         progress: progress,
         chat: options.chat,
-        last: this.l.FormatTimestampOpts(progress.last, format, false),
+        messages: {
+          first: this.l.FormatTimestampOpts(
+            progress.messages.first,
+            format,
+            false,
+          ),
+          last: this.l.FormatTimestampOpts(
+            progress.messages.last,
+            format,
+            false,
+          ),
+        },
       }),
     );
   }
@@ -442,6 +517,7 @@ export function MessagesPullStatusMessage(
   const details = JobLink(job);
   const options = job.data.options as MessagesPullOptions;
   const payload = {
+    options: options,
     chat: options.chat,
     chats: progress.chats.length,
     period: period(options),
@@ -449,7 +525,10 @@ export function MessagesPullStatusMessage(
     state: lodash.capitalize(state ?? 'unknown'),
     progress: progress,
     details: details,
-    last: l.FormatTimestamp(progress.last, false),
+    messages: {
+      first: l.FormatTimestamp(progress.messages.first, false),
+      last: l.FormatTimestamp(progress.messages.last, false),
+    },
   };
 
   return l.r('task.messages.status', payload);
