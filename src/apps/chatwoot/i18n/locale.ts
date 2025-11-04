@@ -4,9 +4,11 @@ import { TemplatePayloads, TKey } from '@waha/apps/chatwoot/i18n/templates';
 import Long from 'long';
 import { ensureNumber } from '@waha/core/engines/noweb/utils';
 import { EnsureMilliseconds } from '@waha/utils/timehelper';
+import { TZ } from '@waha/apps/chatwoot/env';
+import { isToday, isYesterday, isSameYear } from '@waha/utils/datehelper';
 
 export class Locale {
-  constructor(private readonly strings: Record<string, string>) {}
+  constructor(public readonly strings: Record<string, string>) {}
 
   /**
    * Return Base Locale
@@ -101,7 +103,7 @@ export class Locale {
     }
     const opts: any = this.strings['datetime'] || {};
     // Copy timezone if any
-    options.timeZone = opts.timeZone || opts.timezone || process.env.TZ;
+    options.timeZone = opts.timeZone || opts.timezone || TZ;
     if (!year && date.getFullYear() === new Date().getFullYear()) {
       // Hide year if current year
       options.year = undefined;
@@ -116,6 +118,47 @@ export class Locale {
   ): string | null {
     const date = this.ParseTimestamp(timestamp);
     return this.FormatDatetimeOpts(date, options, year);
+  }
+
+  FormatHumanDate(date: Date): string {
+    const options: any = lodash.clone(this.strings['datetime'] || {});
+    const now = new Date();
+    const today = isToday(date, now);
+    const yesterday = isYesterday(date, now);
+    const sameYear = isSameYear(date, now);
+    const dateOptions: Intl.DateTimeFormatOptions = {
+      ...options,
+      hour: undefined,
+      minute: undefined,
+      second: undefined,
+      timeZoneName: undefined,
+      year: sameYear ? undefined : options.year,
+      weekday: today || yesterday ? undefined : options.weekday,
+    };
+
+    const timeOptions: Intl.DateTimeFormatOptions = {
+      ...options,
+      year: undefined,
+      month: undefined,
+      day: undefined,
+      weekday: undefined,
+    };
+
+    const dateStr = date.toLocaleDateString(this.locale, dateOptions);
+    const timeStr = date.toLocaleTimeString(this.locale, timeOptions);
+
+    if (today) {
+      const todayLabel = this.r('Today');
+      return `${todayLabel}, ${dateStr} • ${timeStr}`;
+    }
+
+    if (yesterday) {
+      const yesterdayLabel = this.r('Yesterday');
+      return `${yesterdayLabel}, ${dateStr} • ${timeStr}`;
+    }
+
+    // weekday already included in dateStr
+    return `${dateStr} • ${timeStr}`;
   }
 }
 

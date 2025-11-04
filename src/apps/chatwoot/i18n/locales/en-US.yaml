@@ -24,6 +24,9 @@ datetime:
   # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
   # timeZone: 'America/New_York'
 
+Today: Today
+Yesterday: Yesterday
+
 job.report.error: |-
   ⚠️ **{{{header}}}**
   {{#attempts.nextDelay}}
@@ -76,7 +79,7 @@ whatsapp.group.message: |-
 
 whatsapp.history.message.wrapper: |-
   {{{content}}}
-  `🗓️ {{{timestamp}}}`
+  `{{#history}}📥{{/history}}🗓️ {{{timestamp}}}`
 
 # WhatsApp Messages Ack
 UNKNOWN: |-

@@ -467,6 +467,10 @@ class MessageAnyHistoryHandler extends MessageAnyHandler {
   public force: boolean = false;
   public shouldLogUnsupported = true;
 
+  protected get historyMessage() {
+    return true;
+  }
+
   protected get shouldAddFromTag() {
     return false;
   }
@@ -480,22 +484,6 @@ class MessageAnyHistoryHandler extends MessageAnyHandler {
       return true;
     }
     return await super.ShouldProcessMessage(payload);
-  }
-
-  protected finalizeContent(content: string, payload: WAMessage): string {
-    let ack: any = null;
-    if (payload.fromMe) {
-      ack = {
-        emoji: MessageAckEmoji(payload.ack),
-        name: this.l.r(payload.ackName || 'UNKNOWN'),
-      };
-    }
-    return this.l.r('whatsapp.history.message.wrapper', {
-      content: content,
-      payload: payload,
-      timestamp: this.l.FormatTimestamp(payload.timestamp, false),
-      ack: ack,
-    });
   }
 }
 

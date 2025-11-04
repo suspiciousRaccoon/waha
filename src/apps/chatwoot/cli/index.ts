@@ -4,6 +4,7 @@ import { BufferedOutput } from '@waha/apps/chatwoot/cli/utils/BufferedOutput';
 import { CommandContext } from '@waha/apps/chatwoot/cli/types';
 import { ChatWootCommandsConfig } from '@waha/apps/chatwoot/dto/config.dto';
 import { BuildProgram } from '@waha/apps/chatwoot/cli/program.a';
+import { CHATWOOT_COMMAND_PREFIX } from '@waha/apps/chatwoot/env';
 
 export async function runText(
   commands: ChatWootCommandsConfig,
@@ -31,4 +32,4 @@ export async function runText(
   return output;
 }
 
-export const CommandPrefix = process.env.WAHA_CHATWOOT_COMMAND_PREFIX || 'wa/';
+export const CommandPrefix = CHATWOOT_COMMAND_PREFIX;

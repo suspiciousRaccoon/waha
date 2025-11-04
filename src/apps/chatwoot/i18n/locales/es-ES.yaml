@@ -25,6 +25,9 @@ datetime:
   # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
   # timeZone: 'Europe/Madrid'
 
+Today: 'Hoy'
+Yesterday: 'Ayer'
+
 job.report.error: |-
   ⚠️ **{{{header}}}**
   {{#attempts.nextDelay}}
@@ -521,7 +524,7 @@ whatsapp.to.chatwoot.message.facebook.ad: |-
   {{{payload.body}}}
 whatsapp.history.message.wrapper: |-
   {{{content}}}
-  `🗓️ {{{timestamp}}}`
+  `{{#history}}📥{{/history}}🗓️ {{{timestamp}}}`
 
 UNKNOWN: Desconocido
 ERROR: Error

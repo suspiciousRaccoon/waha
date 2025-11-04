@@ -23,6 +23,9 @@ datetime:
   # https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#timezonename
   timeZoneName: short
 
+Today: Hoje
+Yesterday: Ontem
+
 job.report.error: |-
   ⚠️ **{{{header}}}**
   {{#attempts.nextDelay}}
@@ -526,7 +529,7 @@ whatsapp.to.chatwoot.message.facebook.ad: |-
   {{{payload.body}}}
 whatsapp.history.message.wrapper: |-
   {{{content}}}
-  `🗓️ {{{timestamp}}}`
+  `{{#history}}📥{{/history}}🗓️ {{{timestamp}}}`
 
 UNKNOWN: Desconhecido
 ERROR: Erro

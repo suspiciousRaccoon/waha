@@ -32,6 +32,8 @@ import { PinoLogger } from 'nestjs-pino';
 import { TKey } from '@waha/apps/chatwoot/i18n/templates';
 import { isJidBroadcast, isJidGroup, toCusFormat } from '@waha/core/utils/jids';
 import { EngineHelper } from '@waha/apps/chatwoot/waha';
+import { EnsureSeconds } from '@waha/utils/timehelper';
+import { CHATWOOT_MESSAGE_CALENDAR_THRESHOLD_SECONDS } from '@waha/apps/chatwoot/env';
 
 export function ListenEventsForChatWoot() {
   return [
@@ -209,8 +211,37 @@ export abstract class MessageBaseHandler<Payload extends WAMessageBase> {
     payload: Payload,
   ): Promise<ChatWootMessagePartial>;
 
+  protected get historyMessage() {
+    return false;
+  }
+
   protected finalizeContent(content: string, payload: Payload): string {
-    return content;
+    if (!content) {
+      return content;
+    }
+    if (!payload.timestamp) {
+      return content;
+    }
+    if (!this.historyMessage) {
+      // Check if the message is recent enough to be considered current
+      const now = EnsureSeconds(Date.now() / 1000);
+      const messageAge = now - EnsureSeconds(payload.timestamp);
+      const recent = messageAge <= CHATWOOT_MESSAGE_CALENDAR_THRESHOLD_SECONDS;
+      if (recent) {
+        return content;
+      }
+    }
+    const date = this.l.ParseTimestamp(payload.timestamp);
+    if (!date) {
+      return content;
+    }
+    const timestamp = this.l.FormatHumanDate(date);
+    return this.l.r('whatsapp.history.message.wrapper', {
+      content: content,
+      payload: payload,
+      history: this.historyMessage,
+      timestamp: timestamp,
+    });
   }
 
   abstract getReplyToWhatsAppID(payload: Payload): string | undefined;
