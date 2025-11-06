@@ -148,7 +148,12 @@ export class WhatsappConfigService implements OnApplicationBootstrap {
     if (!value) {
       return [];
     }
-    return value.split(',');
+    return value.split(',').filter(Boolean);
+  }
+
+  getExcludedFullPaths(): string[] {
+    const paths = this.getExcludedPaths();
+    return paths.map((path) => (path.startsWith('/') ? path : `/${path}`));
   }
 
   getHealthMediaFilesThreshold(): number {
