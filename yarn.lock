@@ -12636,7 +12636,7 @@ __metadata:
     typescript: 5.9.2
     ulid: ^2.3.0
     undici: ^7.16.0
-    whatsapp-web.js: "github:devlikeapro/whatsapp-web.js#fork-main-2025-09-10"
+    whatsapp-web.js: "github:devlikeapro/whatsapp-web.js#fork-main-2025-11-05"
     write-file-atomic: ^6.0.0
     yaml: ^2.7.1
   dependenciesMeta:
@@ -12737,9 +12737,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"whatsapp-web.js@github:devlikeapro/whatsapp-web.js#fork-main-2025-09-10":
-  version: 1.34.1
-  resolution: "whatsapp-web.js@https://github.com/devlikeapro/whatsapp-web.js.git#commit=130dbdb5608d9d6add1fe8712dc9e8be6a4bab34"
+"whatsapp-web.js@github:devlikeapro/whatsapp-web.js#fork-main-2025-11-05":
+  version: 1.34.2
+  resolution: "whatsapp-web.js@https://github.com/devlikeapro/whatsapp-web.js.git#commit=c84b4af4dfd01f326d37f4de6acd7bebc06496d0"
   dependencies:
     "@pedroslopez/moduleraid": ^5.0.2
     archiver: ^5.3.1
@@ -12757,7 +12757,7 @@ __metadata:
       optional: true
     unzipper:
       optional: true
-  checksum: fd1fa94beab523b7b0becec27bd626e350805e1cdcefe81b4648e4a1c865fab8eeee9ab5a7c2d72d83969647c108df446ee2ffa2a475a0024acb75007fd96a53
+  checksum: d9d615d29ba14f6113080a19d8f7e1396ea7dde3cbe4983db04e8df512483198c3f73236e9e8c366afb035ee700bd5718d72bc18ee01caeb7cd86bcadfdbb056
   languageName: node
   linkType: hard
 
