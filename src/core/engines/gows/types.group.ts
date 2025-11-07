@@ -86,6 +86,7 @@ export interface GroupInfoEvent {
 
 export interface GOWSGroupParticipant {
   JID: JID;
+  PhoneNumber: JID;
   IsAdmin: boolean;
   IsSuperAdmin: boolean;
 }

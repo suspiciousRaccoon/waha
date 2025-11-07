@@ -50,6 +50,7 @@ import {
   WhatsappSession,
 } from '@waha/core/abc/session.abc';
 import {
+  ToGroupParticipant,
   ToGroupV2JoinEvent,
   ToGroupV2LeaveEvent,
   ToGroupV2Participants,
@@ -140,6 +141,7 @@ import {
 import { BinaryFile, RemoteFile } from '@waha/structures/files.dto';
 import {
   CreateGroupRequest,
+  GroupParticipant,
   ParticipantsRequest,
   SettingsSecurityChangeInfo,
 } from '@waha/structures/groups.dto';
@@ -1480,6 +1482,14 @@ export class WhatsappSessionNoWebCore extends WhatsappSession {
       throw new Error(`Group with id '${id}' not found`);
     }
     return group;
+  }
+
+  public async getGroupParticipants(id: string): Promise<GroupParticipant[]> {
+    const group = (await this.getGroup(id)) as GroupMetadata;
+    if (!group?.participants?.length) {
+      return [];
+    }
+    return group.participants.map(ToGroupParticipant);
   }
 
   public async deleteGroup(id) {

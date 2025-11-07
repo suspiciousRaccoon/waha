@@ -181,6 +181,9 @@ export class MessageTextRequest extends ChatRequest {
   @ApiHideProperty()
   mentions?: string[];
 
+  @ApiHideProperty()
+  mention?: 'all';
+
   @ReplyToProperty()
   reply_to?: string;
 

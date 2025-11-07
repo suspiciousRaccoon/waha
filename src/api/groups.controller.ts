@@ -31,6 +31,7 @@ import {
   CreateGroupRequest,
   DescriptionRequest,
   GroupField,
+  GroupParticipant,
   GroupsListFields,
   GroupsPaginationParams,
   JoinGroupRequest,
@@ -318,6 +319,17 @@ export class GroupsController {
     @Param('id') id: string,
   ) {
     return session.getParticipants(id);
+  }
+
+  @Get(':id/participants/v2')
+  @GroupIdApiParam
+  @SessionApiParam
+  @ApiOperation({ summary: 'Get group participants.' })
+  getGroupParticipants(
+    @WorkingSessionParam session: WhatsappSession,
+    @Param('id') id: string,
+  ): Promise<GroupParticipant[]> {
+    return session.getGroupParticipants(id);
   }
 
   @Post(':id/participants/add')

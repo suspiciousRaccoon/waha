@@ -101,6 +101,7 @@ import { EventMessageRequest } from '../../structures/events.dto';
 import {
   CreateGroupRequest,
   GroupField,
+  GroupParticipant,
   GroupsListFields,
   ParticipantsRequest,
   SettingsSecurityChangeInfo,
@@ -818,6 +819,10 @@ export abstract class WhatsappSession {
   }
 
   public getGroup(id) {
+    throw new NotImplementedByEngineError();
+  }
+
+  public getGroupParticipants(id: string): Promise<GroupParticipant[]> {
     throw new NotImplementedByEngineError();
   }
 

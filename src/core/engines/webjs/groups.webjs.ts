@@ -18,6 +18,7 @@ import {
   GroupNotificationTypes,
   GroupParticipant as WEBJSGroupParticipant,
 } from 'whatsapp-web.js';
+import { isPnUser } from '@waha/core/utils/jids';
 
 function ToGroupInfo(
   group: GroupChat,
@@ -60,7 +61,7 @@ export async function ToGroupV2JoinEvent(
   };
 }
 
-function getParticipants(
+export function getParticipants(
   participants: WEBJSGroupParticipant[],
 ): GroupParticipant[] {
   return participants.map((participant) => {
@@ -73,6 +74,9 @@ function getParticipants(
 
     return {
       id: participant.id._serialized,
+      pn: isPnUser(participant.id._serialized)
+        ? participant.id._serialized
+        : null,
       role: role,
     };
   });

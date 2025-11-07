@@ -56,6 +56,7 @@ export function ToGroupParticipant(
   }
   return {
     id: toCusFormat(participant.id),
+    pn: toCusFormat(participant.phoneNumber),
     role: role,
   };
 }

@@ -15,6 +15,7 @@ import { Jid } from '@waha/core/engines/const';
 import { EventsFromObservable } from '@waha/core/engines/gows/EventsFromObservable';
 import { GowsEventStreamObservable } from '@waha/core/engines/gows/GowsEventStreamObservable';
 import {
+  ToGroupParticipants,
   ToGroupV2JoinEvent,
   ToGroupV2LeaveEvent,
   ToGroupV2ParticipantsEvents,
@@ -105,6 +106,7 @@ import {
 import { BinaryFile, RemoteFile } from '@waha/structures/files.dto';
 import {
   CreateGroupRequest,
+  GroupParticipant,
   GroupSortField,
   Participant,
   ParticipantsRequest,
@@ -1101,6 +1103,14 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
     const response = await promisify(this.client.GetGroupInfo)(req);
     const data = parseJson(response);
     return data;
+  }
+
+  public async getGroupParticipants(id: string): Promise<GroupParticipant[]> {
+    const group = await this.getGroup(id);
+    if (!group?.Participants?.length) {
+      return [];
+    }
+    return ToGroupParticipants(group.Participants);
   }
 
   public async getInfoAdminsOnly(id): Promise<SettingsSecurityChangeInfo> {

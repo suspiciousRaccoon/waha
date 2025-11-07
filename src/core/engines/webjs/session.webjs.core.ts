@@ -9,6 +9,7 @@ import {
   TagReceiptNodeToReceiptEvent,
 } from '@waha/core/engines/webjs/ack.webjs';
 import {
+  getParticipants,
   ToGroupV2JoinEvent,
   ToGroupV2LeaveEvent,
   ToGroupV2ParticipantsEvent,
@@ -95,6 +96,7 @@ import {
 import { BinaryFile, RemoteFile } from '@waha/structures/files.dto';
 import {
   CreateGroupRequest,
+  GroupParticipant,
   GroupSortField,
   ParticipantsRequest,
   SettingsSecurityChangeInfo,
@@ -1153,6 +1155,11 @@ export class WhatsappSessionWebJSCore extends WhatsappSession {
 
   public getGroup(id) {
     return this.whatsapp.getChatById(id);
+  }
+
+  public async getGroupParticipants(id: string): Promise<GroupParticipant[]> {
+    const group = (await this.whatsapp.getChatById(id)) as GroupChat;
+    return getParticipants(group.participants);
   }
 
   public async deleteGroup(id) {

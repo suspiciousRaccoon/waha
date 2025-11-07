@@ -4,7 +4,7 @@ import {
   GroupInfoFull,
   JoinedGroupEvent,
 } from '@waha/core/engines/gows/types.group';
-import { toJID } from '@waha/core/utils/jids';
+import { toCusFormat, toJID } from '@waha/core/utils/jids';
 import {
   GroupId,
   GroupInfo,
@@ -116,7 +116,7 @@ function getParticipants(jids: string[] | null, type: GroupParticipantType) {
   const participants: GroupParticipant[] = [];
   for (const jid of jids) {
     participants.push({
-      id: jid,
+      id: toCusFormat(jid),
       role: role,
     });
   }
@@ -124,7 +124,7 @@ function getParticipants(jids: string[] | null, type: GroupParticipantType) {
 }
 
 function ToGroupInfo(group: GroupInfoFull): GroupInfo {
-  const participants: GroupParticipant[] = extractParticipants(
+  const participants: GroupParticipant[] = ToGroupParticipants(
     group.Participants,
   );
   return {
@@ -169,7 +169,7 @@ function ToGroupInfoPartial(group: GroupInfoEvent): GroupInfo | null {
   return null;
 }
 
-function extractParticipants(
+export function ToGroupParticipants(
   participants: GOWSGroupParticipant[],
 ): GroupParticipant[] {
   const result: GroupParticipant[] = [];
@@ -183,7 +183,8 @@ function extractParticipants(
       role = GroupParticipantRole.PARTICIPANT;
     }
     result.push({
-      id: participant.JID,
+      id: toCusFormat(participant.JID),
+      pn: toCusFormat(participant.PhoneNumber),
       role: role,
     });
   }

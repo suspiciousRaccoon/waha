@@ -115,9 +115,16 @@ export enum GroupParticipantRole {
 
 export class GroupParticipant {
   @ApiProperty({
-    example: '123456789@c.us',
+    description: 'Member ID in @c.us or @lid format',
+    example: '123456789@lid',
   })
   id: string;
+
+  @ApiProperty({
+    description: 'Member ID in @c.us format',
+    example: '123456789@c.us',
+  })
+  pn?: string;
 
   @ApiProperty({
     example: GroupParticipantRole.PARTICIPANT,
