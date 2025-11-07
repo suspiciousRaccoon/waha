@@ -94,6 +94,7 @@ export class ChatPictureResponse {
 
 export enum MessageSortField {
   TIMESTAMP = 'timestamp',
+  MESSAGE_TIMESTAMP = 'messageTimestamp',
 }
 
 export class GetChatMessagesQuery extends PaginationParams {

@@ -122,6 +122,9 @@ class ChatsController {
     @WorkingSessionParam session: WhatsappSession,
     @Param('chatId') chatId: string,
   ) {
+    if (query.sortBy == MessageSortField.MESSAGE_TIMESTAMP) {
+      query.sortBy = MessageSortField.TIMESTAMP;
+    }
     query.sortBy = query.sortBy || MessageSortField.TIMESTAMP;
     query.sortOrder = query.sortOrder || SortOrder.DESC;
     filter = transformAck(filter);
