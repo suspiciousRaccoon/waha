@@ -5,6 +5,7 @@ import {
   Post,
   Put,
   Query,
+  UnprocessableEntityException,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -44,6 +45,20 @@ import {
   WANumberExistResult,
 } from '../structures/chatting.dto';
 import { WAMessage } from '../structures/responses.dto';
+import { isJidGroup } from '@waha/core/utils/jids';
+
+function validateRequestMentions(request: MessageTextRequest) {
+  if (!isJidGroup(request.chatId)) {
+    throw new UnprocessableEntityException(
+      `"mentions":["all"] can be used only in group chats, not in '${request.chatId}'`,
+    );
+  }
+  if (request.mentions.length > 1) {
+    throw new UnprocessableEntityException(
+      `"mentions":["all"] cannot be used with other mentions`,
+    );
+  }
+}
 
 @ApiSecurity('api_key')
 @Controller('api')
@@ -55,6 +70,15 @@ export class ChattingController {
   @ApiOperation({ summary: 'Send a text message' })
   async sendText(@Body() request: MessageTextRequest): Promise<WAMessage> {
     const whatsapp = await this.manager.getWorkingSession(request.session);
+    if (request.mentions && request.mentions.includes('all')) {
+      validateRequestMentions(request);
+      const participants = await whatsapp.getGroupParticipants(request.chatId);
+      let mentions = participants.map((p) => p.id);
+      // Exclude my ids
+      const me = whatsapp.getSessionMeInfo();
+      mentions = mentions.filter((id) => id !== me.id && id !== me.lid);
+      request.mentions = mentions;
+    }
     return whatsapp.sendText(request);
   }
 
