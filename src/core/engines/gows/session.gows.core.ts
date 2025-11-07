@@ -804,6 +804,7 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
       linkPreview: request.linkPreview ?? true,
       linkPreviewHighQuality: request.linkPreviewHighQuality,
       replyTo: getMessageIdFromSerialized(request.reply_to),
+      mentions: request.mentions?.map((mention) => toJID(mention)),
     });
     const response = await promisify(this.client.SendMessage)(message);
     const data = response.toObject();
@@ -999,7 +1000,7 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
   }
 
   reply(request: MessageReplyRequest) {
-    throw new Error('Method not implemented.');
+    return this.sendText(request);
   }
 
   async sendSeen(request: SendSeenRequest) {

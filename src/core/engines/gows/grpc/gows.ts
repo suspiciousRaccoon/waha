@@ -3564,9 +3564,10 @@ export namespace messages {
             list?: ListMessage;
             location?: Location;
             pollVote?: PollVoteMessage;
+            mentions?: string[];
         }) {
             super();
-            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [11, 13], this.#one_of_decls);
+            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [11, 13, 19], this.#one_of_decls);
             if (!Array.isArray(data) && typeof data == "object") {
                 if ("session" in data && data.session != undefined) {
                     this.session = data.session;
@@ -3621,6 +3622,9 @@ export namespace messages {
                 }
                 if ("pollVote" in data && data.pollVote != undefined) {
                     this.pollVote = data.pollVote;
+                }
+                if ("mentions" in data && data.mentions != undefined) {
+                    this.mentions = data.mentions;
                 }
             }
         }
@@ -3762,6 +3766,12 @@ export namespace messages {
         get has_pollVote() {
             return pb_1.Message.getField(this, 18) != null;
         }
+        get mentions() {
+            return pb_1.Message.getFieldWithDefault(this, 19, []) as string[];
+        }
+        set mentions(value: string[]) {
+            pb_1.Message.setField(this, 19, value);
+        }
         static fromObject(data: {
             session?: ReturnType<typeof Session.prototype.toObject>;
             jid?: string;
@@ -3781,6 +3791,7 @@ export namespace messages {
             list?: ReturnType<typeof ListMessage.prototype.toObject>;
             location?: ReturnType<typeof Location.prototype.toObject>;
             pollVote?: ReturnType<typeof PollVoteMessage.prototype.toObject>;
+            mentions?: string[];
         }): MessageRequest {
             const message = new MessageRequest({});
             if (data.session != null) {
@@ -3837,6 +3848,9 @@ export namespace messages {
             if (data.pollVote != null) {
                 message.pollVote = PollVoteMessage.fromObject(data.pollVote);
             }
+            if (data.mentions != null) {
+                message.mentions = data.mentions;
+            }
             return message;
         }
         toObject() {
@@ -3859,6 +3873,7 @@ export namespace messages {
                 list?: ReturnType<typeof ListMessage.prototype.toObject>;
                 location?: ReturnType<typeof Location.prototype.toObject>;
                 pollVote?: ReturnType<typeof PollVoteMessage.prototype.toObject>;
+                mentions?: string[];
             } = {};
             if (this.session != null) {
                 data.session = this.session.toObject();
@@ -3914,6 +3929,9 @@ export namespace messages {
             if (this.pollVote != null) {
                 data.pollVote = this.pollVote.toObject();
             }
+            if (this.mentions != null) {
+                data.mentions = this.mentions;
+            }
             return data;
         }
         serialize(): Uint8Array;
@@ -3956,6 +3974,8 @@ export namespace messages {
                 writer.writeMessage(17, this.location, () => this.location.serialize(writer));
             if (this.has_pollVote)
                 writer.writeMessage(18, this.pollVote, () => this.pollVote.serialize(writer));
+            if (this.mentions.length)
+                writer.writeRepeatedString(19, this.mentions);
             if (!w)
                 return writer.getResultBuffer();
         }
@@ -4018,6 +4038,9 @@ export namespace messages {
                         break;
                     case 18:
                         reader.readMessage(message.pollVote, () => message.pollVote = PollVoteMessage.deserialize(reader));
+                        break;
+                    case 19:
+                        pb_1.Message.addToRepeatedField(message, 19, reader.readString());
                         break;
                     default: reader.skipField();
                 }
