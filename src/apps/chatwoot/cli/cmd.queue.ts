@@ -3,14 +3,7 @@ import { QueueManager } from '@waha/apps/chatwoot/services/QueueManager';
 import { Locale } from '@waha/apps/chatwoot/i18n/locale';
 import { Conversation } from '@waha/apps/chatwoot/client/Conversation';
 import { QueueRegistry } from '@waha/apps/chatwoot/services/QueueRegistry';
-
-function repr(name: string): string {
-  // No chatwoot in the name always (it start with chatwoot)
-  name = name.replace('chatwoot.', '');
-  // No waha in the name
-  name = name.replace('waha |', 'whatsapp |');
-  return name;
-}
+import { QueueNameRepr } from '@waha/apps/app_sdk/JobUtils';
 
 export interface QueueCommandContext {
   queues: {
@@ -25,7 +18,7 @@ export async function QueueStatus(ctx: QueueCommandContext, name: string) {
   const names = manager.resolve(name);
   let result = await manager.status(names);
   for (const status of result) {
-    status.name = repr(status.name);
+    status.name = QueueNameRepr(status.name);
   }
   // locked: true - last
   result = lodash.sortBy(result, [(x) => !!x.locked, 'name']);
