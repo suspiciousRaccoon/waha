@@ -110,7 +110,11 @@ import {
   WAHAChatPresences,
   WAHAPresenceData,
 } from '@waha/structures/presence.dto';
-import { WAMessage, WAMessageReaction } from '@waha/structures/responses.dto';
+import {
+  WALocation,
+  WAMessage,
+  WAMessageReaction,
+} from '@waha/structures/responses.dto';
 import { BrowserTraceQuery } from '@waha/structures/server.debug.dto';
 import { MeInfo } from '@waha/structures/sessions.dto';
 import { StatusRequest, TextStatus } from '@waha/structures/status.dto';
@@ -1802,7 +1806,7 @@ export class WhatsappSessionWebJSCore extends WhatsappSession {
       // @ts-ignore
       ack: message.ack,
       ackName: WAMessageAck[message.ack] || ACK_UNKNOWN,
-      location: message.location,
+      location: this.extractLocation(message),
       vCards: message.vCards,
       replyTo: replyTo,
       _data: message.rawData,
@@ -1820,6 +1824,24 @@ export class WhatsappSessionWebJSCore extends WhatsappSession {
       participant: quotedMsg.author || quotedMsg.from,
       body: quotedMsg.caption || quotedMsg.body,
       _data: quotedMsg,
+    };
+  }
+
+  protected extractLocation(message: Message): WALocation | null {
+    const location = message.location;
+    if (lodash.isEmpty(location)) {
+      return null;
+    }
+    const rawData: any = message.rawData;
+    return {
+      live: Boolean(rawData.isLive),
+      latitude: location.latitude,
+      longitude: location.longitude,
+      name: location.name,
+      address: location.address,
+      description: rawData.comment || location.description,
+      url: location.url,
+      thumbnail: message.body,
     };
   }
 

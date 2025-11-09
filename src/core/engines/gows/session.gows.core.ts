@@ -120,6 +120,7 @@ import {
 } from '@waha/structures/presence.dto';
 import {
   MessageSource,
+  WALocation,
   WAMessage,
   WAMessageReaction,
 } from '@waha/structures/responses.dto';
@@ -174,6 +175,9 @@ import {
 import esm from '@waha/vendor/esm';
 import { IsEditedMessage } from '@waha/core/utils/pwa';
 import MessageServiceClient = messages.MessageServiceClient;
+import { GoToJSWAProto } from '@waha/core/engines/gows/waproto';
+import { extractWALocation } from '@waha/core/engines/waproto/locaiton';
+import { extractVCards } from '@waha/core/engines/waproto/vcards';
 
 enum WhatsMeowEvent {
   CONNECTED = 'gows.ConnectedEventData',
@@ -2041,6 +2045,16 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
     const mediaContent = extractMediaContent(message.Message);
     const source = this.getSourceDeviceByMsg(message);
 
+    let waproto: proto.Message | null = null;
+    try {
+      waproto = GoToJSWAProto(message.Message);
+    } catch (e) {
+      this.logger.error(
+        'Failed to resolve proto message from GOWS to JS format',
+      );
+      this.logger.error(e, e.stack);
+    }
+
     return {
       id: id,
       timestamp: parseTimestampToSeconds(message.Info.Timestamp),
@@ -2056,7 +2070,8 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
       mediaUrl: message.media?.url,
       // @ts-ignore
       ack: ack,
-      // @ts-ignore
+      location: extractWALocation(waproto),
+      vCards: extractVCards(waproto),
       ackName: WAMessageAck[ack] || ACK_UNKNOWN,
       replyTo: replyTo,
       _data: message,

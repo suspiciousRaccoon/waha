@@ -159,7 +159,11 @@ import {
   WAHAChatPresences,
   WAHAPresenceData,
 } from '@waha/structures/presence.dto';
-import { WAMessage, WAMessageReaction } from '@waha/structures/responses.dto';
+import {
+  WALocation,
+  WAMessage,
+  WAMessageReaction,
+} from '@waha/structures/responses.dto';
 import { MeInfo } from '@waha/structures/sessions.dto';
 import {
   BROADCAST_ID,
@@ -205,6 +209,8 @@ import {
   IsEditedMessage,
   IsHistorySyncNotification,
 } from '@waha/core/utils/pwa';
+import { extractWALocation } from '@waha/core/engines/waproto/locaiton';
+import { extractVCards } from '@waha/core/engines/waproto/vcards';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const promiseRetry = require('promise-retry');
 
@@ -2280,6 +2286,7 @@ export class WhatsappSessionNoWebCore extends WhatsappSession {
     const ack = message.ack || StatusToAck(message.status);
     const mediaContent = extractMediaContent(message.message);
     const source = this.getMessageSource(message.key.id);
+    const waproto = message.message;
     return {
       id: id,
       timestamp: ensureNumber(message.messageTimestamp),
@@ -2297,8 +2304,8 @@ export class WhatsappSessionNoWebCore extends WhatsappSession {
       ack: ack,
       // @ts-ignore
       ackName: WAMessageAck[ack] || ACK_UNKNOWN,
-      location: message.location,
-      vCards: message.vCards,
+      location: extractWALocation(waproto),
+      vCards: extractVCards(waproto),
       replyTo: replyTo,
       _data: message,
     };
