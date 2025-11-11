@@ -1,4 +1,4 @@
-import { camelCaseKeysDeep } from './proto';
+import { camelCaseKeysDeep } from '@waha/core/engines/gows/waproto';
 
 describe('camelCaseKeysDeep', () => {
   it('URL to url', () => {

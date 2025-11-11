@@ -65,7 +65,7 @@ class MessageEditedHandler extends MessageBaseHandler<WAMessageEditedBody> {
   protected async getMessage(
     payload: WAMessageEditedBody,
   ): Promise<ChatWootMessagePartial> {
-    const protoMessage = resolveProtoMessage(payload);
+    const protoMessage = resolveProtoMessage(payload._data);
     const converter: MessageToChatWootConverter = new MessageEdited(this.l);
     return converter.convert(payload, protoMessage);
   }

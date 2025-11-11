@@ -2,7 +2,6 @@ import { WAMessage } from '@waha/structures/responses.dto';
 import type { proto } from '@adiwajshing/baileys';
 import { ChatWootMessagePartial } from '@waha/apps/chatwoot/consumers/waha/base';
 
-export { resolveProtoMessage } from './utils/proto';
 export { TextMessage } from './TextMessage';
 export { LocationMessage } from './LocationMessage';
 export { ShareContactMessage } from './ShareContactMessage';
@@ -23,3 +22,4 @@ export interface MessageToChatWootConverter {
     protoMessage: proto.Message | null,
   ): Awaitable<ChatWootMessagePartial | null>;
 }
+export { resolveProtoMessage } from '@waha/core/engines/gows/waproto';

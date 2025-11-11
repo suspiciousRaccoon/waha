@@ -103,7 +103,7 @@ describe('PixMessage - pt-BR', () => {
 
     // Test
     const logger = JestLogger();
-    const protoMessage = resolveProtoMessage(payload);
+    const protoMessage = resolveProtoMessage(payload._data);
     const converter = new PixMessage(locale, logger);
     const result = converter.convert(payload, protoMessage);
 
@@ -222,7 +222,7 @@ describe('PixMessage - pt-BR', () => {
 
     // Test
     const logger = JestLogger();
-    const protoMessage = resolveProtoMessage(payload);
+    const protoMessage = resolveProtoMessage(payload._data);
     const converter = new PixMessage(locale, logger);
     const result = converter.convert(payload, protoMessage);
 

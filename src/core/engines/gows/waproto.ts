@@ -1,6 +1,5 @@
-import { WAMessage } from '@waha/structures/responses.dto';
-import type { proto } from '@adiwajshing/baileys';
 import * as lodash from 'lodash';
+import type { proto } from '@adiwajshing/baileys';
 
 export function camelCaseKeysDeep<T = any>(input: unknown): T {
   if (Array.isArray(input)) return input.map(camelCaseKeysDeep) as unknown as T;
@@ -13,26 +12,29 @@ export function camelCaseKeysDeep<T = any>(input: unknown): T {
   return input as T;
 }
 
-export function resolveProtoMessage(payload: WAMessage): proto.Message | null {
+/**
+ * Converts GoToJS WA Proto to Baileys Proto Message
+ */
+export function GoToJSWAProto(data: any): proto.Message | null {
+  if (!data) {
+    return data;
+  }
+  return camelCaseKeysDeep(data) as proto.Message;
+}
+
+export function resolveProtoMessage(data: any): proto.Message | null {
   // GOWS
-  if (payload._data.Message) {
-    const protoMessage = payload._data.Message;
+  if (data.Message) {
+    const protoMessage = data.Message;
     // mediaURL => mediaUrl
     // otherAttributes => otherAttributes
     return camelCaseKeysDeep(protoMessage);
   }
 
   // NOWEB
-  if (payload._data.message) {
-    return payload._data.message;
+  if (data.message) {
+    return data.message;
   }
   // WEBJS - not available
   return null;
-}
-
-export function isEmptyString(content: string) {
-  if (!content) {
-    return true;
-  }
-  return content === '' || content === '\n';
 }

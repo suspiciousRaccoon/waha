@@ -77,7 +77,7 @@ export class MessageAnyHandler extends MessageBaseHandler<WAMessage> {
   ): Promise<ChatWootMessagePartial> {
     let converter: MessageToChatWootConverter;
     let msg: ChatWootMessagePartial;
-    const protoMessage = resolveProtoMessage(payload);
+    const protoMessage = resolveProtoMessage(payload._data);
 
     // Check for Facebook Ad first - but let it use the normal flow later
     converter = new FacebookAdMessage(this.l, this.logger);

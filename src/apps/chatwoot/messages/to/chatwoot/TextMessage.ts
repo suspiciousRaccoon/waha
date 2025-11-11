@@ -4,7 +4,7 @@ import { ChatWootMessagePartial } from '@waha/apps/chatwoot/consumers/waha/base'
 import { Locale } from '@waha/apps/chatwoot/i18n/locale';
 import { TKey } from '@waha/apps/chatwoot/i18n/templates';
 import { WAHASelf } from '@waha/apps/app_sdk/waha/WAHASelf';
-import { isEmptyString } from './utils/proto';
+import { isEmptyString } from './utils/text';
 import type { proto } from '@adiwajshing/baileys';
 import { WAMessage } from '@waha/structures/responses.dto';
 import { MessageToChatWootConverter } from '@waha/apps/chatwoot/messages/to/chatwoot';

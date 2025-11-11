@@ -2,7 +2,7 @@ import { ChatWootMessagePartial } from '@waha/apps/chatwoot/consumers/waha/base'
 import { Locale } from '@waha/apps/chatwoot/i18n/locale';
 import { TKey } from '@waha/apps/chatwoot/i18n/templates';
 import { MessageToChatWootConverter } from '@waha/apps/chatwoot/messages/to/chatwoot';
-import { isEmptyString } from '@waha/apps/chatwoot/messages/to/chatwoot/utils/proto';
+import { isEmptyString } from '@waha/apps/chatwoot/messages/to/chatwoot/utils/text';
 import { WhatsappToMarkdown } from '@waha/apps/chatwoot/messages/to/chatwoot/utils/markdown';
 import * as lodash from 'lodash';
 import type { proto } from '@adiwajshing/baileys';
