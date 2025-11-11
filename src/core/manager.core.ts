@@ -350,7 +350,9 @@ export class SessionManagerCore extends SessionManager implements OnModuleInit {
           config: this.sessionConfig,
           me: null,
           presence: null,
-          lastActivityTimestamp: null,
+          timestamps: {
+            activity: null,
+          },
         },
       ];
     }
@@ -370,7 +372,9 @@ export class SessionManagerCore extends SessionManager implements OnModuleInit {
         config: session.sessionConfig,
         me: me,
         presence: session.presence,
-        lastActivityTimestamp: session?.getLastActivityTimestamp(),
+        timestamps: {
+          activity: session?.getLastActivityTimestamp(),
+        },
       },
     ];
   }

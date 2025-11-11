@@ -239,7 +239,9 @@ export class SessionInfo extends SessionDTO {
   assignedWorker?: string;
   // Timestamp of the last activity in milliseconds
   presence: WAHAPresenceStatus.ONLINE | WAHAPresenceStatus.OFFLINE | null;
-  lastActivityTimestamp: number | null;
+  timestamps: {
+    activity: number | null;
+  };
 }
 
 export class SessionDetailedInfo extends SessionInfo {
