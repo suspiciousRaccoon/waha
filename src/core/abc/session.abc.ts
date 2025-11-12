@@ -6,6 +6,7 @@ import { MessagesForRead } from '@waha/core/utils/convertors';
 import {
   IgnoreJidConfig,
   isJidBroadcast,
+  isJidGroup,
   isJidNewsletter,
   isNullJid,
   JidFilter,
@@ -1197,6 +1198,14 @@ export abstract class WhatsappSession {
    */
   public fetch(url: string): Promise<Buffer> {
     return fetchBuffer(url);
+  }
+
+  public async resolveMentionsAll(chatId: string): Promise<string[]> {
+    const participants = await this.getGroupParticipants(chatId);
+    let mentions = participants.map((p) => p.id);
+    // Exclude my ids
+    const me = this.getSessionMeInfo();
+    return mentions.filter((id) => id !== me.id && id !== me.lid);
   }
 }
 

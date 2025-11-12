@@ -303,12 +303,18 @@ class FileRequest extends ChatRequest {
 export class MessageImageRequest extends FileRequest {
   caption?: string;
 
+  @ApiHideProperty()
+  mentions?: string[];
+
   @ReplyToProperty()
   reply_to?: string;
 }
 
 export class MessageFileRequest extends FileRequest {
   caption?: string;
+
+  @ApiHideProperty()
+  mentions?: string[];
 
   @ReplyToProperty()
   reply_to?: string;
@@ -342,6 +348,9 @@ export class MessageVideoRequest extends ChatRequest {
   file: VideoRemoteFile | VideoBinaryFile;
 
   caption?: string = 'Just watch at this!';
+
+  @ApiHideProperty()
+  mentions?: string[];
 
   @ApiProperty({
     description:
