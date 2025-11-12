@@ -631,6 +631,7 @@ export abstract class WhatsappSession {
           'Auto-set presence to OFFLINE after time without activity',
         );
       } catch (error) {
+        this.presence = WAHAPresenceStatus.OFFLINE;
         this.logger.debug('Failed to set presence OFFLINE', error);
       }
       this.cleanupPresenceTimeout();
