@@ -337,11 +337,15 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
 
     events.on(WhatsMeowEvent.DISCONNECTED, () => {
       if (this.status != WAHASessionStatus.STARTING) {
+        this.cleanupPresenceTimeout();
+        this.presence = null;
         this.status = WAHASessionStatus.STARTING;
       }
     });
     events.on(WhatsMeowEvent.KEEP_ALIVE_TIMEOUT, () => {
       if (this.status != WAHASessionStatus.STARTING) {
+        this.cleanupPresenceTimeout();
+        this.presence = null;
         this.status = WAHASessionStatus.STARTING;
       }
     });

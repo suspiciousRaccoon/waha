@@ -725,6 +725,7 @@ export class WhatsappSessionNoWebCore extends WhatsappSession {
 
   private async end() {
     this.cleanupPresenceTimeout();
+    this.presence = null;
     this.autoRestartJob.stop();
     // @ts-ignore
     this.sock?.ev?.removeAllListeners();

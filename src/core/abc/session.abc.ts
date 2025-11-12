@@ -336,6 +336,9 @@ export abstract class WhatsappSession {
 
   protected set presence(value: WAHAPresenceStatus) {
     switch (value) {
+      case null:
+        this._presence = null;
+        break;
       case WAHAPresenceStatus.ONLINE:
         this._presence = WAHAPresenceStatus.ONLINE;
         break;
