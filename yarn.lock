@@ -4867,14 +4867,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"better-sqlite3@npm:11.3.0":
-  version: 11.3.0
-  resolution: "better-sqlite3@npm:11.3.0"
+"better-sqlite3@npm:^12.4.1":
+  version: 12.4.1
+  resolution: "better-sqlite3@npm:12.4.1"
   dependencies:
     bindings: ^1.5.0
     node-gyp: latest
     prebuild-install: ^7.1.1
-  checksum: 364058b4cc739abd5774f511521298eac101d1e6f0362da65b56d9135e6e0728af38c2fa182ec2b56b4c76d7f7ff8efefd753df0c1b8f0192051b06d21e5d1f7
+  checksum: 39141f425a661fcb6ad413c791132c58463026f30d652a672ed9e0fa9fd286021826c0d2c3700762d6bafcccef8de5af1f0fb79eb8c2f31f005f7f0b47069292
   languageName: node
   linkType: hard
 
@@ -12576,7 +12576,7 @@ __metadata:
     audio-decode: ^2.2.2
     axios: ^1.9.0
     axios-retry: ^4.5.0
-    better-sqlite3: 11.3.0
+    better-sqlite3: ^12.4.1
     bufferutil: ^4.0.8
     bullmq: ^5.48.1
     check-disk-space: ^3.4.0
