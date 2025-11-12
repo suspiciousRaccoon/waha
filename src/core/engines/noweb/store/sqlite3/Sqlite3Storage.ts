@@ -26,6 +26,13 @@ export class Sqlite3Storage extends INowebStorage {
       client: KNEX_SQLITE_CLIENT,
       connection: { filename: filePath },
       useNullAsDefault: true,
+      pool: {
+        min: 1,
+        max: 10,
+        idleTimeoutMillis: 60_000,
+        createTimeoutMillis: 120_000,
+        acquireTimeoutMillis: 120_000,
+      },
     });
     this.tables = NOWEB_STORE_SCHEMA;
   }
