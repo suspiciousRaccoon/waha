@@ -4,6 +4,7 @@ import Knex from 'knex';
 import * as path from 'path';
 
 import { LocalStore } from './LocalStore';
+import { KNEX_SQLITE_CLIENT } from '@waha/core/env';
 
 export class LocalStoreCore extends LocalStore {
   protected readonly baseDirectory: string =
@@ -69,7 +70,7 @@ export class LocalStoreCore extends LocalStore {
     const engineDir = this.getEngineDirectory();
     const database = path.join(engineDir, 'waha.sqlite3');
     return Knex({
-      client: 'sqlite3',
+      client: KNEX_SQLITE_CLIENT,
       connection: { filename: database },
       useNullAsDefault: true,
       acquireConnectionTimeout: 120_000,
