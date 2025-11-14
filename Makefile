@@ -32,7 +32,7 @@ push:
 	docker push devlikeapro/waha
 
 for-swagger:
-	WHATSAPP_SWAGGER_CONFIG_ADVANCED=true . ${NVM_DIR}/nvm.sh && nvm exec yarn start
+	WHATSAPP_SWAGGER_CONFIG_ADVANCED=true WHATSAPP_SWAGGER_PASSWORD=666 . ${NVM_DIR}/nvm.sh && nvm exec yarn start
 
 up-noweb:
 	yarn up @adiwajshing/baileys@github:devlikeapro/Baileys#fork-master-2025-11-07
