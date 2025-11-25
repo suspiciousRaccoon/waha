@@ -1,5 +1,5 @@
 ARG NODE_IMAGE_TAG=22.16-bookworm-slim
-ARG GOLANG_IMAGE_TAG=1.23-bookworm
+ARG GOLANG_IMAGE_TAG=1.24-bookworm
 
 #
 # Build
