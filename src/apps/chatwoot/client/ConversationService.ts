@@ -6,7 +6,6 @@ import {
 } from '@waha/apps/chatwoot/client/interfaces';
 import type { conversation } from '@figuro/chatwoot-sdk/dist/models/conversation';
 import { ConversationSelector } from '@waha/apps/chatwoot/services/ConversationSelector';
-import axios from 'axios';
 import { ChatWootInboxNewAPI } from '@waha/apps/chatwoot/client/ChatWootInboxNewAPI';
 
 export type ConversationResult = Pick<conversation, 'id' | 'account_id'>;

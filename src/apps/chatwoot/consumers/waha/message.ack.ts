@@ -18,7 +18,6 @@ import { WAHAWebhookMessageAck } from '@waha/structures/webhooks.dto';
 import { Job } from 'bullmq';
 import { PinoLogger } from 'nestjs-pino';
 import { ShouldMarkAsReadInChatWoot } from '@waha/apps/chatwoot/consumers/waha/message.ack.utils';
-import { toCusFormat } from '@waha/core/utils/jids';
 import { parseMessageIdSerialized } from '@waha/core/utils/ids';
 import { MessageMappingService } from '@waha/apps/chatwoot/storage';
 
