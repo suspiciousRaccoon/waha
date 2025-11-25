@@ -5,9 +5,9 @@ __metadata:
   version: 6
   cacheKey: 8
 
-"@adiwajshing/baileys@github:devlikeapro/Baileys#fork-master-2025-11-07":
-  version: 7.0.0-rc.6
-  resolution: "@adiwajshing/baileys@https://github.com/devlikeapro/Baileys.git#commit=e828866d7936785b054e16f360c32115f118f291"
+"@adiwajshing/baileys@github:devlikeapro/Baileys#fork-master-2025-11-21":
+  version: 7.0.0-rc.9
+  resolution: "@adiwajshing/baileys@https://github.com/devlikeapro/Baileys.git#commit=4fb1d817fbc9e25c8011dcd0bd0836b11a340c5a"
   dependencies:
     "@cacheable/node-cache": ^1.4.0
     "@hapi/boom": ^9.1.3
@@ -31,7 +31,7 @@ __metadata:
       optional: true
     link-preview-js:
       optional: true
-  checksum: 0a02bc71fe13e998047f10e205126cca978ffde85a50fabc8ccf25c79a3ff6baecc857a395956e6c37b10abbeb9e390e4fcbc870ea11e3a22224cbc8c562c41e
+  checksum: b355cd7012afb96ae79d4d7debd3a888ed844d3ddef0ba83b9cd965f3d901bf2d42630be93064e0abcb1abd842f62d89c09cc6f7545ed3086d14422f789a80ec
   languageName: node
   linkType: hard
 
@@ -12532,7 +12532,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "waha@workspace:."
   dependencies:
-    "@adiwajshing/baileys": "github:devlikeapro/Baileys#fork-master-2025-11-07"
+    "@adiwajshing/baileys": "github:devlikeapro/Baileys#fork-master-2025-11-21"
     "@adiwajshing/keyed-db": ^0.2.4
     "@aws-sdk/client-s3": ^3.633.0
     "@aws-sdk/s3-request-presigner": ^3.633.0
@@ -12739,7 +12739,7 @@ __metadata:
 
 "whatsapp-web.js@github:devlikeapro/whatsapp-web.js#fork-main-2025-11-05":
   version: 1.34.2
-  resolution: "whatsapp-web.js@https://github.com/devlikeapro/whatsapp-web.js.git#commit=c7097e22b425afac93386796ec91501e3835490a"
+  resolution: "whatsapp-web.js@https://github.com/devlikeapro/whatsapp-web.js.git#commit=06c56b6a693d438e38793cec150c2890ca59910f"
   dependencies:
     "@pedroslopez/moduleraid": ^5.0.2
     archiver: ^5.3.1
@@ -12757,7 +12757,7 @@ __metadata:
       optional: true
     unzipper:
       optional: true
-  checksum: 096b6d840221bc7b9f0dc34616c4446a7ae1cce0e99faf3b96436c7046faf5cb2847ce78378ba363dc90653983ab05bc9d780eed864e4bbfe4775c4e69e0997a
+  checksum: 46971900f209cb9988a8386ce13d9d082d7133711b1e6c38e1880684a70c1eda407be3c6fe45cd2526160efd47c2780b6b55500592ffc2b8c784f5e6c7d54670
   languageName: node
   linkType: hard
 
