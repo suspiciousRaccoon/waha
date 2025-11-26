@@ -1290,27 +1290,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@grpc/grpc-js@npm:^1.13.4":
-  version: 1.13.4
-  resolution: "@grpc/grpc-js@npm:1.13.4"
+"@grpc/grpc-js@npm:^1.14.1":
+  version: 1.14.1
+  resolution: "@grpc/grpc-js@npm:1.14.1"
   dependencies:
-    "@grpc/proto-loader": ^0.7.13
+    "@grpc/proto-loader": ^0.8.0
     "@js-sdsl/ordered-map": ^4.4.2
-  checksum: fe5db84bbbcd07cc1b68d1683b7fbe9cfcc5c3a60655ecc17fb3e1cd2adc4c1ce891b15e6e9a9c2140f6891def6f93b509a60d2bce253d13b317f9136e968451
+  checksum: 3f208c23cc985789934d806045599ad3bfa1b6fd9877151cf9af423b4d708cbb3b0cb1347a147061c6ed36470958fd522fbefbf6ae4ca8246f0860bd647f0e5e
   languageName: node
   linkType: hard
 
-"@grpc/proto-loader@npm:^0.7.13":
-  version: 0.7.15
-  resolution: "@grpc/proto-loader@npm:0.7.15"
+"@grpc/proto-loader@npm:^0.8.0":
+  version: 0.8.0
+  resolution: "@grpc/proto-loader@npm:0.8.0"
   dependencies:
     lodash.camelcase: ^4.3.0
     long: ^5.0.0
-    protobufjs: ^7.2.5
+    protobufjs: ^7.5.3
     yargs: ^17.7.2
   bin:
     proto-loader-gen-types: build/bin/proto-loader-gen-types.js
-  checksum: 9f19f4c611a17cd33aec0d6e3686a76696495f40593f7c284933c4b7877f58dfa5a225ddc20705860a632311f4dc0d143cb6a0da7b51b6f5ffd7de26938df308
+  checksum: 97570e2e8c29a35b999fa929acad506765e6752d3219764825fecc0ab632492b1ac2e4dd4c0a96cc2e01754d99bfa838dff0729c6608a02f7b027fd19bc1d1e4
   languageName: node
   linkType: hard
 
@@ -7279,10 +7279,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"google-protobuf@npm:^3.21.4":
-  version: 3.21.4
-  resolution: "google-protobuf@npm:3.21.4"
-  checksum: 048fa2cb579f5f88c977774b2ae36851807379d9329a6895fe3685df69ba6c927e2ff463d08d5eecd56becd9c65bca406f34f90e27984a3077e8629bb3a2a766
+"google-protobuf@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "google-protobuf@npm:4.0.1"
+  checksum: d6ed3007b121ac28dbe9a686bdcc26ba4aba8bc41bd43bbaf59c2cbad96eba4d56338b9da56e8006fa89922eb5b15cb5c79f40b82d03ac39e006c9163435ad4b
   languageName: node
   linkType: hard
 
@@ -10456,7 +10456,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"protobufjs@npm:^7.2.4, protobufjs@npm:^7.2.5":
+"protobufjs@npm:^7.2.4":
   version: 7.5.3
   resolution: "protobufjs@npm:7.5.3"
   dependencies:
@@ -10473,6 +10473,26 @@ __metadata:
     "@types/node": ">=13.7.0"
     long: ^5.0.0
   checksum: 8a8842338c9bf586f11e1c179fc01f0b65adc22114bb2626daf62d66439c7b4227c182ef375184d24d2a16378716bab8dc5000940287610c8b8742972e4b0a2f
+  languageName: node
+  linkType: hard
+
+"protobufjs@npm:^7.5.3":
+  version: 7.5.4
+  resolution: "protobufjs@npm:7.5.4"
+  dependencies:
+    "@protobufjs/aspromise": ^1.1.2
+    "@protobufjs/base64": ^1.1.2
+    "@protobufjs/codegen": ^2.0.4
+    "@protobufjs/eventemitter": ^1.1.0
+    "@protobufjs/fetch": ^1.1.0
+    "@protobufjs/float": ^1.0.2
+    "@protobufjs/inquire": ^1.1.0
+    "@protobufjs/path": ^1.1.2
+    "@protobufjs/pool": ^1.1.0
+    "@protobufjs/utf8": ^1.1.0
+    "@types/node": ">=13.7.0"
+    long: ^5.0.0
+  checksum: 53bf83b9a726b05d43da35bb990dba7536759787dccea9a67b8f31be9df470ba17f1f1b982ca19956cfc7726f3ec7e0e883ca4ad93b5ec753cc025a637fc704f
   languageName: node
   linkType: hard
 
@@ -12540,8 +12560,8 @@ __metadata:
     "@bull-board/express": ^6.9.1
     "@bull-board/nestjs": ^6.9.1
     "@figuro/chatwoot-sdk": ^1.1.17
-    "@grpc/grpc-js": ^1.13.4
-    "@grpc/proto-loader": ^0.7.13
+    "@grpc/grpc-js": ^1.14.1
+    "@grpc/proto-loader": ^0.8.0
     "@liaoliaots/nestjs-redis": ^9
     "@nestjs/axios": ^3.0.2
     "@nestjs/bullmq": ^11.0.2
@@ -12589,7 +12609,7 @@ __metadata:
     express-basic-auth: ^1.2.1
     file-type: 16.5.4
     fs-extra: ^11.2.0
-    google-protobuf: ^3.21.4
+    google-protobuf: ^4.0.1
     grpc-tools: ^1.13.0
     https-proxy-agent: ^7.0.0
     ical.js: ^2.2.1

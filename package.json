@@ -70,7 +70,7 @@
     "express-basic-auth": "^1.2.1",
     "file-type": "16.5.4",
     "fs-extra": "^11.2.0",
-    "google-protobuf": "^3.21.4",
+    "google-protobuf": "^4.0.1",
     "https-proxy-agent": "^7.0.0",
     "ical.js": "^2.2.1",
     "ioredis": "^5",
@@ -121,8 +121,8 @@
     "axios": "^1.9.0"
   },
   "devDependencies": {
-    "@grpc/grpc-js": "^1.13.4",
-    "@grpc/proto-loader": "^0.7.13",
+    "@grpc/grpc-js": "^1.14.1",
+    "@grpc/proto-loader": "^0.8.0",
     "@nestjs/cli": "^11.0.0",
     "@nestjs/schematics": "^11.0.0",
     "@nestjs/testing": "^11.0.0",
