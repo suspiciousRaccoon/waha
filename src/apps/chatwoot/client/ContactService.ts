@@ -26,6 +26,20 @@ export enum AvatarUpdateMode {
   ALWAYS,
 }
 
+export function sanitizeName(name: string) {
+  // 255 chars max
+  const limit = 255;
+  if (!name) {
+    return name;
+  }
+  if (name.length < limit) {
+    return name;
+  }
+  // remove only bidi controls
+  const clean = name.replace(/[\u200E\u200F\u202A-\u202E\u2066-\u2069]/g, '');
+  return clean.slice(0, 255).trim();
+}
+
 export class ContactService {
   constructor(
     private config: ChatWootAPIConfig,
@@ -139,6 +153,7 @@ export class ContactService {
     chatId: string,
     payload: public_contact_create_update_payload,
   ): Promise<ContactResponse> {
+    payload.name = sanitizeName(payload.name);
     const contact = await this.inboxAPI.contacts.create({
       inboxIdentifier: this.config.inboxIdentifier,
       data: payload,
