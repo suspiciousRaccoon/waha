@@ -1,3 +1,4 @@
+tmp/*
 src/core/engines/gows/proto
 .env
 .envs/*
