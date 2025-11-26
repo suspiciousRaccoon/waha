@@ -171,6 +171,10 @@ import {
   isLabelChatAddedEvent,
   isLabelUpsertEvent,
 } from './labels.gows';
+import {
+  EventStreamClientSingleton,
+  MessageServiceClientSingleton,
+} from '@waha/core/engines/gows/clients';
 import esm from '@waha/vendor/esm';
 import { IsEditedMessage } from '@waha/core/utils/pwa';
 import MessageServiceClient = messages.MessageServiceClient;
@@ -272,7 +276,7 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
       }),
     });
 
-    this.client = new MessageServiceClient(
+    this.client = MessageServiceClientSingleton(
       this.engineConfig.connection,
       grpc.credentials.createInsecure(),
       gRPCClientConfig,
@@ -302,7 +306,7 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
     this.stream$ = new GowsEventStreamObservable(
       this.loggerBuilder.child({ grpc: 'stream' }),
       () => {
-        const client = new messages.EventStreamClient(
+        const client = EventStreamClientSingleton(
           this.engineConfig.connection,
           grpc.credentials.createInsecure(),
           gRPCClientConfig,
@@ -701,7 +705,6 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
     this.status = WAHASessionStatus.STOPPED;
     this.events?.stop();
     this.stopEvents();
-    this.client?.close();
     this.mediaManager.close();
   }
 
