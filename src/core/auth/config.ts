@@ -6,7 +6,7 @@ export interface SValue {
   generated: boolean;
 }
 
-function rand() {
+export function rand() {
   return crypto.randomUUID().toString().replace(/-/g, '');
 }
 

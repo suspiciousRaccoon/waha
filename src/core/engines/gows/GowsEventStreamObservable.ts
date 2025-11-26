@@ -4,6 +4,7 @@ import { EnginePayload } from '@waha/structures/webhooks.dto';
 import { sleep } from '@waha/utils/promiseTimeout';
 import { Logger } from 'pino';
 import { Observable } from 'rxjs';
+import { rand } from '@waha/core/auth/config';
 
 /**
  * Observable that listens to a gRPC stream and emits EnginePayload objects.
@@ -14,16 +15,41 @@ export class GowsEventStreamObservable extends Observable<EnginePayload> {
   CLIENT_CLOSE_TIMEOUT = 1_000;
 
   constructor(
-    private logger: Logger,
+    logger: Logger,
     factory: () => {
       client: grpc.Client;
       stream: grpc.ClientReadableStream<messages.EventJson>;
     },
   ) {
     super((subscriber) => {
-      this.logger.debug('Creating grpc client and stream...');
+      logger.debug('Creating grpc client and stream...');
+      logger.setBindings({ id: rand() });
       const { client, stream } = factory();
       this._client = client;
+
+      let closed = false;
+      const cleanup = async (reason: string) => {
+        if (closed) {
+          return;
+        }
+        closed = true;
+
+        logger.debug({ reason }, 'Cancelling gRPC stream...');
+        try {
+          stream.cancel();
+        } catch (err) {
+          logger.warn({ err }, 'Failed to cancel gRPC stream');
+        }
+
+        logger.debug({ reason }, 'Closing gRPC client...');
+        try {
+          client.close();
+        } catch (err) {
+          logger.warn({ err }, 'Failed to close gRPC client');
+        }
+
+        await sleep(this.CLIENT_CLOSE_TIMEOUT);
+      };
 
       stream.on('data', (raw) => {
         const obj = raw.toObject();
@@ -32,18 +58,21 @@ export class GowsEventStreamObservable extends Observable<EnginePayload> {
       });
 
       stream.on('end', (...args) => {
-        this.logger.debug('Stream ended', args);
+        logger.debug('Stream ended', args);
         subscriber?.complete();
         subscriber = null;
+        void cleanup('end');
       });
 
       stream.on('error', async (err: any) => {
         const CLIENT_CANCELLED_CODE = grpc.status.CANCELLED;
         if (err.code === CLIENT_CANCELLED_CODE) {
-          this.logger.debug('Stream cancelled by client');
+          logger.debug('Stream cancelled by client');
+          await cleanup('cancelled');
           return;
         }
-        this.logger.error(err, 'Stream error');
+        logger.error(err, 'Stream error');
+        await cleanup('error');
         // Give some time to node event loop to process the error
         await sleep(100);
         subscriber?.error(err);
@@ -51,14 +80,7 @@ export class GowsEventStreamObservable extends Observable<EnginePayload> {
       });
 
       return async () => {
-        this.logger.debug('Closing stream client...');
-        client.close();
-        await sleep(this.CLIENT_CLOSE_TIMEOUT);
-        this.logger.debug('Stream client closed');
-
-        this.logger.debug('Cancelling stream...');
-        stream.cancel();
-        this.logger.debug('Stream cancelled');
+        await cleanup('teardown');
       };
     });
   }
