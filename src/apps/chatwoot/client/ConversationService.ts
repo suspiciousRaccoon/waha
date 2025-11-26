@@ -24,14 +24,20 @@ export class ConversationService {
     private logger: ILogger,
   ) {}
 
-  private async find(contact: ContactIds): Promise<ConversationResult | null> {
+  public async find(contact: ContactIds): Promise<ConversationResult | null> {
     const result: { payload: contact_conversations } =
       (await this.accountAPI.contacts.listConversations({
         accountId: this.config.accountId,
         id: contact.id,
       })) as any;
     const conversations = result.payload;
-    return this.selector.select(conversations);
+    const conversation = this.selector.select(conversations);
+    if (conversation) {
+      this.logger.debug(
+        `Found existing conversation.id: ${conversation.id} for contact.id: ${contact.id}, contact.sourceId: ${contact.sourceId}`,
+      );
+    }
+    return conversation;
   }
 
   private async create(contact: ContactIds): Promise<ConversationResult> {
@@ -50,9 +56,6 @@ export class ConversationService {
     if (!conversation) {
       conversation = await this.create(contact);
     }
-    this.logger.debug(
-      `Using conversation.id: ${conversation.id} for contact.id: ${contact.id}, contact.sourceId: ${contact.sourceId}`,
-    );
     return conversation;
   }
 

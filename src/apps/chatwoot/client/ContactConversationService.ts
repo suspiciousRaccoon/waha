@@ -10,6 +10,7 @@ import {
 import { Conversation } from '@waha/apps/chatwoot/client/Conversation';
 import {
   ContactIds,
+  ConversationResult,
   ConversationService,
 } from '@waha/apps/chatwoot/client/ConversationService';
 import { ChatWootAPIConfig } from '@waha/apps/chatwoot/client/interfaces';
@@ -43,9 +44,10 @@ export class ContactConversationService {
     this.cache = CacheForConfig(config);
   }
 
-  public async upsertByContactInfo(
+  private async getByContactInfo(
     contactInfo: ContactInfo,
-  ): Promise<ContactIds> {
+    upsert: boolean,
+  ): Promise<ContactIds | null> {
     const chatId = contactInfo.ChatId();
 
     // Check cache for chat id
@@ -77,10 +79,21 @@ export class ContactConversationService {
     //
     // Get or create a conversation for this inbox
     //
-    const conversation = await this.conversationService.upsert({
+    const contactIds = {
       id: cwContact.data.id,
       sourceId: cwContact.sourceId,
-    });
+    };
+    let conversation: ConversationResult;
+    if (upsert) {
+      conversation = await this.conversationService.upsert(contactIds);
+    } else {
+      conversation = await this.conversationService.find(contactIds);
+      if (!conversation) {
+        // Nothing found, do not save it in cache
+        return null;
+      }
+    }
+
     this.logger.debug(
       `Using conversation for chat.id: ${chatId}, conversation.id: ${conversation.id}, contact.id: ${cwContact.sourceId}`,
     );
@@ -94,11 +107,15 @@ export class ContactConversationService {
     return ids;
   }
 
-  public async ConversationByContact(
+  private async conversationByContact(
     contactInfo: ContactInfo,
-  ): Promise<Conversation> {
+    upsert: boolean,
+  ): Promise<Conversation | null> {
     const chatId = contactInfo.ChatId();
-    const ids = await this.upsertByContactInfo(contactInfo);
+    const ids = await this.getByContactInfo(contactInfo, upsert);
+    if (!ids) {
+      return null;
+    }
     const conversation = new Conversation(
       this.accountAPI,
       this.config.accountId,
@@ -116,6 +133,26 @@ export class ContactConversationService {
       }
     };
     return conversation;
+  }
+
+  /**
+   * Find or create if not exists conversation for the contact
+   */
+  public async ConversationByContact(contactInfo: ContactInfo) {
+    const conversation = await this.conversationByContact(contactInfo, true);
+    if (!conversation) {
+      // Shouldn't happen, but for type safety
+      throw new Error('Conversation could not be created or found');
+    }
+    return conversation;
+  }
+
+  /**
+   * Find suitable conversation for the contact (based on filters)
+   * If nothing found - it doesn't create a new one
+   */
+  public async FindConversationByContact(contactInfo: ContactInfo) {
+    return this.conversationByContact(contactInfo, false);
   }
 
   public ConversationById(conversationId: number): Conversation {

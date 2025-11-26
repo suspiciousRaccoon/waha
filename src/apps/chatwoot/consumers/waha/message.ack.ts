@@ -94,7 +94,16 @@ class MessageAckHandler {
       this.locale,
     );
     const conversation =
-      await this.contactConversationService.ConversationByContact(contactInfo);
+      await this.contactConversationService.FindConversationByContact(
+        contactInfo,
+      );
+
+    if (!conversation) {
+      this.logger.debug(
+        `No suitable conversation found to mark as read for chat.id: ${payload.from}`,
+      );
+      return;
+    }
     this.info.onConversationId(conversation.conversationId);
 
     const sourceId = conversation.sourceId;
