@@ -1,4 +1,6 @@
+import * as inspector from 'node:inspector';
 import * as v8 from 'node:v8';
+import { Readable } from 'node:stream';
 
 import {
   Controller,
@@ -18,7 +20,10 @@ import {
   WorkingSessionParam,
 } from '@waha/nestjs/params/SessionApiParam';
 import { WAHAValidationPipe } from '@waha/nestjs/pipes/WAHAValidationPipe';
-import { BrowserTraceQuery } from '@waha/structures/server.debug.dto';
+import {
+  BrowserTraceQuery,
+  CpuProfileQuery,
+} from '@waha/structures/server.debug.dto';
 import { createReadStream } from 'fs';
 
 @ApiSecurity('api_key')
@@ -34,6 +39,56 @@ export class ServerDebugController {
   ) {
     this.logger = new Logger('ServerDebugController');
     this.enabled = this.config.debugModeEnabled;
+  }
+
+  @Get('cpu')
+  @ApiOperation({
+    summary: 'Collect and return a CPU profile for the current nodejs process',
+    description: 'Uses the Node.js inspector profiler to capture a .cpuprofile',
+  })
+  @UsePipes(new WAHAValidationPipe())
+  async cpuProfile(@Query() query: CpuProfileQuery) {
+    if (!this.enabled) {
+      throw new NotFoundException('WAHA_DEBUG_MODE is disabled');
+    }
+    const { seconds } = query;
+    this.logger.log(`Collecting CPU profile for ${seconds}s...`);
+
+    const session = new inspector.Session();
+    session.connect();
+
+    const profile = await new Promise<inspector.Profiler.Profile>(
+      (resolve, reject) => {
+        session.post('Profiler.enable', (enableError) => {
+          if (enableError) {
+            session.disconnect();
+            return reject(enableError);
+          }
+          session.post('Profiler.start', (startError) => {
+            if (startError) {
+              session.disconnect();
+              return reject(startError);
+            }
+            setTimeout(() => {
+              session.post('Profiler.stop', (stopError, params) => {
+                session.disconnect();
+                if (stopError) {
+                  return reject(stopError);
+                }
+                resolve(params.profile);
+              });
+            }, seconds * 1000);
+          });
+        });
+      },
+    );
+
+    const filename = `CPU.${Date.now()}.${process.pid}.cpuprofile`;
+    const stream = Readable.from([JSON.stringify(profile)]);
+    return new StreamableFile(stream, {
+      type: 'application/json',
+      disposition: `attachment; filename=${filename}`,
+    });
   }
 
   @Get('heapsnapshot')
