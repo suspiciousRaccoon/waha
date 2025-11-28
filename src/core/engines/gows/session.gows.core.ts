@@ -2372,6 +2372,8 @@ export class GOWSEngineMediaProcessor implements IMediaEngineProcessor<any> {
   }
 
   async getMediaBuffer(message: any): Promise<Buffer | null> {
+    const mediaDownloadTimeoutMs = 600_000; // 10 minutes
+
     const data = JSON.stringify(message.Message);
     const request = new messages.DownloadMediaRequest({
       // double "session" it's not a mistake here
@@ -2380,11 +2382,23 @@ export class GOWSEngineMediaProcessor implements IMediaEngineProcessor<any> {
       jid: message.Info.Chat,
       messageId: message.Info.ID,
     });
-    const response = await promisify(this.session.client.DownloadMedia)(
-      request,
+
+    const opts = {
+      deadline: new Date(Date.now() + mediaDownloadTimeoutMs),
+    };
+    const call = promisify(
+      this.session.client.DownloadMedia.bind(this.session.client),
     );
-    const obj = response.toObject();
-    return Buffer.from(obj.content);
+    try {
+      const response = await call(request, opts);
+      const obj = response.toObject();
+      return Buffer.from(obj.content);
+    } catch (err) {
+      if (err?.code === grpc.status.DEADLINE_EXCEEDED) {
+        err.message = `DownloadMedia timed out after ${mediaDownloadTimeoutMs}ms for message '${message?.Info?.ID}'`;
+      }
+      throw err;
+    }
   }
 
   getFilename(message: any): string | null {
