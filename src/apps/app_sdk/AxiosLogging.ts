@@ -29,13 +29,22 @@ export class AxiosLogging {
     const { method, url } = response.config;
     const status = response.status;
     const methodStr = method?.toUpperCase() ?? 'GET';
-    const responseData = JSON.stringify(response.data);
 
-    if (status >= 200 && status < 400) {
-      this.logger.debug(`${methodStr} ${status}:OK ${url}`);
-      this.logger.trace(`${methodStr} ${status}:OK ${url} ${responseData}`);
+    const type: any = response.headers['content-type'];
+    // Log warnings for non-2xx/3xx responses
+    if (status < 200 || status >= 400) {
+      const data = JSON.stringify(response.data);
+      this.logger.warn(`${methodStr} ${status} ${url} ${data}`);
+      return response;
+    }
+
+    // Log debug for 2xx/3xx responses
+    this.logger.debug(`${methodStr} ${status}:OK ${url}`);
+    if (type.startsWith('application/json')) {
+      const data = JSON.stringify(response.data);
+      this.logger.trace(`${methodStr} ${status}:OK ${url} ${data}`);
     } else {
-      this.logger.warn(`${methodStr} ${status} ${url} ${responseData}`);
+      this.logger.trace(`${methodStr} ${status}:OK ${url} [${type}]`);
     }
 
     return response;
