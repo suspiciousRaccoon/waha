@@ -71,16 +71,6 @@ else
 fi
 
 #
-# Enable CPU profiling
-#
-if [ "$WAHA_DEBUG_MODE" = "true" ] || [ "$WAHA_DEBUG_MODE" = "True" ] || [ "$WAHA_DEBUG_MODE" = "1" ]; then
-  case " $NODE_OPTIONS " in
-    *" --cpu-prof "*) ;;
-    *) export NODE_OPTIONS="${NODE_OPTIONS:+$NODE_OPTIONS }--cpu-prof" ;;
-  esac
-fi
-
-#
 # Start your application using node with exec to ensure proper signal handling
 #
 if [ "$USE_XVFB" = "true" ]; then
