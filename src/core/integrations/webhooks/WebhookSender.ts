@@ -71,6 +71,7 @@ export class WebhookSender {
     const ctx = {
       id: headers['X-Webhook-Request-Id'],
       ['event.id']: json.id,
+      event: json.event,
       url: this.url,
     };
     this.logger.info(ctx, `Sending POST...`);
@@ -133,7 +134,10 @@ export class WebhookSender {
       retryCondition: (error) => true,
       onRetry: (retryCount, error, requestConfig) => {
         this.logger.warn(
-          { id: requestConfig.headers['X-Webhook-Request-Id'] },
+          {
+            id: requestConfig.headers['X-Webhook-Request-Id'],
+            event: requestConfig.headers['X-Webhook-Event'],
+          },
           `Error sending POST request: '${error.message}'. Retrying ${retryCount}/${attempts}...`,
         );
       },
