@@ -106,6 +106,7 @@
     "swagger-ui-express": "^4.1.4",
     "ulid": "^2.3.0",
     "undici": "^7.16.0",
+    "uniqid": "^5.4.0",
     "whatsapp-web.js": "github:devlikeapro/whatsapp-web.js#fork-main-2025-11-05",
     "write-file-atomic": "^6.0.0",
     "yaml": "^2.7.1"

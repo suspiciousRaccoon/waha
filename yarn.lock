@@ -12392,6 +12392,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"uniqid@npm:^5.4.0":
+  version: 5.4.0
+  resolution: "uniqid@npm:5.4.0"
+  checksum: 69fc28e7b2b5b24227b4295e51aa7c1d4085a60655ad071db8fc350876cc9044d68ee0781c0d27c2c98691380aa418970e0d1b02a1e4564480f9d19b0dc1707b
+  languageName: node
+  linkType: hard
+
 "unique-filename@npm:^1.1.1":
   version: 1.1.1
   resolution: "unique-filename@npm:1.1.1"
@@ -12656,6 +12663,7 @@ __metadata:
     typescript: 5.9.2
     ulid: ^2.3.0
     undici: ^7.16.0
+    uniqid: ^5.4.0
     whatsapp-web.js: "github:devlikeapro/whatsapp-web.js#fork-main-2025-11-05"
     write-file-atomic: ^6.0.0
     yaml: ^2.7.1
