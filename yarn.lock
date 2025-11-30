@@ -7279,10 +7279,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"google-protobuf@npm:^4.0.1":
-  version: 4.0.1
-  resolution: "google-protobuf@npm:4.0.1"
-  checksum: d6ed3007b121ac28dbe9a686bdcc26ba4aba8bc41bd43bbaf59c2cbad96eba4d56338b9da56e8006fa89922eb5b15cb5c79f40b82d03ac39e006c9163435ad4b
+"google-protobuf@npm:^3.21.4":
+  version: 3.21.4
+  resolution: "google-protobuf@npm:3.21.4"
+  checksum: 048fa2cb579f5f88c977774b2ae36851807379d9329a6895fe3685df69ba6c927e2ff463d08d5eecd56becd9c65bca406f34f90e27984a3077e8629bb3a2a766
   languageName: node
   linkType: hard
 
@@ -12609,7 +12609,7 @@ __metadata:
     express-basic-auth: ^1.2.1
     file-type: 16.5.4
     fs-extra: ^11.2.0
-    google-protobuf: ^4.0.1
+    google-protobuf: ^3.21.4
     grpc-tools: ^1.13.0
     https-proxy-agent: ^7.0.0
     ical.js: ^2.2.1
