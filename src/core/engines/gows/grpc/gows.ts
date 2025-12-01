@@ -2687,6 +2687,7 @@ export namespace messages {
             mimetype?: string;
             audio?: AudioInfo;
             filename?: string;
+            contentPath?: string;
         }) {
             super();
             pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
@@ -2705,6 +2706,9 @@ export namespace messages {
                 }
                 if ("filename" in data && data.filename != undefined) {
                     this.filename = data.filename;
+                }
+                if ("contentPath" in data && data.contentPath != undefined) {
+                    this.contentPath = data.contentPath;
                 }
             }
         }
@@ -2741,12 +2745,19 @@ export namespace messages {
         set filename(value: string) {
             pb_1.Message.setField(this, 5, value);
         }
+        get contentPath() {
+            return pb_1.Message.getFieldWithDefault(this, 6, "") as string;
+        }
+        set contentPath(value: string) {
+            pb_1.Message.setField(this, 6, value);
+        }
         static fromObject(data: {
             content?: Uint8Array;
             type?: MediaType;
             mimetype?: string;
             audio?: ReturnType<typeof AudioInfo.prototype.toObject>;
             filename?: string;
+            contentPath?: string;
         }): Media {
             const message = new Media({});
             if (data.content != null) {
@@ -2764,6 +2775,9 @@ export namespace messages {
             if (data.filename != null) {
                 message.filename = data.filename;
             }
+            if (data.contentPath != null) {
+                message.contentPath = data.contentPath;
+            }
             return message;
         }
         toObject() {
@@ -2773,6 +2787,7 @@ export namespace messages {
                 mimetype?: string;
                 audio?: ReturnType<typeof AudioInfo.prototype.toObject>;
                 filename?: string;
+                contentPath?: string;
             } = {};
             if (this.content != null) {
                 data.content = this.content;
@@ -2788,6 +2803,9 @@ export namespace messages {
             }
             if (this.filename != null) {
                 data.filename = this.filename;
+            }
+            if (this.contentPath != null) {
+                data.contentPath = this.contentPath;
             }
             return data;
         }
@@ -2805,6 +2823,8 @@ export namespace messages {
                 writer.writeMessage(4, this.audio, () => this.audio.serialize(writer));
             if (this.filename.length)
                 writer.writeString(5, this.filename);
+            if (this.contentPath.length)
+                writer.writeString(6, this.contentPath);
             if (!w)
                 return writer.getResultBuffer();
         }
@@ -2828,6 +2848,9 @@ export namespace messages {
                         break;
                     case 5:
                         message.filename = reader.readString();
+                        break;
+                    case 6:
+                        message.contentPath = reader.readString();
                         break;
                     default: reader.skipField();
                 }
