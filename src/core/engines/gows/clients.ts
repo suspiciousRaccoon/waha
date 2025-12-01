@@ -7,13 +7,15 @@ let eventStreamClient: messages.EventStreamClient | null = null;
 export const MessageServiceClientSingleton = (
   address: string,
   credentials: grpc.ChannelCredentials,
-  options?: grpc.ChannelOptions,
 ): messages.MessageServiceClient => {
   if (!messageServiceClient) {
     messageServiceClient = new messages.MessageServiceClient(
       address,
       credentials,
-      options,
+      {
+        'grpc.max_send_message_length': 128 * 1024 * 1024,
+        'grpc.max_receive_message_length': 128 * 1024 * 1024,
+      },
     );
   }
   return messageServiceClient;
@@ -22,14 +24,12 @@ export const MessageServiceClientSingleton = (
 export const EventStreamClientSingleton = (
   address: string,
   credentials: grpc.ChannelCredentials,
-  options?: grpc.ChannelOptions,
 ): messages.EventStreamClient => {
   if (!eventStreamClient) {
-    eventStreamClient = new messages.EventStreamClient(
-      address,
-      credentials,
-      options,
-    );
+    eventStreamClient = new messages.EventStreamClient(address, credentials, {
+      'grpc.max_send_message_length': 128 * 1024 * 1024,
+      'grpc.max_receive_message_length': 128 * 1024 * 1024,
+    });
   }
   return eventStreamClient;
 };

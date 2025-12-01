@@ -210,11 +210,6 @@ enum WhatsMeowEvent {
   POLL_VOTE_EVENT = 'gows.PollVoteEvent',
 }
 
-const gRPCClientConfig = {
-  'grpc.max_send_message_length': 512 * 1024 * 1024,
-  'grpc.max_receive_message_length': 512 * 1024 * 1024,
-};
-
 export interface GowsConfig {
   connection: string;
 }
@@ -282,7 +277,6 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
     this.client = MessageServiceClientSingleton(
       this.engineConfig.connection,
       grpc.credentials.createInsecure(),
-      gRPCClientConfig,
     );
 
     try {
@@ -312,7 +306,6 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
         const client = EventStreamClientSingleton(
           this.engineConfig.connection,
           grpc.credentials.createInsecure(),
-          gRPCClientConfig,
         );
         const stream = client.StreamEvents(this.session);
         return { client, stream };
