@@ -16673,7 +16673,8 @@ proto.messages.DownloadMediaRequest.toObject = function(includeInstance, msg) {
     session: (f = msg.getSession()) && proto.messages.Session.toObject(includeInstance, f),
     message: jspb.Message.getFieldWithDefault(msg, 2, ""),
     jid: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    messageid: jspb.Message.getFieldWithDefault(msg, 4, "")
+    messageid: jspb.Message.getFieldWithDefault(msg, 4, ""),
+    contentpath: jspb.Message.getFieldWithDefault(msg, 5, "")
   };
 
   if (includeInstance) {
@@ -16726,6 +16727,10 @@ proto.messages.DownloadMediaRequest.deserializeBinaryFromReader = function(msg, 
     case 4:
       var value = /** @type {string} */ (reader.readString());
       msg.setMessageid(value);
+      break;
+    case 5:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setContentpath(value);
       break;
     default:
       reader.skipField();
@@ -16782,6 +16787,13 @@ proto.messages.DownloadMediaRequest.serializeBinaryToWriter = function(message, 
   if (f.length > 0) {
     writer.writeString(
       4,
+      f
+    );
+  }
+  f = message.getContentpath();
+  if (f.length > 0) {
+    writer.writeString(
+      5,
       f
     );
   }
@@ -16879,6 +16891,24 @@ proto.messages.DownloadMediaRequest.prototype.setMessageid = function(value) {
 };
 
 
+/**
+ * optional string contentPath = 5;
+ * @return {string}
+ */
+proto.messages.DownloadMediaRequest.prototype.getContentpath = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.messages.DownloadMediaRequest} returns this
+ */
+proto.messages.DownloadMediaRequest.prototype.setContentpath = function(value) {
+  return jspb.Message.setProto3StringField(this, 5, value);
+};
+
+
 
 
 
@@ -16911,7 +16941,8 @@ proto.messages.DownloadMediaResponse.prototype.toObject = function(opt_includeIn
  */
 proto.messages.DownloadMediaResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    content: msg.getContent_asB64()
+    content: msg.getContent_asB64(),
+    contentpath: jspb.Message.getFieldWithDefault(msg, 5, "")
   };
 
   if (includeInstance) {
@@ -16952,6 +16983,10 @@ proto.messages.DownloadMediaResponse.deserializeBinaryFromReader = function(msg,
       var value = /** @type {!Uint8Array} */ (reader.readBytes());
       msg.setContent(value);
       break;
+    case 5:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setContentpath(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -16985,6 +17020,13 @@ proto.messages.DownloadMediaResponse.serializeBinaryToWriter = function(message,
   if (f.length > 0) {
     writer.writeBytes(
       1,
+      f
+    );
+  }
+  f = message.getContentpath();
+  if (f.length > 0) {
+    writer.writeString(
+      5,
       f
     );
   }
@@ -17030,6 +17072,24 @@ proto.messages.DownloadMediaResponse.prototype.getContent_asU8 = function() {
  */
 proto.messages.DownloadMediaResponse.prototype.setContent = function(value) {
   return jspb.Message.setProto3BytesField(this, 1, value);
+};
+
+
+/**
+ * optional string contentPath = 5;
+ * @return {string}
+ */
+proto.messages.DownloadMediaResponse.prototype.getContentpath = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.messages.DownloadMediaResponse} returns this
+ */
+proto.messages.DownloadMediaResponse.prototype.setContentpath = function(value) {
+  return jspb.Message.setProto3StringField(this, 5, value);
 };
 
 

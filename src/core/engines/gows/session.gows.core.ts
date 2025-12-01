@@ -177,11 +177,14 @@ import {
 } from '@waha/core/engines/gows/clients';
 import esm from '@waha/vendor/esm';
 import { IsEditedMessage } from '@waha/core/utils/pwa';
-import MessageServiceClient = messages.MessageServiceClient;
 import { GoToJSWAProto } from '@waha/core/engines/gows/waproto';
 import { extractWALocation } from '@waha/core/engines/waproto/locaiton';
 import { extractVCards } from '@waha/core/engines/waproto/vcards';
 import { Activity } from '@waha/core/abc/activity';
+import { TmpDir } from '@waha/utils/tmpdir';
+import * as path from 'path';
+import MessageServiceClient = messages.MessageServiceClient;
+import * as fsp from 'fs/promises';
 
 enum WhatsMeowEvent {
   CONNECTED = 'gows.ConnectedEventData',
@@ -2375,30 +2378,44 @@ export class GOWSEngineMediaProcessor implements IMediaEngineProcessor<any> {
     const mediaDownloadTimeoutMs = 600_000; // 10 minutes
 
     const data = JSON.stringify(message.Message);
-    const request = new messages.DownloadMediaRequest({
-      // double "session" it's not a mistake here
-      session: this.session.session,
-      message: data,
-      jid: message.Info.Chat,
-      messageId: message.Info.ID,
-    });
-
-    const opts = {
-      deadline: new Date(Date.now() + mediaDownloadTimeoutMs),
-    };
-    const call = promisify(
-      this.session.client.DownloadMedia.bind(this.session.client),
+    const tmpdir = new TmpDir(
+      this.session.logger,
+      `waha-media-${this.session.name}-`,
     );
-    try {
-      const response = await call(request, opts);
-      const obj = response.toObject();
-      return Buffer.from(obj.content);
-    } catch (err) {
-      if (err?.code === grpc.status.DEADLINE_EXCEEDED) {
-        err.message = `DownloadMedia timed out after ${mediaDownloadTimeoutMs}ms for message '${message?.Info?.ID}'`;
+    return await tmpdir.use(async (dir) => {
+      const file = path.join(dir, 'content.tmp');
+      const request = new messages.DownloadMediaRequest({
+        // double "session" it's not a mistake here
+        session: this.session.session,
+        message: data,
+        jid: message.Info.Chat,
+        messageId: message.Info.ID,
+        contentPath: file,
+      });
+
+      const opts = {
+        deadline: new Date(Date.now() + mediaDownloadTimeoutMs),
+      };
+      const call = promisify(
+        this.session.client.DownloadMedia.bind(this.session.client),
+      );
+      try {
+        const response = await call(request, opts);
+        const obj = response.toObject();
+        if (!obj.contentPath) {
+          // Read directly from grpc response
+          return Buffer.from(obj.content);
+        } else {
+          // Read from the file
+          return await fsp.readFile(obj.contentPath);
+        }
+      } catch (err) {
+        if (err?.code === grpc.status.DEADLINE_EXCEEDED) {
+          err.message = `DownloadMedia timed out after ${mediaDownloadTimeoutMs}ms for message '${message?.Info?.ID}'`;
+        }
+        throw err;
       }
-      throw err;
-    }
+    });
   }
 
   getFilename(message: any): string | null {

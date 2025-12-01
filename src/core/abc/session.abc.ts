@@ -181,7 +181,7 @@ export abstract class WhatsappSession {
   public name: string;
   protected mediaManager: IMediaManager;
   public loggerBuilder: LoggerBuilder;
-  protected logger: Logger;
+  public logger: Logger;
   protected sessionStore: DataStore;
   protected proxyConfig?: ProxyConfig;
   public sessionConfig?: SessionConfig;

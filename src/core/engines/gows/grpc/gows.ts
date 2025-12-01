@@ -7949,6 +7949,7 @@ export namespace messages {
             message?: string;
             jid?: string;
             messageId?: string;
+            contentPath?: string;
         }) {
             super();
             pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
@@ -7964,6 +7965,9 @@ export namespace messages {
                 }
                 if ("messageId" in data && data.messageId != undefined) {
                     this.messageId = data.messageId;
+                }
+                if ("contentPath" in data && data.contentPath != undefined) {
+                    this.contentPath = data.contentPath;
                 }
             }
         }
@@ -7994,11 +7998,18 @@ export namespace messages {
         set messageId(value: string) {
             pb_1.Message.setField(this, 4, value);
         }
+        get contentPath() {
+            return pb_1.Message.getFieldWithDefault(this, 5, "") as string;
+        }
+        set contentPath(value: string) {
+            pb_1.Message.setField(this, 5, value);
+        }
         static fromObject(data: {
             session?: ReturnType<typeof Session.prototype.toObject>;
             message?: string;
             jid?: string;
             messageId?: string;
+            contentPath?: string;
         }): DownloadMediaRequest {
             const message = new DownloadMediaRequest({});
             if (data.session != null) {
@@ -8013,6 +8024,9 @@ export namespace messages {
             if (data.messageId != null) {
                 message.messageId = data.messageId;
             }
+            if (data.contentPath != null) {
+                message.contentPath = data.contentPath;
+            }
             return message;
         }
         toObject() {
@@ -8021,6 +8035,7 @@ export namespace messages {
                 message?: string;
                 jid?: string;
                 messageId?: string;
+                contentPath?: string;
             } = {};
             if (this.session != null) {
                 data.session = this.session.toObject();
@@ -8033,6 +8048,9 @@ export namespace messages {
             }
             if (this.messageId != null) {
                 data.messageId = this.messageId;
+            }
+            if (this.contentPath != null) {
+                data.contentPath = this.contentPath;
             }
             return data;
         }
@@ -8048,6 +8066,8 @@ export namespace messages {
                 writer.writeString(3, this.jid);
             if (this.messageId.length)
                 writer.writeString(4, this.messageId);
+            if (this.contentPath.length)
+                writer.writeString(5, this.contentPath);
             if (!w)
                 return writer.getResultBuffer();
         }
@@ -8069,6 +8089,9 @@ export namespace messages {
                     case 4:
                         message.messageId = reader.readString();
                         break;
+                    case 5:
+                        message.contentPath = reader.readString();
+                        break;
                     default: reader.skipField();
                 }
             }
@@ -8085,12 +8108,16 @@ export namespace messages {
         #one_of_decls: number[][] = [];
         constructor(data?: any[] | {
             content?: Uint8Array;
+            contentPath?: string;
         }) {
             super();
             pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
             if (!Array.isArray(data) && typeof data == "object") {
                 if ("content" in data && data.content != undefined) {
                     this.content = data.content;
+                }
+                if ("contentPath" in data && data.contentPath != undefined) {
+                    this.contentPath = data.contentPath;
                 }
             }
         }
@@ -8100,21 +8127,35 @@ export namespace messages {
         set content(value: Uint8Array) {
             pb_1.Message.setField(this, 1, value);
         }
+        get contentPath() {
+            return pb_1.Message.getFieldWithDefault(this, 5, "") as string;
+        }
+        set contentPath(value: string) {
+            pb_1.Message.setField(this, 5, value);
+        }
         static fromObject(data: {
             content?: Uint8Array;
+            contentPath?: string;
         }): DownloadMediaResponse {
             const message = new DownloadMediaResponse({});
             if (data.content != null) {
                 message.content = data.content;
+            }
+            if (data.contentPath != null) {
+                message.contentPath = data.contentPath;
             }
             return message;
         }
         toObject() {
             const data: {
                 content?: Uint8Array;
+                contentPath?: string;
             } = {};
             if (this.content != null) {
                 data.content = this.content;
+            }
+            if (this.contentPath != null) {
+                data.contentPath = this.contentPath;
             }
             return data;
         }
@@ -8124,6 +8165,8 @@ export namespace messages {
             const writer = w || new pb_1.BinaryWriter();
             if (this.content.length)
                 writer.writeBytes(1, this.content);
+            if (this.contentPath.length)
+                writer.writeString(5, this.contentPath);
             if (!w)
                 return writer.getResultBuffer();
         }
@@ -8135,6 +8178,9 @@ export namespace messages {
                 switch (reader.getFieldNumber()) {
                     case 1:
                         message.content = reader.readBytes();
+                        break;
+                    case 5:
+                        message.contentPath = reader.readString();
                         break;
                     default: reader.skipField();
                 }
