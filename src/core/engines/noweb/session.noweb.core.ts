@@ -2540,6 +2540,7 @@ export class WhatsappSessionNoWebCore extends WhatsappSession {
       timestamp: timestamp,
       isVideo: call.isVideo,
       isGroup: call.isGroup,
+      _data: call,
     };
   }
 

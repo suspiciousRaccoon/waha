@@ -1770,6 +1770,7 @@ export class WhatsappSessionWebJSCore extends WhatsappSession {
           timestamp: call.timestamp,
           isVideo: call.isVideo,
           isGroup: call.isGroup,
+          _data: call,
         };
       }),
     );

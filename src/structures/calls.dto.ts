@@ -23,4 +23,6 @@ export class CallData {
   isVideo: boolean;
 
   isGroup: boolean;
+
+  _data: any;
 }
