@@ -123,6 +123,7 @@ import {
   WAMessage,
   WAMessageReaction,
 } from '@waha/structures/responses.dto';
+import { CallData } from '@waha/structures/calls.dto';
 import { MeInfo, ProxyConfig } from '@waha/structures/sessions.dto';
 import {
   BROADCAST_ID,
@@ -142,6 +143,7 @@ import { onlyEvent } from '@waha/utils/reactive/ops/onlyEvent';
 import * as NodeCache from 'node-cache';
 import {
   filter,
+  groupBy,
   merge,
   mergeMap,
   Observable,
@@ -150,7 +152,7 @@ import {
   share,
   Subject,
 } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, debounceTime } from 'rxjs/operators';
 import { promisify } from 'util';
 
 import * as gows from './types';
@@ -208,6 +210,12 @@ enum WhatsMeowEvent {
   EVENT_MESSAGE_RESPONSE = 'gows.EventMessageResponse',
   // Polls
   POLL_VOTE_EVENT = 'gows.PollVoteEvent',
+  // Calls
+  CALL_OFFER = 'events.CallOffer',
+  CALL_ACCEPT = 'events.CallAccept',
+  CALL_REJECT = 'events.CallReject',
+  CALL_TERMINATE = 'events.CallTerminate',
+  CALL_OFFER_NOTICE = 'events.CallOfferNotice',
 }
 
 export interface GowsConfig {
@@ -541,6 +549,52 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
       map(this.processMessageReaction.bind(this)),
     );
     this.events2.get(WAHAEvents.MESSAGE_REACTION).switch(messageReactions$);
+
+    //
+    // Calls
+    //
+    const callOffer$ = all$.pipe(
+      onlyEvent(WhatsMeowEvent.CALL_OFFER),
+      filter(this.shouldProcessCallEvent.bind(this)),
+      map(this.toCallData.bind(this)),
+    );
+    const callOfferNotice$ = all$.pipe(
+      onlyEvent(WhatsMeowEvent.CALL_OFFER_NOTICE),
+      filter(this.shouldProcessCallEvent.bind(this)),
+      map(this.toCallData.bind(this)),
+    );
+    this.events2
+      .get(WAHAEvents.CALL_RECEIVED)
+      .switch(merge(callOffer$, callOfferNotice$));
+
+    const callAccept$ = all$.pipe(
+      onlyEvent(WhatsMeowEvent.CALL_ACCEPT),
+      filter(this.shouldProcessCallEvent.bind(this)),
+      map(this.toCallData.bind(this)),
+    );
+    this.events2.get(WAHAEvents.CALL_ACCEPTED).switch(callAccept$);
+
+    const callReject$ = all$.pipe(
+      onlyEvent(WhatsMeowEvent.CALL_REJECT),
+      filter(this.shouldProcessCallEvent.bind(this)),
+    );
+    const callTerminate$ = all$.pipe(
+      onlyEvent(WhatsMeowEvent.CALL_TERMINATE),
+      filter(this.shouldProcessCallEvent.bind(this)),
+      // Skip terminate events that only mean the call was accepted or rejected on another device
+      filter(
+        (call: any) =>
+          call?.Reason !== 'accepted_elsewhere' &&
+          call?.Reason !== 'rejected_elsewhere',
+      ),
+    );
+    // Debounce per call to collapse duplicate reject/terminate events
+    const callRejected$ = merge(callReject$, callTerminate$).pipe(
+      groupBy((call: any) => this.getCallId(call) || 'unknown'),
+      mergeMap((group$) => group$.pipe(debounceTime(1_000))),
+      map(this.toCallData.bind(this)),
+    );
+    this.events2.get(WAHAEvents.CALL_REJECTED).switch(callRejected$);
 
     const presence$ = all$.pipe(
       onlyEvent(WhatsMeowEvent.PRESENCE),
@@ -2163,6 +2217,59 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
       },
       _data: event,
     };
+  }
+
+  private getCallId(call: any): string | null {
+    return call?.CallID || call?.Data?.Attrs?.['call-id'] || null;
+  }
+
+  private shouldProcessCallEvent(call: any): boolean {
+    if (!call) {
+      return false;
+    }
+    if (call.GroupJID && this.jids.include(call.GroupJID)) {
+      return true;
+    }
+    return this.jids.include(call.From);
+  }
+
+  private toCallData(call: any): CallData {
+    const date = call?.Timestamp ? new Date(call.Timestamp) : new Date();
+    const timestamp = date.getTime() / 1000;
+    const isVideo = this.isVideoCall(call);
+    const isGroup = this.isGroupCall(call);
+    const from = call?.From || call?.GroupJID;
+    return {
+      id: this.getCallId(call),
+      from: from ? toCusFormat(from) : undefined,
+      timestamp: timestamp,
+      isVideo: Boolean(isVideo),
+      isGroup: isGroup,
+      _data: call,
+    };
+  }
+
+  private isVideoCall(call: any): boolean {
+    if (!call) return false;
+    if (call?.Media === 'video') return true;
+    const attrsMedia = call?.Data?.Attrs?.media || call?.Data?.Attrs?.type;
+    if (attrsMedia === 'video') return true;
+    const content = call?.Data?.Content;
+    if (Array.isArray(content)) {
+      const hasVideoTag = content.some((item: any) => item?.Tag === 'video');
+      if (hasVideoTag) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private isGroupCall(call: any): boolean {
+    if (!call) return false;
+    if (call?.GroupJID) return true;
+    const attrs = call?.Data?.Attrs;
+    if (!attrs) return false;
+    return attrs.type === 'group' || Boolean(attrs['group-jid']);
   }
 
   private toEventResponsePayload(event: any): EventResponsePayload {
