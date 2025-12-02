@@ -131,7 +131,15 @@ import { TmpDir } from '@waha/utils/tmpdir';
 import * as lodash from 'lodash';
 import * as path from 'path';
 import { ProtocolError } from 'puppeteer';
-import { filter, fromEvent, merge, mergeMap, Observable, share } from 'rxjs';
+import {
+  filter,
+  fromEvent,
+  merge,
+  mergeMap,
+  Observable,
+  share,
+  Subject,
+} from 'rxjs';
 import { map } from 'rxjs/operators';
 import {
   AuthStrategy,
@@ -163,6 +171,7 @@ import {
   toCusFormat,
 } from '@waha/core/utils/jids';
 import { Activity } from '@waha/core/abc/activity';
+import { CallData } from '@waha/structures/calls.dto';
 
 export interface WebJSConfig {
   webVersion?: string;
@@ -183,6 +192,7 @@ export class WhatsappSessionWebJSCore extends WhatsappSession {
 
   whatsapp: WebjsClientCore;
   protected qr: QR;
+  private callRejected$ = new Subject<CallData>();
 
   public constructor(config) {
     super(config);
@@ -660,6 +670,7 @@ export class WhatsappSessionWebJSCore extends WhatsappSession {
     call.id = id;
     call.from = peerJid;
     await call.reject();
+    this.callRejected$.next(this.toRejectedCallData(peerJid, id));
   }
 
   @Activity()
@@ -1786,6 +1797,9 @@ export class WhatsappSessionWebJSCore extends WhatsappSession {
       }),
     );
     this.events2.get(WAHAEvents.CALL_RECEIVED).switch(calls$);
+    this.events2
+      .get(WAHAEvents.CALL_REJECTED)
+      .switch(this.callRejected$.asObservable());
   }
 
   protected async processIncomingMessage(
@@ -1800,6 +1814,23 @@ export class WhatsappSessionWebJSCore extends WhatsappSession {
       wamessage.media = media;
     }
     return wamessage;
+  }
+
+  private toRejectedCallData(peerJid: string, id: string): CallData {
+    const timestamp = Math.floor(Date.now() / 1000);
+    return {
+      id: id,
+      from: peerJid,
+      timestamp: timestamp,
+      isVideo: false,
+      isGroup: isJidGroup(peerJid),
+      _data: {
+        id: id,
+        from: peerJid,
+        status: 'reject',
+        api: true,
+      },
+    };
   }
 
   private processMessageReaction(reaction: Reaction): WAMessageReaction {
