@@ -664,6 +664,10 @@ export abstract class WhatsappSession {
     throw new NotImplementedByEngineError();
   }
 
+  public rejectCall(from: string, id: string): Promise<void> {
+    throw new NotImplementedByEngineError();
+  }
+
   /**
    * Chats methods
    */

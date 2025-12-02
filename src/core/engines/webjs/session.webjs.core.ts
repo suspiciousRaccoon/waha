@@ -150,7 +150,10 @@ import {
   Reaction,
   WAState,
 } from 'whatsapp-web.js';
-import { Message as MessageInstance } from 'whatsapp-web.js/src/structures';
+import {
+  Message as MessageInstance,
+  Call as CallInstance,
+} from 'whatsapp-web.js/src/structures';
 
 import { WAJSPresenceChatStateType, WebJSPresence } from './types';
 import {
@@ -651,6 +654,14 @@ export class WhatsappSessionWebJSCore extends WhatsappSession {
   /**
    * Other methods
    */
+  async rejectCall(from: string, id: string): Promise<void> {
+    const peerJid = normalizeJid(this.ensureSuffix(from));
+    const call = new CallInstance(this.whatsapp, null);
+    call.id = id;
+    call.from = peerJid;
+    await call.reject();
+  }
+
   @Activity()
   sendText(request: MessageTextRequest) {
     const options = this.getMessageOptions(request);

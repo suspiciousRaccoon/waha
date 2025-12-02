@@ -10105,6 +10105,122 @@ export namespace messages {
             return GetLidsRequest.deserialize(bytes);
         }
     }
+    export class RejectCallRequest extends pb_1.Message {
+        #one_of_decls: number[][] = [];
+        constructor(data?: any[] | {
+            session?: Session;
+            from?: string;
+            id?: string;
+        }) {
+            super();
+            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
+            if (!Array.isArray(data) && typeof data == "object") {
+                if ("session" in data && data.session != undefined) {
+                    this.session = data.session;
+                }
+                if ("from" in data && data.from != undefined) {
+                    this.from = data.from;
+                }
+                if ("id" in data && data.id != undefined) {
+                    this.id = data.id;
+                }
+            }
+        }
+        get session() {
+            return pb_1.Message.getWrapperField(this, Session, 1) as Session;
+        }
+        set session(value: Session) {
+            pb_1.Message.setWrapperField(this, 1, value);
+        }
+        get has_session() {
+            return pb_1.Message.getField(this, 1) != null;
+        }
+        get from() {
+            return pb_1.Message.getFieldWithDefault(this, 2, "") as string;
+        }
+        set from(value: string) {
+            pb_1.Message.setField(this, 2, value);
+        }
+        get id() {
+            return pb_1.Message.getFieldWithDefault(this, 3, "") as string;
+        }
+        set id(value: string) {
+            pb_1.Message.setField(this, 3, value);
+        }
+        static fromObject(data: {
+            session?: ReturnType<typeof Session.prototype.toObject>;
+            from?: string;
+            id?: string;
+        }): RejectCallRequest {
+            const message = new RejectCallRequest({});
+            if (data.session != null) {
+                message.session = Session.fromObject(data.session);
+            }
+            if (data.from != null) {
+                message.from = data.from;
+            }
+            if (data.id != null) {
+                message.id = data.id;
+            }
+            return message;
+        }
+        toObject() {
+            const data: {
+                session?: ReturnType<typeof Session.prototype.toObject>;
+                from?: string;
+                id?: string;
+            } = {};
+            if (this.session != null) {
+                data.session = this.session.toObject();
+            }
+            if (this.from != null) {
+                data.from = this.from;
+            }
+            if (this.id != null) {
+                data.id = this.id;
+            }
+            return data;
+        }
+        serialize(): Uint8Array;
+        serialize(w: pb_1.BinaryWriter): void;
+        serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+            const writer = w || new pb_1.BinaryWriter();
+            if (this.has_session)
+                writer.writeMessage(1, this.session, () => this.session.serialize(writer));
+            if (this.from.length)
+                writer.writeString(2, this.from);
+            if (this.id.length)
+                writer.writeString(3, this.id);
+            if (!w)
+                return writer.getResultBuffer();
+        }
+        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): RejectCallRequest {
+            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new RejectCallRequest();
+            while (reader.nextField()) {
+                if (reader.isEndGroup())
+                    break;
+                switch (reader.getFieldNumber()) {
+                    case 1:
+                        reader.readMessage(message.session, () => message.session = Session.deserialize(reader));
+                        break;
+                    case 2:
+                        message.from = reader.readString();
+                        break;
+                    case 3:
+                        message.id = reader.readString();
+                        break;
+                    default: reader.skipField();
+                }
+            }
+            return message;
+        }
+        serializeBinary(): Uint8Array {
+            return this.serialize();
+        }
+        static deserializeBinary(bytes: Uint8Array): RejectCallRequest {
+            return RejectCallRequest.deserialize(bytes);
+        }
+    }
     export class PollMessage extends pb_1.Message {
         #one_of_decls: number[][] = [];
         constructor(data?: any[] | {
@@ -10933,6 +11049,15 @@ export namespace messages {
                 responseSerialize: (message: DownloadMediaResponse) => Buffer.from(message.serialize()),
                 responseDeserialize: (bytes: Buffer) => DownloadMediaResponse.deserialize(new Uint8Array(bytes))
             },
+            RejectCall: {
+                path: "/messages.MessageService/RejectCall",
+                requestStream: false,
+                responseStream: false,
+                requestSerialize: (message: RejectCallRequest) => Buffer.from(message.serialize()),
+                requestDeserialize: (bytes: Buffer) => RejectCallRequest.deserialize(new Uint8Array(bytes)),
+                responseSerialize: (message: Empty) => Buffer.from(message.serialize()),
+                responseDeserialize: (bytes: Buffer) => Empty.deserialize(new Uint8Array(bytes))
+            },
             GetMessageById: {
                 path: "/messages.MessageService/GetMessageById",
                 requestStream: false,
@@ -11022,6 +11147,7 @@ export namespace messages {
         abstract GetContactById(call: grpc_1.ServerUnaryCall<EntityByIdRequest, Json>, callback: grpc_1.sendUnaryData<Json>): void;
         abstract CancelEventMessage(call: grpc_1.ServerUnaryCall<CancelEventMessageRequest, MessageResponse>, callback: grpc_1.sendUnaryData<MessageResponse>): void;
         abstract DownloadMedia(call: grpc_1.ServerUnaryCall<DownloadMediaRequest, DownloadMediaResponse>, callback: grpc_1.sendUnaryData<DownloadMediaResponse>): void;
+        abstract RejectCall(call: grpc_1.ServerUnaryCall<RejectCallRequest, Empty>, callback: grpc_1.sendUnaryData<Empty>): void;
         abstract GetMessageById(call: grpc_1.ServerUnaryCall<EntityByIdRequest, Json>, callback: grpc_1.sendUnaryData<Json>): void;
         abstract GetMessages(call: grpc_1.ServerUnaryCall<GetMessagesRequest, JsonList>, callback: grpc_1.sendUnaryData<JsonList>): void;
         abstract GetChats(call: grpc_1.ServerUnaryCall<GetChatsRequest, JsonList>, callback: grpc_1.sendUnaryData<JsonList>): void;
@@ -11209,6 +11335,9 @@ export namespace messages {
         };
         DownloadMedia: GrpcUnaryServiceInterface<DownloadMediaRequest, DownloadMediaResponse> = (message: DownloadMediaRequest, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<DownloadMediaResponse>, options?: grpc_1.CallOptions | grpc_1.requestCallback<DownloadMediaResponse>, callback?: grpc_1.requestCallback<DownloadMediaResponse>): grpc_1.ClientUnaryCall => {
             return super.DownloadMedia(message, metadata, options, callback);
+        };
+        RejectCall: GrpcUnaryServiceInterface<RejectCallRequest, Empty> = (message: RejectCallRequest, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<Empty>, options?: grpc_1.CallOptions | grpc_1.requestCallback<Empty>, callback?: grpc_1.requestCallback<Empty>): grpc_1.ClientUnaryCall => {
+            return super.RejectCall(message, metadata, options, callback);
         };
         GetMessageById: GrpcUnaryServiceInterface<EntityByIdRequest, Json> = (message: EntityByIdRequest, metadata: grpc_1.Metadata | grpc_1.CallOptions | grpc_1.requestCallback<Json>, options?: grpc_1.CallOptions | grpc_1.requestCallback<Json>, callback?: grpc_1.requestCallback<Json>): grpc_1.ClientUnaryCall => {
             return super.GetMessageById(message, metadata, options, callback);

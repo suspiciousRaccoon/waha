@@ -186,9 +186,11 @@ import {
   mergeMap,
   Observable,
   partition,
+  groupBy,
   share,
+  tap,
 } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { debounceTime, map } from 'rxjs/operators';
 
 import { INowebStore } from './store/INowebStore';
 import { NowebPersistentStore } from './store/NowebPersistentStore';
@@ -848,6 +850,11 @@ export class WhatsappSessionNoWebCore extends WhatsappSession {
 
   async generateNewMessageId(): Promise<string> {
     return this.generateMessageID();
+  }
+
+  async rejectCall(from: string, id: string): Promise<void> {
+    const jid = toJID(this.ensureSuffix(from));
+    await this.sock.rejectCall(id, jid);
   }
 
   @Activity()
@@ -2123,6 +2130,8 @@ export class WhatsappSessionNoWebCore extends WhatsappSession {
       ),
       share(),
     );
+
+    const acceptedCallIds = new Set<string>();
     this.events2.get(WAHAEvents.CALL_RECEIVED).switch(
       call$.pipe(
         filter((call: WACallEvent) => call.status === 'offer'),
@@ -2132,18 +2141,33 @@ export class WhatsappSessionNoWebCore extends WhatsappSession {
     this.events2.get(WAHAEvents.CALL_ACCEPTED).switch(
       call$.pipe(
         filter((call: WACallEvent) => call.status === 'accept'),
+        tap((call: WACallEvent) => acceptedCallIds.add(call.id)),
         map(this.toCallData.bind(this)),
       ),
     );
     this.events2.get(WAHAEvents.CALL_REJECTED).switch(
-      calls$.pipe(
-        // Filter out if there's any "accept" events.
-        // Meaning it's been accepted on one device, but rejected on another
-        exclude((calls) => calls.some((call) => call.status === 'accept')),
-        mergeAll(),
-        filter((call: WACallEvent) => call.status === 'reject'),
+      call$.pipe(
+        filter(
+          (call: WACallEvent) =>
+            call.status === 'reject' || call.status === 'terminate',
+        ),
+        // Skip rejections when the call was accepted earlier (local or other device)
+        exclude((call: WACallEvent) => {
+          const shouldSkip = acceptedCallIds.has(call.id);
+          if (call.status === 'terminate') {
+            acceptedCallIds.delete(call.id);
+          }
+          return shouldSkip;
+        }),
         // We get two "reject" events, one with null isGroup property, ignore it
         exclude((call: WACallEvent) => call.isGroup == null),
+        groupBy((call: WACallEvent) => call.id || 'unknown'),
+        mergeMap((group$) =>
+          group$.pipe(
+            debounceTime(1_000),
+            tap((call: WACallEvent) => acceptedCallIds.delete(call.id)),
+          ),
+        ),
         map(this.toCallData.bind(this)),
       ),
     );

@@ -40,6 +40,7 @@ import { join } from 'path';
 import { Logger } from 'pino';
 
 import { AuthController } from '../api/auth.controller';
+import { CallsController } from '../api/calls.controller';
 import { ChatsController } from '../api/chats.controller';
 import { ChattingController } from '../api/chatting.controller';
 import { ContactsController } from '../api/contacts.controller';
@@ -143,6 +144,7 @@ export const CONTROLLERS = [
   ProfileController,
   ChattingController,
   ChatsController,
+  CallsController,
   ChannelsController,
   StatusController,
   LabelsController,

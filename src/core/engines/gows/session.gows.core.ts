@@ -862,6 +862,15 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
     return data.id;
   }
 
+  async rejectCall(from: string, id: string): Promise<void> {
+    const request = new messages.RejectCallRequest({
+      session: this.session,
+      from: toJID(this.ensureSuffix(from)),
+      id: id,
+    });
+    await promisify(this.client.RejectCall)(request);
+  }
+
   @Activity()
   async sendText(request: MessageTextRequest) {
     const jid = toJID(this.ensureSuffix(request.chatId));

@@ -543,6 +543,17 @@ function deserialize_messages_ProfileStatusRequest(buffer_arg) {
   return gows_pb.ProfileStatusRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_messages_RejectCallRequest(arg) {
+  if (!(arg instanceof gows_pb.RejectCallRequest)) {
+    throw new Error('Expected argument of type messages.RejectCallRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_messages_RejectCallRequest(buffer_arg) {
+  return gows_pb.RejectCallRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_messages_RevokeMessageRequest(arg) {
   if (!(arg instanceof gows_pb.RevokeMessageRequest)) {
     throw new Error('Expected argument of type messages.RevokeMessageRequest');
@@ -1389,6 +1400,20 @@ downloadMedia: {
     requestDeserialize: deserialize_messages_DownloadMediaRequest,
     responseSerialize: serialize_messages_DownloadMediaResponse,
     responseDeserialize: deserialize_messages_DownloadMediaResponse,
+  },
+  //
+// Calls
+//
+rejectCall: {
+    path: '/messages.MessageService/RejectCall',
+    requestStream: false,
+    responseStream: false,
+    requestType: gows_pb.RejectCallRequest,
+    responseType: gows_pb.Empty,
+    requestSerialize: serialize_messages_RejectCallRequest,
+    requestDeserialize: deserialize_messages_RejectCallRequest,
+    responseSerialize: serialize_messages_Empty,
+    responseDeserialize: deserialize_messages_Empty,
   },
   //
 // Storage
