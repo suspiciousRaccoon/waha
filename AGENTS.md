@@ -120,5 +120,11 @@ This guide summarizes how to explore, modify, and validate the WhatsApp HTTP API
 - Keep docs and code ASCII unless a file already uses other characters. When
   updating documentation, mirror the concise, actionable tone used here.
 
+## Local Engine Sources
+
+- WebJS source: `../whatsapp-web.js`
+- Baileys (NoWeb) source: `../WhiskeySockets-Baileys`
+- GoWhatsApp (GoWS) source: `../gows` + `../whatsmeow`
+
 Following this playbook keeps contributions aligned with WAHA’s structure,
 automation hooks, and release process.
