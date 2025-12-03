@@ -369,12 +369,13 @@ export abstract class MessageBaseHandler<Payload extends WAMessageBase> {
       },
     );
 
-    const type = payload.fromMe ? MessageType.OUTGOING : MessageType.INCOMING;
+    const private_ = message.private ?? payload.fromMe;
+    const type = private_ ? MessageType.OUTGOING : MessageType.INCOMING;
     content = this.finalizeContent(content, payload);
     return {
       content: content,
       message_type: type,
-      private: message.private ?? payload.fromMe,
+      private: private_,
       attachments: message.attachments as any,
       content_attributes: {
         in_reply_to: replyTo,
