@@ -24,7 +24,7 @@ import { SessionManager } from '@waha/core/abc/manager.abc';
 import { parseMessageIdSerialized } from '@waha/core/utils/ids';
 import { RMutexService } from '@waha/modules/rmutex/rmutex.service';
 import { WAHAEvents } from '@waha/structures/enums.dto';
-import { MessageSource, WAMessageBase } from '@waha/structures/responses.dto';
+import { MessageSource } from '@waha/structures/responses.dto';
 import { sleep } from '@waha/utils/promiseTimeout';
 import { Job } from 'bullmq';
 import { PinoLogger } from 'nestjs-pino';
@@ -195,7 +195,17 @@ export interface ChatWootMessagePartial {
   private?: boolean;
 }
 
-export abstract class MessageBaseHandler<Payload extends WAMessageBase> {
+export interface MessageBaseHandlerPayload {
+  id: string;
+  timestamp: number;
+  from?: string;
+  fromMe?: boolean;
+  source?: MessageSource;
+}
+
+export abstract class MessageBaseHandler<
+  Payload extends MessageBaseHandlerPayload,
+> {
   constructor(
     protected job: Job,
     protected mappingService: MessageMappingService,
@@ -305,7 +315,7 @@ export abstract class MessageBaseHandler<Payload extends WAMessageBase> {
 
   private async saveMapping(
     chatwootMessage: generic_id & message,
-    whatsappMessage: WAMessageBase,
+    whatsappMessage: MessageBaseHandlerPayload,
   ) {
     const chatwoot: Omit<ChatwootMessage, 'id'> = {
       timestamp: new Date(chatwootMessage.created_at * 1000),
