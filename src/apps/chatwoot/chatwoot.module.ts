@@ -23,6 +23,9 @@ import { WAHAMessageReactionConsumer } from './consumers/waha/message.reaction';
 import { WAHAMessageRevokedConsumer } from './consumers/waha/message.revoked';
 import { WAHAMessageAckConsumer } from './consumers/waha/message.ack';
 import { WAHASessionStatusConsumer } from './consumers/waha/session.status';
+import { WAHACallAcceptedConsumer } from './consumers/waha/call.accepted';
+import { WAHACallReceivedConsumer } from './consumers/waha/call.received';
+import { WAHACallRejectedConsumer } from './consumers/waha/call.rejected';
 import { ChatWootQueueService } from './services/ChatWootQueueService';
 import { ChatWootScheduleService } from './services/ChatWootScheduleService';
 import { ChatWootWAHAQueueService } from './services/ChatWootWAHAQueueService';
@@ -77,6 +80,18 @@ const IMPORTS = lodash.flatten([
     defaultJobOptions: merge(ExponentialRetriesJobOptions, JobRemoveOptions),
   }),
   RegisterAppQueue({
+    name: QueueName.WAHA_CALL_RECEIVED,
+    defaultJobOptions: merge(ExponentialRetriesJobOptions, JobRemoveOptions),
+  }),
+  RegisterAppQueue({
+    name: QueueName.WAHA_CALL_ACCEPTED,
+    defaultJobOptions: merge(ExponentialRetriesJobOptions, JobRemoveOptions),
+  }),
+  RegisterAppQueue({
+    name: QueueName.WAHA_CALL_REJECTED,
+    defaultJobOptions: merge(ExponentialRetriesJobOptions, JobRemoveOptions),
+  }),
+  RegisterAppQueue({
     name: QueueName.WAHA_SESSION_STATUS,
     defaultJobOptions: merge(ExponentialRetriesJobOptions, JobRemoveOptions),
   }),
@@ -124,6 +139,9 @@ const PROVIDERS = [
   WAHAMessageEditedConsumer,
   WAHAMessageRevokedConsumer,
   WAHAMessageAckConsumer,
+  WAHACallReceivedConsumer,
+  WAHACallAcceptedConsumer,
+  WAHACallRejectedConsumer,
   // Scheduled
   MessageCleanupConsumer,
   CheckVersionConsumer,

@@ -522,6 +522,18 @@ whatsapp.to.chatwoot.message.facebook.ad: |-
   ---
   💬 **গ্রাহকের বার্তা:**
   {{{payload.body}}}
+
+whatsapp.to.chatwoot.call.received: |-
+  📞🔔 *ইনকামিং {{#call.isVideo}}ভিডিও{{/call.isVideo}}{{^call.isVideo}}ভয়েস{{/call.isVideo}} কল*
+  📱 উত্তর দিতে দয়া করে **WhatsApp** খুলুন।
+
+whatsapp.to.chatwoot.call.accepted: |-
+  📞✅ *কল রিসিভ করা হয়েছে*
+  📱 কলটি আপনার অন্য ডিভাইসে রিসিভ করা হয়েছে।
+
+whatsapp.to.chatwoot.call.rejected: |-
+  📞❌ *কল শেষ হয়েছে*
+
 whatsapp.history.message.wrapper: |-
   {{{content}}}
   `{{#history}}📥{{/history}}🗓️ {{{timestamp}}}`

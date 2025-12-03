@@ -522,6 +522,18 @@ whatsapp.to.chatwoot.message.facebook.ad: |-
   ---
   💬 **Müşteri Mesajı:**
   {{{payload.body}}}
+
+whatsapp.to.chatwoot.call.received: |-
+  📞🔔 *Gelen {{#call.isVideo}}Görüntülü{{/call.isVideo}}{{^call.isVideo}}Sesli{{/call.isVideo}} Arama*
+  📱 Yanıtlamak için lütfen **WhatsApp**'ı açın.
+
+whatsapp.to.chatwoot.call.accepted: |-
+  📞✅ *Arama Yanıtlandı*
+  📱 Arama diğer cihazınızda açıldı.
+
+whatsapp.to.chatwoot.call.rejected: |-
+  📞❌ *Arama Sonlandı*
+
 whatsapp.history.message.wrapper: |-
   {{{content}}}
   `{{#history}}📥{{/history}}🗓️ {{{timestamp}}}`

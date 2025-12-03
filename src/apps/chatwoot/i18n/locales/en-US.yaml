@@ -316,6 +316,17 @@ whatsapp.to.chatwoot.message.facebook.ad: |-
   💬 **CUSTOMER MESSAGE:**
   {{{payload.body}}}
 
+whatsapp.to.chatwoot.call.received: |-
+  📞🔔 *Incoming {{#call.isVideo}}Video{{/call.isVideo}}{{^call.isVideo}}Voice{{/call.isVideo}} Call*
+  📱 Please open **WhatsApp** to answer.
+
+whatsapp.to.chatwoot.call.accepted: |-
+  📞✅ *Call Answered*
+  📱 The call was picked up on your other device.
+
+whatsapp.to.chatwoot.call.rejected: |-
+  📞❌ *Call Ended*
+
 app.connected.message: |-
   🔗 **CONNECTED: WhatsApp Session to Inbox**
 

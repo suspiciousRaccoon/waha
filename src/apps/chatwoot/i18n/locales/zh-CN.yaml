@@ -522,6 +522,18 @@ whatsapp.to.chatwoot.message.facebook.ad: |-
   ---
   💬 **客户消息:**
   {{{payload.body}}}
+
+whatsapp.to.chatwoot.call.received: |-
+  📞🔔 *收到{{#call.isVideo}}视频{{/call.isVideo}}{{^call.isVideo}}语音{{/call.isVideo}}来电*
+  📱 请打开 **WhatsApp** 接听。
+
+whatsapp.to.chatwoot.call.accepted: |-
+  📞✅ *已接听来电*
+  📱 来电已在你的其他设备上接听。
+
+whatsapp.to.chatwoot.call.rejected: |-
+  📞❌ *通话已结束*
+
 whatsapp.history.message.wrapper: |-
   {{{content}}}
   `{{#history}}📥{{/history}}🗓️ {{{timestamp}}}`

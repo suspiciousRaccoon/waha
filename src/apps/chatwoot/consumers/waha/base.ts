@@ -43,6 +43,9 @@ export function ListenEventsForChatWoot() {
     WAHAEvents.MESSAGE_REVOKED,
     WAHAEvents.MESSAGE_ACK,
     WAHAEvents.SESSION_STATUS,
+    WAHAEvents.CALL_RECEIVED,
+    WAHAEvents.CALL_ACCEPTED,
+    WAHAEvents.CALL_REJECTED,
   ];
 }
 

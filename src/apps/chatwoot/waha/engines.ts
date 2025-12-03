@@ -5,9 +5,12 @@ import { getEngineName } from '@waha/version';
 import { Message as MessageInstance } from 'whatsapp-web.js/src/structures';
 import { isLidUser, isPnUser, toCusFormat } from '@waha/core/utils/jids';
 import { WAMessage } from '@waha/structures/responses.dto';
+import { CallData } from '@waha/structures/calls.dto';
 
 interface IEngineHelper {
   ChatID(message: WAMessage | any): string;
+
+  CallChatID(call: CallData | any): string;
 
   WhatsAppMessageKeys(message: any): WhatsAppMessage;
 
@@ -25,6 +28,10 @@ interface IEngineHelper {
 class NOWEBHelper implements IEngineHelper {
   ChatID(message: WAMessage): string {
     return message.from;
+  }
+
+  CallChatID(call: CallData): string {
+    return call.from;
   }
 
   WhatsAppMessageKeys(message: any): WhatsAppMessage {
@@ -60,6 +67,10 @@ class NOWEBHelper implements IEngineHelper {
 class GOWSHelper implements IEngineHelper {
   ChatID(message: WAMessage): string {
     return message.from;
+  }
+
+  CallChatID(call: CallData): string {
+    return call._data?.CallCreator || call.from;
   }
 
   /**
@@ -100,6 +111,10 @@ class GOWSHelper implements IEngineHelper {
 class WEBJSHelper implements IEngineHelper {
   ChatID(message: WAMessage): string {
     return message._data?.id?.remote || message.from;
+  }
+
+  CallChatID(call: CallData): string {
+    return call.from;
   }
 
   /**

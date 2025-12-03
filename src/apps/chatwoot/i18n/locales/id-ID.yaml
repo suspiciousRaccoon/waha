@@ -522,6 +522,18 @@ whatsapp.to.chatwoot.message.facebook.ad: |-
   ---
   💬 **Pesan Pelanggan:**
   {{{payload.body}}}
+
+whatsapp.to.chatwoot.call.received: |-
+  📞🔔 *Panggilan {{#call.isVideo}}Video{{/call.isVideo}}{{^call.isVideo}}Suara{{/call.isVideo}} Masuk*
+  📱 Silakan buka **WhatsApp** untuk menjawab.
+
+whatsapp.to.chatwoot.call.accepted: |-
+  📞✅ *Panggilan Dijawab*
+  📱 Panggilan dijawab di perangkat lainmu.
+
+whatsapp.to.chatwoot.call.rejected: |-
+  📞❌ *Panggilan Berakhir*
+
 whatsapp.history.message.wrapper: |-
   {{{content}}}
   `{{#history}}📥{{/history}}🗓️ {{{timestamp}}}`

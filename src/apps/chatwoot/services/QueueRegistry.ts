@@ -32,6 +32,12 @@ export class QueueRegistry {
     private readonly wahaMessageRevokedQueue: Queue,
     @InjectQueue(QueueName.WAHA_MESSAGE_ACK)
     private readonly wahaMessageAckQueue: Queue,
+    @InjectQueue(QueueName.WAHA_CALL_RECEIVED)
+    private readonly wahaCallReceivedQueue: Queue,
+    @InjectQueue(QueueName.WAHA_CALL_ACCEPTED)
+    private readonly wahaCallAcceptedQueue: Queue,
+    @InjectQueue(QueueName.WAHA_CALL_REJECTED)
+    private readonly wahaCallRejectedQueue: Queue,
     @InjectQueue(QueueName.INBOX_MESSAGE_CREATED)
     private readonly inboxMessageCreatedQueue: Queue,
     @InjectQueue(QueueName.INBOX_MESSAGE_UPDATED)
@@ -57,6 +63,9 @@ export class QueueRegistry {
       [QueueName.WAHA_MESSAGE_EDITED]: this.wahaMessageEditedQueue,
       [QueueName.WAHA_MESSAGE_REVOKED]: this.wahaMessageRevokedQueue,
       [QueueName.WAHA_MESSAGE_ACK]: this.wahaMessageAckQueue,
+      [QueueName.WAHA_CALL_RECEIVED]: this.wahaCallReceivedQueue,
+      [QueueName.WAHA_CALL_ACCEPTED]: this.wahaCallAcceptedQueue,
+      [QueueName.WAHA_CALL_REJECTED]: this.wahaCallRejectedQueue,
       [QueueName.INBOX_MESSAGE_CREATED]: this.inboxMessageCreatedQueue,
       [QueueName.INBOX_MESSAGE_UPDATED]: this.inboxMessageUpdatedQueue,
       [QueueName.INBOX_CONVERSATION_CREATED]:

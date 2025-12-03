@@ -522,6 +522,18 @@ whatsapp.to.chatwoot.message.facebook.ad: |-
   ---
   💬 **پیام مشتری:**
   {{{payload.body}}}
+
+whatsapp.to.chatwoot.call.received: |-
+  📞🔔 *تماس {{#call.isVideo}}تصویری{{/call.isVideo}}{{^call.isVideo}}صوتی{{/call.isVideo}} ورودی*
+  📱 برای پاسخ دادن لطفاً **واتساپ** را باز کنید.
+
+whatsapp.to.chatwoot.call.accepted: |-
+  📞✅ *تماس پاسخ داده شد*
+  📱 تماس روی دستگاه دیگر شما پاسخ داده شد.
+
+whatsapp.to.chatwoot.call.rejected: |-
+  📞❌ *تماس پایان یافت*
+
 whatsapp.history.message.wrapper: |-
   {{{content}}}
   `{{#history}}📥{{/history}}🗓️ {{{timestamp}}}`

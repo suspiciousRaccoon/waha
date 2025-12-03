@@ -1,6 +1,7 @@
 import type { proto } from '@adiwajshing/baileys';
 import { WAMessage } from '@waha/structures/responses.dto';
 import { SimpleVCardInfo } from '@waha/core/vcard';
+import { CallData } from '@waha/structures/calls.dto';
 
 export enum TKey {
   LOCALE_NAME = 'locale.name',
@@ -57,6 +58,9 @@ export enum TKey {
   WA_TO_CW_MESSAGE_FACEBOOK_AD = 'whatsapp.to.chatwoot.message.facebook.ad',
   WA_TO_CW_MESSAGE_LIST = 'whatsapp.to.chatwoot.message.list',
   WA_TO_CW_MESSAGE_ALBUM = 'whatsapp.to.chatwoot.message.album',
+  WA_TO_CW_CALL_RECEIVED = 'whatsapp.to.chatwoot.call.received',
+  WA_TO_CW_CALL_ACCEPTED = 'whatsapp.to.chatwoot.call.accepted',
+  WA_TO_CW_CALL_REJECTED = 'whatsapp.to.chatwoot.call.rejected',
 
   //
   // App Inbox
@@ -195,6 +199,9 @@ export type TemplatePayloads = {
     expectedVideoCount: number;
     totalCount: number;
   };
+  [TKey.WA_TO_CW_CALL_RECEIVED]: { call: CallData };
+  [TKey.WA_TO_CW_CALL_ACCEPTED]: { call: CallData };
+  [TKey.WA_TO_CW_CALL_REJECTED]: { call: CallData };
   [TKey.JOB_SCHEDULED_ERROR_HEADER]: void;
   [TKey.JOB_REPORT_ERROR]: {
     header: string;

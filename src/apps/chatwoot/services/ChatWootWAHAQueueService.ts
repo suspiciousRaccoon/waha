@@ -35,6 +35,12 @@ export class ChatWootWAHAQueueService {
         return this.queueRegistry.queue(QueueName.WAHA_MESSAGE_ACK);
       case WAHAEvents.SESSION_STATUS:
         return this.queueRegistry.queue(QueueName.WAHA_SESSION_STATUS);
+      case WAHAEvents.CALL_RECEIVED:
+        return this.queueRegistry.queue(QueueName.WAHA_CALL_RECEIVED);
+      case WAHAEvents.CALL_ACCEPTED:
+        return this.queueRegistry.queue(QueueName.WAHA_CALL_ACCEPTED);
+      case WAHAEvents.CALL_REJECTED:
+        return this.queueRegistry.queue(QueueName.WAHA_CALL_REJECTED);
       default:
         return null;
     }

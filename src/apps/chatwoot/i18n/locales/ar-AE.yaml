@@ -522,6 +522,18 @@ whatsapp.to.chatwoot.message.facebook.ad: |-
   ---
   💬 **رسالة العميل:**
   {{{payload.body}}}
+
+whatsapp.to.chatwoot.call.received: |-
+  📞🔔 *مكالمة {{#call.isVideo}}فيديو{{/call.isVideo}}{{^call.isVideo}}صوتية{{/call.isVideo}} واردة*
+  📱 يرجى فتح **واتساب** للرد.
+
+whatsapp.to.chatwoot.call.accepted: |-
+  📞✅ *تم الرد على المكالمة*
+  📱 تم الرد على المكالمة من جهازك الآخر.
+
+whatsapp.to.chatwoot.call.rejected: |-
+  📞❌ *تم إنهاء المكالمة*
+
 whatsapp.history.message.wrapper: |-
   {{{content}}}
   `{{#history}}📥{{/history}}🗓️ {{{timestamp}}}`

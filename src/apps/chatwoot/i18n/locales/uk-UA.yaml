@@ -522,6 +522,18 @@ whatsapp.to.chatwoot.message.facebook.ad: |-
   ---
   💬 **Повідомлення клієнта:**
   {{{payload.body}}}
+
+whatsapp.to.chatwoot.call.received: |-
+  📞🔔 *Вхідний {{#call.isVideo}}відеодзвінок{{/call.isVideo}}{{^call.isVideo}}голосовий дзвінок{{/call.isVideo}}*
+  📱 Відкрийте **WhatsApp**, щоб відповісти.
+
+whatsapp.to.chatwoot.call.accepted: |-
+  📞✅ *Дзвінок прийнято*
+  📱 Дзвінок прийняли на вашому іншому пристрої.
+
+whatsapp.to.chatwoot.call.rejected: |-
+  📞❌ *Дзвінок завершено*
+
 whatsapp.history.message.wrapper: |-
   {{{content}}}
   `{{#history}}📥{{/history}}🗓️ {{{timestamp}}}`
