@@ -1,5 +1,18 @@
 import { UrlProtection } from '@waha/apps/chatwoot/messages/to/markdown';
 
+const boldPattern = new RegExp(
+  `(?<![\\p{L}\\p{N}_*])\\*(?!\\*)(?=\\S)(.+?)(?<=\\S)\\*(?![\\p{L}\\p{N}_*])`,
+  'gu',
+);
+const italicPattern = new RegExp(
+  `(?<![\\p{L}\\p{N}_])_(?!_)(?=\\S)(.+?)(?<=\\S)_(?![\\p{L}\\p{N}_])`,
+  'gu',
+);
+const strikePattern = new RegExp(
+  `(?<![\\p{L}\\p{N}_~])~(?!~)(?=\\S)(.+?)(?<=\\S)~(?![\\p{L}\\p{N}_~])`,
+  'gu',
+);
+
 export function WhatsappToMarkdown(text: string): string {
   if (!text) {
     return text;
@@ -16,11 +29,11 @@ export function WhatsappToMarkdown(text: string): string {
   // Apply markdown transformations to "clean" text
   let result = text
     // Bold: *bold* → **bold**
-    .replace(/\*(.*?)\*/g, '**$1**')
+    .replace(boldPattern, '**$1**')
     // Strikethrough: ~strike~ → ~~strike~~
-    .replace(/~(.*?)~/g, '~~$1~~')
+    .replace(strikePattern, '~~$1~~')
     // Italic: _italic_ → *italic*
-    .replace(/_(.*?)_/g, '*$1*');
+    .replace(italicPattern, '*$1*');
 
   // Restore original URLs after all transformations
   result = urls.restore(result);

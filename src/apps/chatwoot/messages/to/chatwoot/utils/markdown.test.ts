@@ -53,4 +53,40 @@ describe('WhatsappToMarkdown', () => {
     const expected = 'URL: https://example.com/test_page e texto *em itálico*';
     expect(WhatsappToMarkdown(input)).toBe(expected);
   });
+
+  it('keeps already bold markdown intact', () => {
+    const input = '**PIX - Copia e Cola**';
+    expect(WhatsappToMarkdown(input)).toBe(input);
+  });
+
+  it('keeps already strikethrough markdown intact', () => {
+    const input = '~~removed~~';
+    expect(WhatsappToMarkdown(input)).toBe(input);
+  });
+
+  it('keeps underscores inside identifiers intact', () => {
+    const input = 'api key: abc_test_key';
+    expect(WhatsappToMarkdown(input)).toBe(input);
+  });
+
+  it('does not convert underscores inside words', () => {
+    const input = 'Instance name: customer_prod_instance';
+    expect(WhatsappToMarkdown(input)).toBe(input);
+  });
+
+  it('does not convert when markers are stuck to word characters', () => {
+    const input = 'My name is*Rafael* and email is test_user@example.com';
+    expect(WhatsappToMarkdown(input)).toBe(input);
+  });
+
+  it('keeps formatting when markers touch punctuation boundaries', () => {
+    const input = 'Hello *Rafael*, welcome to _WAHA_!';
+    const expected = 'Hello **Rafael**, welcome to *WAHA*!';
+    expect(WhatsappToMarkdown(input)).toBe(expected);
+  });
+
+  it('ignores markers with inner spaces next to the marker', () => {
+    const input = '* text* and _ text_ should stay the same';
+    expect(WhatsappToMarkdown(input)).toBe(input);
+  });
 });

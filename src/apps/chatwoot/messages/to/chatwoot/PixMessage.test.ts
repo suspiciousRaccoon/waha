@@ -108,15 +108,15 @@ describe('PixMessage - pt-BR', () => {
     const result = converter.convert(payload, protoMessage);
 
     // Assert
-    const expected = `💳 ****PIX - Copia e Cola****
+    const expected = `💳 **PIX - Copia e Cola**
 
-****Merchant Name Here****
+**Merchant Name Here**
 
-****Chave PIX:**** +5000000000000
-****Tipo:**** PHONE
-****Referência:**** 4TB11111111
+**Chave PIX:** +5000000000000
+**Tipo:** PHONE
+**Referência:** 4TB11111111
 
-💳 ****PIX Copia e Cola enviado****`;
+💳 **PIX Copia e Cola enviado**`;
 
     expect(protoMessage).not.toBeNull();
     expect(result).not.toBeNull();
@@ -227,16 +227,16 @@ describe('PixMessage - pt-BR', () => {
     const result = converter.convert(payload, protoMessage);
 
     // Assert
-    const expected = `💳 ****PIX - Copia e Cola****
+    const expected = `💳 **PIX - Copia e Cola**
 
-****Merchant Name Here****
+**Merchant Name Here**
 
-****Chave PIX:**** +5000000000000
-****Tipo:**** PHONE
-****Valor:**** R$\u00A025,12
-****Referência:**** 4TB11111111
+**Chave PIX:** +5000000000000
+**Tipo:** PHONE
+**Valor:** R$\u00A025,12
+**Referência:** 4TB11111111
 
-💳 ****PIX Copia e Cola enviado****`;
+💳 **PIX Copia e Cola enviado**`;
 
     expect(protoMessage).not.toBeNull();
     expect(result).not.toBeNull();
