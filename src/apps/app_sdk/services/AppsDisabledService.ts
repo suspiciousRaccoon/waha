@@ -37,6 +37,10 @@ export class AppsDisabledService implements IAppsService {
     throw new AppsIsDisabledError();
   }
 
+  async removeBySession(manager: SessionManager, session: string) {
+    return;
+  }
+
   migrate(knex: Knex<any, any[]>): Promise<void> {
     return;
   }

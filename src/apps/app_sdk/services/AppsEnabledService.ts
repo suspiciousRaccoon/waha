@@ -156,6 +156,12 @@ export class AppsEnabledService implements IAppsService {
     return;
   }
 
+  async removeBySession(manager: SessionManager, session: string) {
+    const knex = manager.store.getWAHADatabase();
+    const repo = new AppRepository(knex);
+    await repo.deleteBySession(session);
+  }
+
   async beforeSessionStart(session: WhatsappSession, store: DataStore) {
     const knex = store.getWAHADatabase();
     const repo = new AppRepository(knex);

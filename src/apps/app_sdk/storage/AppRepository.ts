@@ -123,4 +123,11 @@ export class AppRepository {
   async delete(id: string): Promise<void> {
     await this.knex(this.tableName).where('id', id).delete();
   }
+
+  /**
+   * Deletes all apps for a session
+   */
+  async deleteBySession(session: string): Promise<void> {
+    await this.knex(this.tableName).where('session', session).delete();
+  }
 }
