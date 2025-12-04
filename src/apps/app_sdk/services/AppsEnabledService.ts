@@ -107,11 +107,23 @@ export class AppsEnabledService implements IAppsService {
     return app;
   }
 
-  async update(manager: SessionManager, app: App): Promise<App> {
+  async upsert(manager: SessionManager, app: App) {
+    return await this.update(manager, app, true);
+  }
+
+  async update(
+    manager: SessionManager,
+    app: App,
+    upsert: boolean = false,
+  ): Promise<App> {
     await this.checkSessionExists(manager, app.session);
     const knex = manager.store.getWAHADatabase();
     const repo = new AppRepository(knex);
     const savedApp = await repo.getById(app.id);
+    if (!savedApp && upsert) {
+      return this.create(manager, app);
+    }
+
     if (!savedApp) {
       throw new NotFoundException(`App '${app.id}' not found`);
     }

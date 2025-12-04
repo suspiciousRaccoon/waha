@@ -11,6 +11,8 @@ export interface IAppsService {
 
   create(manager: SessionManager, app: App): Promise<App>;
 
+  upsert(manager: SessionManager, app: App): Promise<App>;
+
   update(manager: SessionManager, app: App): Promise<App>;
 
   delete(manager: SessionManager, appId: string): Promise<void>;

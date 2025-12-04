@@ -67,7 +67,7 @@ export class AppsController {
       );
     }
 
-    return await this.appsService.update(this.manager, app);
+    return await this.appsService.upsert(this.manager, app);
   }
 
   @Delete('/:id')
