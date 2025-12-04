@@ -9,6 +9,7 @@ import { BullAuthMiddleware } from '@waha/apps/app_sdk/auth';
 import { AppsDisabledService } from '@waha/apps/app_sdk/services/AppsDisabledService';
 import { AppsEnabledService } from '@waha/apps/app_sdk/services/AppsEnabledService';
 import { AppsService } from '@waha/apps/app_sdk/services/IAppsService';
+import { CallsAppService } from '@waha/apps/calls/services/CallsAppService';
 import { ChatwootLocalesController } from '@waha/apps/chatwoot/api/chatwoot.locales.controller';
 import { ChatWootExports } from '@waha/apps/chatwoot/chatwoot.module';
 import { parseBool } from '@waha/helpers';
@@ -78,6 +79,7 @@ const AppsEnabled = {
       provide: AppsService,
       useClass: AppsEnabledService,
     },
+    CallsAppService,
     ...ChatWootExports.providers,
   ],
 };

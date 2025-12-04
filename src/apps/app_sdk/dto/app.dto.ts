@@ -1,4 +1,5 @@
 import { ChatWootAppConfig } from '@waha/apps/chatwoot/dto/config.dto';
+import { CallsAppConfig } from '@waha/apps/calls/dto/config.dto';
 import { Type } from 'class-transformer';
 import {
   IsBoolean,
@@ -9,13 +10,14 @@ import {
 } from 'class-validator';
 import { ApiExtraModels, ApiProperty } from '@nestjs/swagger';
 
-export type AllowedAppConfig = ChatWootAppConfig;
+export type AllowedAppConfig = ChatWootAppConfig | CallsAppConfig;
 
 export enum AppName {
   chatwoot = 'chatwoot',
+  calls = 'calls',
 }
 
-@ApiExtraModels(ChatWootAppConfig)
+@ApiExtraModels(ChatWootAppConfig, CallsAppConfig)
 export class App<T extends AllowedAppConfig = any> {
   @IsString()
   id: string;
@@ -43,6 +45,8 @@ export class App<T extends AllowedAppConfig = any> {
       switch (options.object.app) {
         case AppName.chatwoot:
           return ChatWootAppConfig;
+        case AppName.calls:
+          return CallsAppConfig;
         default:
           return Object;
       }
@@ -57,4 +61,9 @@ export class ChatWootAppDto extends App<ChatWootAppConfig> {
   config: ChatWootAppConfig;
 }
 
-export type AppDto = ChatWootAppDto;
+export class CallsAppDto extends App<CallsAppConfig> {
+  @Type(() => CallsAppConfig)
+  config: CallsAppConfig;
+}
+
+export type AppDto = ChatWootAppDto | CallsAppDto;

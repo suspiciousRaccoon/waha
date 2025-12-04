@@ -3,6 +3,7 @@ import { migrate } from '@waha/apps/app_sdk/migrations';
 import { IAppService } from '@waha/apps/app_sdk/services/IAppService';
 import { IAppsService } from '@waha/apps/app_sdk/services/IAppsService';
 import { ChatWootAppService } from '@waha/apps/chatwoot/services/ChatWootAppService';
+import { CallsAppService } from '@waha/apps/calls/services/CallsAppService';
 import { DataStore } from '@waha/core/abc/DataStore';
 import { SessionManager } from '@waha/core/abc/manager.abc';
 import { WhatsappSession } from '@waha/core/abc/session.abc';
@@ -17,6 +18,7 @@ import { AppRepository } from '../storage/AppRepository';
 export class AppsEnabledService implements IAppsService {
   constructor(
     protected readonly chatwootService: ChatWootAppService,
+    protected readonly callsAppService: CallsAppService,
     @InjectPinoLogger('AppsService')
     protected logger: PinoLogger,
   ) {}
@@ -43,9 +45,12 @@ export class AppsEnabledService implements IAppsService {
       throw new Error(`App with ID '${app.id}' already exists.`);
     }
 
+    let existingApps: App[] = [];
+    if (app.app === AppName.chatwoot || app.app === AppName.calls) {
+      existingApps = await repo.getAllBySession(app.session);
+    }
     // Validate only one Chatwoot app per session
     if (app.app === AppName.chatwoot) {
-      const existingApps = await repo.getAllBySession(app.session);
       const existingChatwootApp = existingApps.find(
         (existingApp) => existingApp.app === AppName.chatwoot,
       );
@@ -53,6 +58,18 @@ export class AppsEnabledService implements IAppsService {
       if (existingChatwootApp) {
         throw new Error(
           `Only one Chatwoot app is allowed per session. Session '${app.session}' already has a Chatwoot app with ID '${existingChatwootApp.id}'.`,
+        );
+      }
+    }
+    // Validate only one Calls app per session
+    if (app.app === AppName.calls) {
+      const existingCallsApp = existingApps.find(
+        (existingApp) => existingApp.app === AppName.calls,
+      );
+
+      if (existingCallsApp) {
+        throw new Error(
+          `Only one Calls app is allowed per session. Session '${app.session}' already has a Calls app with ID '${existingCallsApp.id}'.`,
         );
       }
     }
@@ -175,6 +192,8 @@ export class AppsEnabledService implements IAppsService {
     switch (app.app) {
       case AppName.chatwoot:
         return this.chatwootService;
+      case AppName.calls:
+        return this.callsAppService;
       default:
         throw new Error(`App '${app.app}' not supported`);
     }
