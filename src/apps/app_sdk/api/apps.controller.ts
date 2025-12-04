@@ -45,7 +45,12 @@ export class AppsController {
   @ApiOperation({ summary: 'Create a new app' })
   @UsePipes(new WAHAValidationPipe())
   async create(@Body() app: App): Promise<App> {
-    return await this.appsService.create(this.manager, app);
+    const result = await this.appsService.create(this.manager, app);
+    const isRunning = this.manager.isRunning(app.session);
+    if (isRunning && app.enabled) {
+      await this.manager.restart(app.session);
+    }
+    return result;
   }
 
   @Get('/:id')
@@ -67,13 +72,22 @@ export class AppsController {
       );
     }
 
-    return await this.appsService.upsert(this.manager, app);
+    const result = await this.appsService.upsert(this.manager, app);
+    const isRunning = this.manager.isRunning(app.session);
+    if (isRunning) {
+      await this.manager.restart(app.session);
+    }
+    return result;
   }
 
   @Delete('/:id')
   @ApiOperation({ summary: 'Delete an app' })
   @UsePipes(new WAHAValidationPipe())
   async delete(@Param('id') id: string): Promise<void> {
-    await this.appsService.delete(this.manager, id);
+    const app = await this.appsService.delete(this.manager, id);
+    const isRunning = this.manager.isRunning(app.session);
+    if (isRunning) {
+      await this.manager.restart(app.session);
+    }
   }
 }

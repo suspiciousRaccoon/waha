@@ -1,10 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { App } from '@waha/apps/app_sdk/dto/app.dto';
 import { BooleanString } from '@waha/nestjs/validation/BooleanString';
 import { IsDynamicObject } from '@waha/nestjs/validation/IsDynamicObject';
 import { Transform, Type } from 'class-transformer';
 import {
   IsArray,
   IsBoolean,
+  IsEnum,
   IsOptional,
   IsString,
   Matches,
@@ -19,7 +21,26 @@ import { WebhookConfig } from './webhooks.config.dto';
 /**
  * Queries
  */
-export class ListSessionsQuery {
+export enum SessionExpand {
+  apps = 'apps',
+}
+
+export class SessionExpandQuery {
+  @ApiProperty({
+    required: false,
+    type: String,
+    enum: SessionExpand,
+    isArray: true,
+    description: 'Expand additional session details.',
+  })
+  @Transform(({ value }) => (Array.isArray(value) ? value : [value]))
+  @IsArray()
+  @IsEnum(SessionExpand, { each: true })
+  @IsOptional()
+  expand?: SessionExpand[];
+}
+
+export class ListSessionsQuery extends SessionExpandQuery {
   @ApiProperty({
     example: false,
     required: false,
@@ -31,6 +52,8 @@ export class ListSessionsQuery {
   @IsOptional()
   all?: boolean;
 }
+
+export class SessionInfoQuery extends SessionExpandQuery {}
 
 /**
  * Requests
@@ -242,6 +265,15 @@ export class SessionInfo extends SessionDTO {
   timestamps: {
     activity: number | null;
   };
+
+  @ApiProperty({
+    description: 'Apps configured for the session.',
+    required: false,
+    isArray: true,
+    type: App,
+    nullable: true,
+  })
+  apps?: App[];
 }
 
 export class SessionDetailedInfo extends SessionInfo {
@@ -273,6 +305,19 @@ export class SessionCreateRequest {
   config?: SessionConfig;
 
   @ApiProperty({
+    description: 'Apps to be synchronized for this session.',
+    required: false,
+    isArray: true,
+    type: App,
+    nullable: true,
+  })
+  @ValidateNested({ each: true })
+  @Type(() => App)
+  @IsArray()
+  @IsOptional()
+  apps?: App[] | null;
+
+  @ApiProperty({
     description: 'Start session after creation',
     example: true,
     default: true,
@@ -287,4 +332,17 @@ export class SessionUpdateRequest {
   @Type(() => SessionConfig)
   @IsOptional()
   config?: SessionConfig;
+
+  @ApiProperty({
+    description: 'Apps to be synchronized for this session.',
+    required: false,
+    isArray: true,
+    type: App,
+    nullable: true,
+  })
+  @ValidateNested({ each: true })
+  @Type(() => App)
+  @IsArray()
+  @IsOptional()
+  apps?: App[] | null;
 }

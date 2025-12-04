@@ -89,9 +89,6 @@ export class AppsEnabledService implements IAppsService {
     }
 
     const result = await repo.save(app);
-    if (app.enabled) {
-      await this.restartIfRunning(manager, app.session);
-    }
     delete result.pk;
     return result;
   }
@@ -152,16 +149,13 @@ export class AppsEnabledService implements IAppsService {
     } else {
       await service.beforeUpdated(savedApp, app);
     }
-
     await repo.update(app.id, app);
-    await this.restartIfRunning(manager, app.session);
-
     const updated = await repo.getById(app.id);
     delete (updated as any)?.pk;
     return updated!;
   }
 
-  async delete(manager: SessionManager, appId: string) {
+  async delete(manager: SessionManager, appId: string): Promise<App> {
     const knex = manager.store.getWAHADatabase();
     const repo = new AppRepository(knex);
     const app = await repo.getById(appId);
@@ -171,8 +165,8 @@ export class AppsEnabledService implements IAppsService {
     const service = this.getAppService(app);
     await service.beforeDeleted(app);
     await repo.delete(app.id);
-    await this.restartIfRunning(manager, app.session);
-    return;
+    delete app.pk;
+    return app;
   }
 
   async removeBySession(manager: SessionManager, session: string) {
@@ -201,16 +195,40 @@ export class AppsEnabledService implements IAppsService {
     }
   }
 
-  async migrate(knex: Knex): Promise<void> {
-    await migrate(knex);
+  async syncSessionApps(
+    manager: SessionManager,
+    session: string,
+    apps: App[],
+  ): Promise<void> {
+    const existing = await this.list(manager, session);
+    const ids = new Set<string>();
+
+    // Upsert provided apps
+    for (const app of apps) {
+      if (!app.id) {
+        //  Try to find the app by type
+        const found = existing.find((a) => a.app === app.app);
+        if (found) {
+          app.id = found.id;
+        }
+      }
+      // Force session
+      app.session = session;
+      await this.upsert(manager, app);
+      ids.add(app.id);
+    }
+
+    // Remove apps that are not in the provided list
+    for (const app of existing) {
+      if (ids.has(app.id)) {
+        continue;
+      }
+      await this.delete(manager, app.id);
+    }
   }
 
-  private restartIfRunning(manager: SessionManager, session: string) {
-    const isRunning = manager.isRunning(session);
-    if (!isRunning) {
-      return;
-    }
-    return manager.restart(session);
+  async migrate(knex: Knex): Promise<void> {
+    await migrate(knex);
   }
 
   private getAppService(app: App): IAppService {

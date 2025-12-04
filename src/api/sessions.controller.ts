@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Inject,
   NotFoundException,
   Param,
   Post,
@@ -11,12 +12,16 @@ import {
   UsePipes,
 } from '@nestjs/common';
 import { UnprocessableEntityException } from '@nestjs/common/exceptions/unprocessable-entity.exception';
-import { ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import {
   SessionApiParam,
   SessionParam,
 } from '@waha/nestjs/params/SessionApiParam';
 import { WAHAValidationPipe } from '@waha/nestjs/pipes/WAHAValidationPipe';
+import {
+  AppsService,
+  IAppsService,
+} from '@waha/apps/app_sdk/services/IAppsService';
 import {
   SessionLogoutDeprecatedRequest,
   SessionStartDeprecatedRequest,
@@ -29,17 +34,23 @@ import { WhatsappSession } from '../core/abc/session.abc';
 import {
   ListSessionsQuery,
   MeInfo,
+  SessionExpand,
+  SessionInfoQuery,
   SessionCreateRequest,
   SessionDTO,
   SessionInfo,
   SessionUpdateRequest,
 } from '../structures/sessions.dto';
+import { SessionExamples } from './sessions.examples';
 
 @ApiSecurity('api_key')
 @Controller('api/sessions')
 @ApiTags('🖥️ Sessions')
 class SessionsController {
-  constructor(private manager: SessionManager) {}
+  constructor(
+    private manager: SessionManager,
+    @Inject(AppsService) private appsService: IAppsService,
+  ) {}
 
   private withLock(name: string, fn: () => any) {
     return this.manager.withLock(name, fn);
@@ -47,20 +58,32 @@ class SessionsController {
 
   @Get('/')
   @ApiOperation({ summary: 'List all sessions' })
-  list(
+  async list(
     @Query(new WAHAValidationPipe()) query: ListSessionsQuery,
   ): Promise<SessionInfo[]> {
-    return this.manager.getSessions(query.all);
+    const sessions = await this.manager.getSessions(query.all);
+    if (query.expand?.includes(SessionExpand.apps)) {
+      for (const session of sessions) {
+        session.apps = await this.appsService.list(this.manager, session.name);
+      }
+    }
+    return sessions;
   }
 
   @Get('/:session')
   @ApiOperation({ summary: 'Get session information' })
   @SessionApiParam
   @UsePipes(new WAHAValidationPipe())
-  async get(@Param('session') name: string): Promise<SessionInfo> {
+  async get(
+    @Param('session') name: string,
+    @Query() query: SessionInfoQuery,
+  ): Promise<SessionInfo> {
     const session = await this.manager.getSessionInfo(name);
     if (session === null) {
       throw new NotFoundException('Session not found');
+    }
+    if (query.expand?.includes(SessionExpand.apps)) {
+      session.apps = await this.appsService.list(this.manager, name);
     }
     return session;
   }
@@ -78,6 +101,7 @@ class SessionsController {
     description:
       'Create session a new session (and start it at the same time if required).',
   })
+  @ApiBody({ type: SessionCreateRequest, examples: SessionExamples })
   @UsePipes(new WAHAValidationPipe())
   async create(@Body() request: SessionCreateRequest): Promise<SessionDTO> {
     const name = request.name || generatePrefixedId('session');
@@ -86,16 +110,26 @@ class SessionsController {
         const msg = `Session '${name}' already exists. Use PUT to update it.`;
         throw new UnprocessableEntityException(msg);
       }
-
       const config = request.config;
       const start = request.start || false;
       await this.manager.upsert(name, config);
+      if (request.apps) {
+        await this.appsService.syncSessionApps(
+          this.manager,
+          name,
+          request.apps,
+        );
+      }
       if (start) {
         await this.manager.assign(name);
         await this.manager.start(name);
       }
     });
-    return await this.manager.getSessionInfo(name);
+    const session = await this.manager.getSessionInfo(name);
+    if (request.apps) {
+      session.apps = await this.appsService.list(this.manager, name);
+    }
+    return session;
   }
 
   @Put(':session')
@@ -104,7 +138,8 @@ class SessionsController {
     description: '',
   })
   @SessionApiParam
-  @UsePipes(new WAHAValidationPipe())
+  @ApiBody({ type: SessionUpdateRequest, examples: SessionExamples })
+  @UsePipes(new WAHAValidationPipe({ forbidNonWhitelisted: false }))
   async update(
     @Param('session') name: string,
     @Body() request: SessionUpdateRequest,
@@ -117,11 +152,22 @@ class SessionsController {
       const isRunning = this.manager.isRunning(name);
       await this.manager.stop(name, true);
       await this.manager.upsert(name, config);
+      if (request.apps) {
+        await this.appsService.syncSessionApps(
+          this.manager,
+          name,
+          request.apps,
+        );
+      }
       if (isRunning) {
         await this.manager.start(name);
       }
     });
-    return await this.manager.getSessionInfo(name);
+    const session = await this.manager.getSessionInfo(name);
+    if (request.apps) {
+      session.apps = await this.appsService.list(this.manager, name);
+    }
+    return session;
   }
 
   @Delete(':session')

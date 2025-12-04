@@ -37,7 +37,7 @@ export class AppsDisabledService implements IAppsService {
     throw new AppsIsDisabledError();
   }
 
-  async delete(manager: SessionManager, appId: string) {
+  async delete(manager: SessionManager, appId: string): Promise<App> {
     throw new AppsIsDisabledError();
   }
 
@@ -55,5 +55,13 @@ export class AppsDisabledService implements IAppsService {
 
   async afterSessionStart(session: WhatsappSession, store: DataStore) {
     return;
+  }
+
+  async syncSessionApps(
+    manager: SessionManager,
+    sessionName: string,
+    apps?: App[] | null,
+  ): Promise<void> {
+    throw new AppsIsDisabledError();
   }
 }
