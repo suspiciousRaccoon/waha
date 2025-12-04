@@ -9,13 +9,9 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { ApiExtraModels, ApiProperty } from '@nestjs/swagger';
+import { AppName } from '@waha/apps/app_sdk/apps/name';
 
 export type AllowedAppConfig = ChatWootAppConfig | CallsAppConfig;
-
-export enum AppName {
-  chatwoot = 'chatwoot',
-  calls = 'calls',
-}
 
 @ApiExtraModels(ChatWootAppConfig, CallsAppConfig)
 export class App<T extends AllowedAppConfig = any> {

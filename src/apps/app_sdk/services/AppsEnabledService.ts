@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  Optional,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { migrate } from '@waha/apps/app_sdk/migrations';
 import { IAppService } from '@waha/apps/app_sdk/services/IAppService';
 import { IAppsService } from '@waha/apps/app_sdk/services/IAppsService';
@@ -11,16 +16,18 @@ import { generatePrefixedId } from '@waha/utils/ids';
 import { Knex } from 'knex';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { App, AppName } from '../dto/app.dto';
+import { App } from '../dto/app.dto';
 import { AppRepository } from '../storage/AppRepository';
+import { AppName } from '@waha/apps/app_sdk/apps/name';
+import { AppRuntimeConfig } from '@waha/apps/app_sdk/apps/AppRuntime';
 
 @Injectable()
 export class AppsEnabledService implements IAppsService {
   constructor(
-    protected readonly chatwootService: ChatWootAppService,
-    protected readonly callsAppService: CallsAppService,
     @InjectPinoLogger('AppsService')
     protected logger: PinoLogger,
+    @Optional() protected readonly chatwootService: ChatWootAppService,
+    @Optional() protected readonly callsAppService: CallsAppService,
   ) {}
 
   async list(manager: SessionManager, session: string): Promise<App[]> {
@@ -195,6 +202,11 @@ export class AppsEnabledService implements IAppsService {
   }
 
   private getAppService(app: App): IAppService {
+    if (!AppRuntimeConfig.HasApp(app.app)) {
+      throw new UnprocessableEntityException(
+        `App '${app.app}' is disabled in runtime configuration - adjust WAHA_APPS_ON / WAHA_APPS_OFF environment variables to enable it.`,
+      );
+    }
     switch (app.app) {
       case AppName.chatwoot:
         return this.chatwootService;

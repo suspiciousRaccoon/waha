@@ -1,6 +1,7 @@
 import * as path from 'node:path';
 
 import { Knex } from 'knex';
+import { AppRuntimeConfig } from '@waha/apps/app_sdk/apps/AppRuntime';
 
 function migrateSDK(knex: Knex): Promise<any> {
   const config = {
@@ -25,5 +26,7 @@ function migrateApp(knex: Knex, app: string): Promise<any> {
 
 export async function migrate(knex: Knex) {
   await migrateSDK(knex);
-  await migrateApp(knex, 'chatwoot');
+  for (const app of AppRuntimeConfig.GetAppsWithMigration()) {
+    await migrateApp(knex, app.name);
+  }
 }
