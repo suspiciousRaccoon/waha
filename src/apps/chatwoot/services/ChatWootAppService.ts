@@ -120,7 +120,7 @@ export class ChatWootAppService implements IAppService {
   }
 
   beforeSessionStart(app: App<ChatWootAppConfig>, session: WhatsappSession) {
-    this.chatWootWAHAQueueService.listenEvents(app.id, session);
+    this.chatWootWAHAQueueService.listenEvents(app, session);
   }
 
   afterSessionStart(app: App<ChatWootAppConfig>, session: WhatsappSession) {

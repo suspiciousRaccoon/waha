@@ -207,18 +207,28 @@ export class DIContainer {
 
   @CacheSync()
   public ChatWootConfig(): ChatWootConfig {
-    const defaults: ChatWootConfig = {
-      templates: {},
-      linkPreview: LinkPreview.OFF,
-      commands: {
-        server: true,
-        queue: false,
-      },
-      conversations: {
-        sort: ConversationSort.created_newest,
-        status: null,
-      },
-    };
-    return lodash.defaults({}, this.config, defaults);
+    return ChatWootConfigDefaults(this.config);
   }
+}
+
+/**
+ * Applies default values to the ChatWoot configuration
+ */
+export function ChatWootConfigDefaults(
+  config: ChatWootAppConfig,
+): ChatWootConfig {
+  const defaults: ChatWootConfig = {
+    templates: {},
+    linkPreview: LinkPreview.OFF,
+    commands: {
+      server: true,
+      queue: false,
+    },
+    conversations: {
+      sort: ConversationSort.created_newest,
+      status: null,
+      markAsRead: true,
+    },
+  };
+  return lodash.defaultsDeep({}, config, defaults);
 }

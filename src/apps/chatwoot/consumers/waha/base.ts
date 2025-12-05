@@ -34,19 +34,26 @@ import { isJidBroadcast, isJidGroup, toCusFormat } from '@waha/core/utils/jids';
 import { EngineHelper } from '@waha/apps/chatwoot/waha';
 import { EnsureSeconds } from '@waha/utils/timehelper';
 import { CHATWOOT_MESSAGE_CALENDAR_THRESHOLD_SECONDS } from '@waha/apps/chatwoot/env';
+import {
+  ChatWootAppConfig,
+  ChatWootConfig,
+} from '@waha/apps/chatwoot/dto/config.dto';
 
-export function ListenEventsForChatWoot() {
-  return [
+export function ListenEventsForChatWoot(config: ChatWootConfig) {
+  const events = [
     WAHAEvents.MESSAGE_ANY,
     WAHAEvents.MESSAGE_REACTION,
     WAHAEvents.MESSAGE_EDITED,
     WAHAEvents.MESSAGE_REVOKED,
-    WAHAEvents.MESSAGE_ACK,
     WAHAEvents.SESSION_STATUS,
     WAHAEvents.CALL_RECEIVED,
     WAHAEvents.CALL_ACCEPTED,
     WAHAEvents.CALL_REJECTED,
   ];
+  if (config.conversations.markAsRead) {
+    events.push(WAHAEvents.MESSAGE_ACK);
+  }
+  return events;
 }
 
 /**

@@ -7,6 +7,9 @@ import { Queue } from 'bullmq';
 
 import { QueueName } from '../consumers/QueueName';
 import { QueueRegistry } from './QueueRegistry';
+import { App } from '@waha/apps/app_sdk/dto/app.dto';
+import { ChatWootAppConfig } from '@waha/apps/chatwoot/dto/config.dto';
+import { ChatWootConfigDefaults } from '@waha/apps/chatwoot/di/DIContainer';
 
 /**
  * Service for managing ChatWoot queues for WAHA events
@@ -63,13 +66,14 @@ export class ChatWootWAHAQueueService {
   /**
    * Configure ChatWoot event handling for a session
    */
-  listenEvents(appId: string, session: WhatsappSession): void {
-    const events = ListenEventsForChatWoot();
+  listenEvents(app: App<ChatWootAppConfig>, session: WhatsappSession): void {
+    const config = ChatWootConfigDefaults(app.config);
+    const events = ListenEventsForChatWoot(config);
     for (const event of events) {
       const obs$ = session.getEventObservable(event);
       obs$.subscribe(async (payload) => {
         const data = populateSessionInfo(event, session)(payload);
-        await this.addJobToQueue(event, data, appId);
+        await this.addJobToQueue(event, data, app.id);
       });
     }
   }

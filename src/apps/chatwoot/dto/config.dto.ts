@@ -7,12 +7,10 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsDynamicObject } from '@waha/nestjs/validation/IsDynamicObject';
-import {
-  ConversationSelectorConfig,
-  ConversationSort,
-} from '@waha/apps/chatwoot/services/ConversationSelector';
+import { ConversationSort } from '@waha/apps/chatwoot/services/ConversationSelector';
 import { ConversationStatus } from '@waha/apps/chatwoot/client/types';
 
 export const DEFAULT_LOCALE = 'en-US';
@@ -39,6 +37,15 @@ export class ChatWootConversationsConfig {
   @IsOptional()
   @IsEnum(ConversationStatus, { each: true })
   status: Array<ConversationStatus> | null;
+
+  @ApiPropertyOptional({
+    description:
+      'Process message.ack events to mark ChatWoot conversations as read. Enabled by default.',
+    default: true,
+  })
+  @IsOptional()
+  @IsBoolean()
+  markAsRead?: boolean = true;
 }
 
 export interface ChatWootConfig {
