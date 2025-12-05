@@ -67,6 +67,7 @@ import type { Agent } from 'https';
 import { IMediaEngineProcessor } from '@waha/core/media/IMediaEngineProcessor';
 import { QR } from '@waha/core/QR';
 import { AckToStatus, StatusToAck } from '@waha/core/utils/acks';
+import { pairs } from '@waha/utils/pairs';
 import { ExtractMessageKeysForRead } from '@waha/core/utils/convertors';
 import { parseMessageIdSerialized } from '@waha/core/utils/ids';
 import { isJidNewsletter, toCusFormat, toJID } from '@waha/core/utils/jids';
@@ -633,10 +634,14 @@ export class WhatsappSessionNoWebCore extends WhatsappSession {
   private issueMessageUpdateOnPoll() {
     // Fix for https://github.com/devlikeapro/waha/issues/960
     this.sock.ev.on('messages.upsert', async ({ messages }) => {
-      const meId = this.getSessionMeInfo().id;
-      if (!meId) {
+      const me = this.getSessionMeInfo();
+      if (!me) {
+        this.logger.warn(
+          'Cannot issue poll updates, session "me" info not found',
+        );
         return;
       }
+
       for (const message of messages) {
         const content = normalizeMessageContent(message.message);
         if (!content?.pollUpdateMessage) {
@@ -655,38 +660,75 @@ export class WhatsappSessionNoWebCore extends WhatsappSession {
           continue;
         }
 
-        const meIdNormalised = jidNormalizedUser(meId);
-        const pollCreatorJid = getKeyAuthor(creationMsgKey, meIdNormalised);
-        const voterJid = getKeyAuthor(message.key, meIdNormalised);
-        const pollEncKey = pollMsg.messageContextInfo?.messageSecret;
-
-        try {
-          const voteMsg = decryptPollVote(content.pollUpdateMessage.vote, {
-            pollEncKey,
-            pollCreatorJid,
-            pollMsgId: creationMsgKey.id,
-            voterJid,
-          });
-          this.sock.ev.emit('messages.update', [
-            {
-              key: creationMsgKey,
-              update: {
-                pollUpdates: [
-                  {
-                    pollUpdateMessageKey: message.key,
-                    vote: voteMsg,
-                    senderTimestampMs: (
-                      content.pollUpdateMessage.senderTimestampMs as Long
-                    ).toNumber(),
-                  },
-                ],
+        // Because of new @lid system it's hard to detect exactly how
+        // the vote has been encrypted, so we'll iterator over all possible
+        // not null combinations
+        const key = message.key;
+        const myIds = [jidNormalizedUser(me.id), jidNormalizedUser(me.lid)];
+        const participantIds = [
+          key?.participantAlt,
+          key?.remoteJidAlt,
+          key?.participant,
+          key?.remoteJid,
+        ];
+        let creators: string[] = creationMsgKey.fromMe
+          ? [...myIds, ...participantIds]
+          : [...participantIds, ...myIds];
+        let votes: string[] = key.fromMe
+          ? [...myIds, ...participantIds]
+          : [...participantIds, ...myIds];
+        creators = lodash.uniq(creators.filter(Boolean));
+        votes = lodash.uniq(votes.filter(Boolean));
+        let found = false;
+        for (const [pollCreatorJid, voterJid] of pairs(creators, votes)) {
+          try {
+            const pollEncKey = pollMsg.messageContextInfo?.messageSecret;
+            const voteMsg = decryptPollVote(content.pollUpdateMessage.vote, {
+              pollCreatorJid: pollCreatorJid,
+              pollMsgId: creationMsgKey.id,
+              pollEncKey: pollEncKey,
+              voterJid: voterJid,
+            });
+            this.sock.ev.emit('messages.update', [
+              {
+                key: creationMsgKey,
+                update: {
+                  pollUpdates: [
+                    {
+                      pollUpdateMessageKey: message.key,
+                      vote: voteMsg,
+                      senderTimestampMs: (
+                        content.pollUpdateMessage.senderTimestampMs as Long
+                      ).toNumber(),
+                    },
+                  ],
+                },
               },
-            },
-          ]);
-        } catch (err) {
+            ]);
+            found = true;
+            break;
+          } catch (err) {
+            this.logger.trace(
+              {
+                err: err.message,
+                key: key,
+                creationsMsgKey: creationMsgKey,
+                pollCreatorJid: pollCreatorJid,
+                voterJid: voterJid,
+              },
+              'failed to decrypt poll vote using creator and voter',
+            );
+          }
+        }
+        if (!found) {
           this.logger.warn(
-            { err, creationMsgKey },
-            'failed to decrypt poll vote',
+            {
+              key: key,
+              creationsMsgKey: creationMsgKey,
+              creators: creators,
+              voters: votes,
+            },
+            'failed to decrypt poll vote with any combination of creator/voter',
           );
         }
       }
