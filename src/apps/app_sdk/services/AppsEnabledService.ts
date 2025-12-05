@@ -21,6 +21,14 @@ import { AppRepository } from '../storage/AppRepository';
 import { AppName } from '@waha/apps/app_sdk/apps/name';
 import { AppRuntimeConfig } from '@waha/apps/app_sdk/apps/AppRuntime';
 
+export class AppDisableError extends UnprocessableEntityException {
+  constructor(app: string) {
+    super(
+      `App '${app}' is disabled in runtime configuration - adjust WAHA_APPS_ON / WAHA_APPS_OFF environment variables to enable it.`,
+    );
+  }
+}
+
 @Injectable()
 export class AppsEnabledService implements IAppsService {
   constructor(
@@ -82,6 +90,9 @@ export class AppsEnabledService implements IAppsService {
     }
 
     const service = this.getAppService(app);
+    if (!service && !AppRuntimeConfig.HasApp(app.app)) {
+      throw new AppDisableError(app.app);
+    }
     service.validate(app);
     // Only run beforeCreated when app is enabled (default true if omitted)
     if (app.enabled !== false) {
@@ -136,6 +147,9 @@ export class AppsEnabledService implements IAppsService {
     }
 
     const service = this.getAppService(app);
+    if (!service && !AppRuntimeConfig.HasApp(app.app)) {
+      throw new AppDisableError(app.app);
+    }
     service.validate(app);
 
     const hasEnabledChange = savedApp.enabled !== app.enabled;
@@ -163,7 +177,7 @@ export class AppsEnabledService implements IAppsService {
       throw new NotFoundException(`App '${appId}' not found`);
     }
     const service = this.getAppService(app);
-    await service.beforeDeleted(app);
+    await service?.beforeDeleted(app);
     await repo.delete(app.id);
     delete app.pk;
     return app;
@@ -181,6 +195,9 @@ export class AppsEnabledService implements IAppsService {
     const apps = await repo.getEnabledBySession(session.name);
     for (const app of apps) {
       const service = this.getAppService(app);
+      if (!service && !AppRuntimeConfig.HasApp(app.app)) {
+        throw new AppDisableError(app.app);
+      }
       service.beforeSessionStart(app, session);
     }
   }
@@ -191,6 +208,9 @@ export class AppsEnabledService implements IAppsService {
     const apps = await repo.getEnabledBySession(session.name);
     for (const app of apps) {
       const service = this.getAppService(app);
+      if (!service && !AppRuntimeConfig.HasApp(app.app)) {
+        throw new AppDisableError(app.app);
+      }
       service.afterSessionStart(app, session);
     }
   }
@@ -231,12 +251,7 @@ export class AppsEnabledService implements IAppsService {
     await migrate(knex);
   }
 
-  private getAppService(app: App): IAppService {
-    if (!AppRuntimeConfig.HasApp(app.app)) {
-      throw new UnprocessableEntityException(
-        `App '${app.app}' is disabled in runtime configuration - adjust WAHA_APPS_ON / WAHA_APPS_OFF environment variables to enable it.`,
-      );
-    }
+  private getAppService(app: App): IAppService | null {
     switch (app.app) {
       case AppName.chatwoot:
         return this.chatwootService;
