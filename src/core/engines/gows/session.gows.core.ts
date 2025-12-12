@@ -765,7 +765,6 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
     this.status = WAHASessionStatus.STOPPED;
     this.events?.stop();
     this.stopEvents();
-    this.client?.close();
     this.mediaManager.close();
   }
 
