@@ -70,6 +70,7 @@ import {
   MessageForwardRequest,
   MessageImageRequest,
   MessageLocationRequest,
+  MessagePollRequest,
   MessageReactionRequest,
   MessageReplyRequest,
   MessageStarRequest,
@@ -157,6 +158,7 @@ import {
   GroupNotification,
   Label as WEBJSLabel,
   Location,
+  Poll,
   Message,
   MessageMedia,
   Reaction,
@@ -738,6 +740,20 @@ export class WhatsappSessionWebJSCore extends WhatsappSession {
     return this.whatsapp.sendMessage(
       this.ensureSuffix(request.chatId),
       request.text,
+      options,
+    );
+  }
+
+  @Activity()
+  async sendPoll(request: MessagePollRequest) {
+    const poll = new Poll(request.poll.name, request.poll.options, {
+      allowMultipleAnswers: request.poll.multipleAnswers,
+      messageSecret: undefined,
+    });
+    const options = this.getMessageOptions(request);
+    return this.whatsapp.sendMessage(
+      this.ensureSuffix(request.chatId),
+      poll,
       options,
     );
   }
