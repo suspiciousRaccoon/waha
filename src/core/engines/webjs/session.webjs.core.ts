@@ -117,7 +117,11 @@ import {
 } from '@waha/structures/responses.dto';
 import { BrowserTraceQuery } from '@waha/structures/server.debug.dto';
 import { MeInfo } from '@waha/structures/sessions.dto';
-import { StatusRequest, TextStatus } from '@waha/structures/status.dto';
+import {
+  DeleteStatusRequest,
+  StatusRequest,
+  TextStatus,
+} from '@waha/structures/status.dto';
 import {
   EnginePayload,
   WAMessageAckBody,
@@ -1522,7 +1526,7 @@ export class WhatsappSessionWebJSCore extends WhatsappSession {
   /**
    * Status methods
    */
-  protected checkStatusRequest(request: StatusRequest) {
+  protected checkStatusRequest(request: { contacts?: any[] }) {
     if (request.contacts && request.contacts?.length > 0) {
       const msg =
         "WEBJS doesn't accept 'contacts'. Remove the field to send status to all contacts.";
@@ -1543,6 +1547,16 @@ export class WhatsappSessionWebJSCore extends WhatsappSession {
 
     const options = { extra: extra, linkPreview: status.linkPreview };
     return this.whatsapp.sendMessage(Jid.BROADCAST, status.text, options);
+  }
+
+  public async deleteStatus(request: DeleteStatusRequest) {
+    this.checkStatusRequest(request);
+
+    let messageId = request.id;
+    if (!request.id.startsWith('true_status@broadcast_')) {
+      messageId = `true_status@broadcast_${request.id}`;
+    }
+    return await this.whatsapp.revokeStatusMessage(messageId);
   }
 
   /**
