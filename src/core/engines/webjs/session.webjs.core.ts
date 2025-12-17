@@ -3,7 +3,10 @@ import {
   getChannelInviteLink,
   WhatsappSession,
 } from '@waha/core/abc/session.abc';
-import { getFromToParticipant } from '@waha/core/engines/noweb/session.noweb.core';
+import {
+  getDestination,
+  getFromToParticipant,
+} from '@waha/core/engines/noweb/session.noweb.core';
 import {
   ReceiptEvent,
   TagReceiptNodeToReceiptEvent,
@@ -125,6 +128,8 @@ import {
 } from '@waha/structures/status.dto';
 import {
   EnginePayload,
+  PollVote as WAHAPollVote,
+  PollVotePayload,
   WAMessageAckBody,
   WAMessageEditedBody,
   WAMessageRevokedBody,
@@ -159,6 +164,7 @@ import {
   Label as WEBJSLabel,
   Location,
   Poll,
+  PollVote as WebjsPollVote,
   Message,
   MessageMedia,
   Reaction,
@@ -1691,6 +1697,13 @@ export class WhatsappSessionWebJSCore extends WhatsappSession {
     );
     this.events2.get(WAHAEvents.MESSAGE_EDITED).switch(messagesEdit$);
 
+    const pollVote$ = fromEvent(this.whatsapp, Events.VOTE_UPDATE);
+    const pollVotes$ = pollVote$.pipe(
+      map(this.toPollVotePayload.bind(this)),
+      filter(Boolean),
+    );
+    this.events2.get(WAHAEvents.POLL_VOTE).switch(pollVotes$);
+
     const messageAckWEBJS$ = fromEvent(
       this.whatsapp,
       Events.MESSAGE_ACK,
@@ -1898,6 +1911,57 @@ export class WhatsappSessionWebJSCore extends WhatsappSession {
         text: reaction.reaction,
         messageId: reaction.msgId._serialized,
       },
+    };
+  }
+
+  private toPollVotePayload(vote: WebjsPollVote): PollVotePayload | null {
+    const pollMessageId = vote?.parentMessage?.id?._serialized;
+    if (!pollMessageId) {
+      return null;
+    }
+    let pollKey;
+    try {
+      pollKey = parseMessageIdSerialized(pollMessageId);
+    } catch (error) {
+      this.logger.warn(
+        { pollMessageId, error },
+        'Failed to parse poll message id for vote update',
+      );
+      return null;
+    }
+    const chatId = toCusFormat(
+      vote?.parentMessage?.id?.remote || pollKey.remoteJid,
+    );
+    if (!this.jids.include(chatId)) {
+      return null;
+    }
+    const meId = this.getSessionMeInfo()?.id;
+    const poll = getDestination(pollKey, meId);
+
+    let voter = vote.voter;
+    if (!voter) {
+      return null;
+    }
+    voter = normalizeJid(voter);
+    const fromMe = !!meId && toCusFormat(meId) === toCusFormat(voter);
+    const voteKey = {
+      id: pollKey.id,
+      remoteJid: pollKey.remoteJid,
+      fromMe: fromMe,
+      participant: isJidGroup(chatId) ? voter : undefined,
+    };
+    const selectedOptions =
+      vote?.selectedOptions?.map((option) => option?.name).filter(Boolean) ??
+      [];
+    const pollVote: WAHAPollVote = {
+      ...getDestination(voteKey, meId),
+      selectedOptions: selectedOptions,
+      timestamp: vote?.interractedAtTs,
+    };
+    return {
+      poll: poll,
+      vote: pollVote,
+      _data: vote,
     };
   }
 
