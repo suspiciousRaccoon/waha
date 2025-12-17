@@ -548,9 +548,8 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
       onlyEvent(WhatsMeowEvent.RECEIPT),
       filter((r: any) => this.jids.include(r?.Chat)),
     );
-    const [receiptGroups$, receiptContacts$] = partition(
-      receipt$,
-      (r: any) => isJidGroup(r?.Chat || r?.Info?.Chat),
+    const [receiptGroups$, receiptContacts$] = partition(receipt$, (r: any) =>
+      isJidGroup(r?.Chat || r?.Info?.Chat),
     );
     const messageAckGroups$ = receiptGroups$.pipe(
       mergeMap(this.receiptToMessageAck.bind(this)),
@@ -560,7 +559,7 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
       mergeMap(this.receiptToMessageAck.bind(this)),
       DistinctAck(),
     );
-    this.events2.get(WAHAEvents.GROUP_ACK).switch(messageAckGroups$);
+    this.events2.get(WAHAEvents.MESSAGE_ACK_GROUP).switch(messageAckGroups$);
     this.events2.get(WAHAEvents.MESSAGE_ACK).switch(messageAckContacts$);
 
     const messageReactions$ = messages$.pipe(

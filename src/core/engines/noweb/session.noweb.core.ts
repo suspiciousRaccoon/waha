@@ -2078,7 +2078,9 @@ export class WhatsappSessionNoWebCore extends WhatsappSession {
     const messageAckGroupsFinal$ = messageAckGroups$.pipe(DistinctAck());
 
     this.events2.get(WAHAEvents.MESSAGE_ACK).switch(messageAckDirectFinal$);
-    this.events2.get(WAHAEvents.GROUP_ACK).switch(messageAckGroupsFinal$);
+    this.events2
+      .get(WAHAEvents.MESSAGE_ACK_GROUP)
+      .switch(messageAckGroupsFinal$);
 
     //
     // Other
