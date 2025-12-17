@@ -17,13 +17,13 @@ COPY yarn.lock .
 ENV YARN_CHECKSUM_BEHAVIOR=update
 
 RUN npm install -g corepack && corepack enable
-RUN yarn set version 3.6.3
-RUN yarn install --immutable
+RUN yarn set version 4.9.2
+RUN yarn install
 
 # App
 WORKDIR /git
 ADD . /git
-RUN yarn install --immutable
+RUN yarn install
 RUN yarn build && find ./dist -name "*.d.ts" -delete
 
 #
