@@ -43,7 +43,7 @@ export function exponentialDelay(delayFactor: number) {
 export class WebhookSender {
   protected static AGENTS = {
     http: new HttpAgent({}),
-    https: new HttpsAgent({}),
+    https: new HttpsAgent({ rejectUnauthorized: false }),
   };
 
   protected url: string;
