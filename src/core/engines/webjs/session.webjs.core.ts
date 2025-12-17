@@ -172,6 +172,7 @@ import {
 } from '@waha/core/utils/jids';
 import { Activity } from '@waha/core/abc/activity';
 import { CallData } from '@waha/structures/calls.dto';
+import { Jid } from '@waha/core/engines/const';
 
 export interface WebJSConfig {
   webVersion?: string;
@@ -1532,7 +1533,16 @@ export class WhatsappSessionWebJSCore extends WhatsappSession {
   @Activity()
   public sendTextStatus(status: TextStatus) {
     this.checkStatusRequest(status);
-    return this.whatsapp.sendTextStatus(status);
+    const extra: any = {};
+    if (status.font != null) {
+      extra.fontStyle = status.font;
+    }
+    if (status.backgroundColor != null) {
+      extra.backgroundColor = status.backgroundColor;
+    }
+
+    const options = { extra: extra, linkPreview: status.linkPreview };
+    return this.whatsapp.sendMessage(Jid.BROADCAST, status.text, options);
   }
 
   /**
