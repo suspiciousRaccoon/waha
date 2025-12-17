@@ -7,7 +7,7 @@ __metadata:
 
 "@adiwajshing/baileys@github:devlikeapro/Baileys#fork-master-2025-12-17":
   version: 7.0.0-rc.9
-  resolution: "@adiwajshing/baileys@https://github.com/devlikeapro/Baileys.git#commit=65b3c2d8d8738ed2a1a7461df5e26736e6f6604e"
+  resolution: "@adiwajshing/baileys@https://github.com/devlikeapro/Baileys.git#commit=425b11f5b2d98c808210fab78afc6257f27f2fe5"
   dependencies:
     "@cacheable/node-cache": "npm:^1.4.0"
     "@hapi/boom": "npm:^9.1.3"
