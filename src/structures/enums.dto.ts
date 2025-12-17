@@ -16,6 +16,7 @@ export enum WAHAEvents {
   GROUP_V2_LEAVE = 'group.v2.leave',
   GROUP_V2_UPDATE = 'group.v2.update',
   GROUP_V2_PARTICIPANTS = 'group.v2.participants',
+  GROUP_ACK = 'group.ack',
   PRESENCE_UPDATE = 'presence.update',
   POLL_VOTE = 'poll.vote',
   POLL_VOTE_FAILED = 'poll.vote.failed',

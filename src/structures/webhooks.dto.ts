@@ -207,9 +207,19 @@ export class WAHAWebhookMessageAny extends WAHAWebhook {
 export class WAHAWebhookMessageAck extends WAHAWebhook {
   @ApiProperty({
     description:
-      'Receive events when server or recipient gets the message, read or played it.',
+      'Receive events when server or recipient gets the message, read or played it (contacts only).',
   })
   event = WAHAEvents.MESSAGE_ACK;
+
+  payload: WAMessageAckBody;
+}
+
+export class WAHAWebhookGroupAck extends WAHAWebhook {
+  @ApiProperty({
+    description:
+      'Receive events when participants in a group read or play messages.',
+  })
+  event = WAHAEvents.GROUP_ACK;
 
   payload: WAMessageAckBody;
 }

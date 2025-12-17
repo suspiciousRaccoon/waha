@@ -1699,10 +1699,11 @@ export class WhatsappSessionWebJSCore extends WhatsappSession {
       filter((ack) => this.jids.include(ack.to)),
     );
 
-    const messageAckAll$ = merge(messagesAckDM$, messageAckGroups$);
+    const messageAckDMFinal$ = messagesAckDM$.pipe(DistinctAck());
+    const messageAckGroupsFinal$ = messageAckGroups$.pipe(DistinctAck());
 
-    const messageAck$ = messageAckAll$.pipe(DistinctAck());
-    this.events2.get(WAHAEvents.MESSAGE_ACK).switch(messageAck$);
+    this.events2.get(WAHAEvents.MESSAGE_ACK).switch(messageAckDMFinal$);
+    this.events2.get(WAHAEvents.GROUP_ACK).switch(messageAckGroupsFinal$);
 
     //
     // Others

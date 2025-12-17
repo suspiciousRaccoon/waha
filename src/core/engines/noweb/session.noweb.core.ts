@@ -2074,10 +2074,11 @@ export class WhatsappSessionNoWebCore extends WhatsappSession {
       filter(isMine), // ack comes only for MY messages
       map(this.convertMessageReceiptUpdateToMessageAck.bind(this)),
     );
-    const messageAck$ = merge(messageAckDirect$, messageAckGroups$).pipe(
-      DistinctAck(),
-    );
-    this.events2.get(WAHAEvents.MESSAGE_ACK).switch(messageAck$);
+    const messageAckDirectFinal$ = messageAckDirect$.pipe(DistinctAck());
+    const messageAckGroupsFinal$ = messageAckGroups$.pipe(DistinctAck());
+
+    this.events2.get(WAHAEvents.MESSAGE_ACK).switch(messageAckDirectFinal$);
+    this.events2.get(WAHAEvents.GROUP_ACK).switch(messageAckGroupsFinal$);
 
     //
     // Other
