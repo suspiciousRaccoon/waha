@@ -115,6 +115,7 @@
     "bufferutil": "^4.0.8"
   },
   "resolutions": {
+    "typescript": "5.9.2",
     "bufferutil": "^4.0.8",
     "ws": "^8.18.0",
     "puppeteer": "^24.31.0",
