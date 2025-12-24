@@ -121,11 +121,7 @@ import {
 } from '@waha/structures/responses.dto';
 import { BrowserTraceQuery } from '@waha/structures/server.debug.dto';
 import { MeInfo } from '@waha/structures/sessions.dto';
-import {
-  DeleteStatusRequest,
-  StatusRequest,
-  TextStatus,
-} from '@waha/structures/status.dto';
+import { DeleteStatusRequest, TextStatus } from '@waha/structures/status.dto';
 import {
   EnginePayload,
   PollVote as WAHAPollVote,
@@ -521,10 +517,29 @@ export class WhatsappSessionWebJSCore extends WhatsappSession {
       }
     });
 
-    this.whatsapp.on(Events.AUTHENTICATED, (args) => {
+    this.whatsapp.on(Events.AUTHENTICATED, async (args) => {
       this.status = WAHASessionStatus.WORKING;
       this.qr.save('');
       this.logger.info({ args: args }, `Session has been authenticated!`);
+
+      // Try to get client info from puppeter if nothing set
+      // Fix https://github.com/devlikeapro/waha/issues/1735
+      await sleep(3_000);
+      if (!this.whatsapp.info) {
+        // try to load client info few times with a delay
+        for (let attempt = 0; attempt < 3; attempt++) {
+          await this.loadClientInfo().catch((error) =>
+            this.logger.error(
+              error,
+              `Failed to load client info, attempt ${attempt + 1}`,
+            ),
+          );
+          if (this.whatsapp.info) {
+            break;
+          }
+          await sleep(3_000);
+        }
+      }
     });
 
     this.whatsapp.on(Events.AUTHENTICATION_FAILURE, (args) => {
@@ -583,6 +598,21 @@ export class WhatsappSessionWebJSCore extends WhatsappSession {
         log.info('Session has recovered, no need to restart.');
       });
     });
+  }
+
+  private async loadClientInfo() {
+    const data = await this.whatsapp.pupPage.evaluate(() => {
+      return {
+        // @ts-ignore
+        ...window.Store.Conn.serialize(),
+        wid:
+          // @ts-ignore
+          window.Store.User.getMaybeMePnUser() ||
+          // @ts-ignore
+          window.Store.User.getMaybeMeLidUser(),
+      };
+    });
+    this.whatsapp.info = data as any;
   }
 
   /**
