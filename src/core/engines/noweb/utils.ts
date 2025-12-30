@@ -11,7 +11,13 @@ export function extractMediaContent(
     content?.videoMessage ||
     content?.audioMessage ||
     content?.stickerMessage;
-  return mediaContent;
+  if (mediaContent) {
+    return mediaContent;
+  }
+  if (content?.associatedChildMessage?.message) {
+    return extractMediaContent(content.associatedChildMessage.message);
+  }
+  return null;
 }
 
 interface Long {
