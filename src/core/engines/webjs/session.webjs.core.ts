@@ -181,6 +181,10 @@ import {
 import { Activity } from '@waha/core/abc/activity';
 import { CallData } from '@waha/structures/calls.dto';
 import { Jid } from '@waha/core/engines/const';
+import {
+  WAHA_CLIENT_BROWSER_NAME,
+  WAHA_CLIENT_DEVICE_NAME,
+} from '@waha/core/env';
 
 export interface WebJSConfig {
   webVersion?: string;
@@ -242,6 +246,10 @@ export class WhatsappSessionWebJSCore extends WhatsappSession {
     // add at the start
     args.unshift(`--a-waha-timestamp=${new Date()}`);
     args.unshift(`--a-waha-session=${this.name}`);
+    const deviceName =
+      this.sessionConfig.client?.deviceName ?? WAHA_CLIENT_DEVICE_NAME;
+    const browserName =
+      this.sessionConfig.client?.browserName ?? WAHA_CLIENT_BROWSER_NAME;
     return {
       puppeteer: {
         protocolTimeout: 300_000,
@@ -252,6 +260,8 @@ export class WhatsappSessionWebJSCore extends WhatsappSession {
       },
       userAgent:
         'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+      deviceName: deviceName,
+      browserName: browserName,
       webVersion: webVersion,
       webVersionCache: {
         type: cacheType,
