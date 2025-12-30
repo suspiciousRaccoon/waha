@@ -326,6 +326,8 @@ export class WhatsappSessionNoWebCore extends WhatsappSession {
       this.sessionConfig.client?.browserName ?? WAHA_CLIENT_BROWSER_NAME;
     if (browserName && !deviceName) {
       browser = Browsers.appropriate(browserName);
+    } else if (!browserName && deviceName) {
+      browser = [deviceName, 'Chrome', '22.04.4'];
     } else if (browserName && deviceName) {
       switch (deviceName) {
         case 'Mac OS':
