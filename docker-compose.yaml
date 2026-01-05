@@ -4,9 +4,12 @@ services:
     restart: always
     # https://waha.devlike.pro/docs/how-to/engines/#docker-images
     # https://portal.devlike.pro/docker-image
-    image: devlikeapro/waha-plus
+    # image: devlikeapro/waha-plus
     # WAHA Core
     # image: devlikeapro/waha:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
 
     # Add "dns" if you have a problem with resolving "web.whatsapp.com"
     dns:
@@ -14,21 +17,21 @@ services:
       - 8.8.8.8
 
     logging:
-      driver: 'json-file'
+      driver: "json-file"
       options:
-        max-size: '100m'
-        max-file: '10'
+        max-size: "100m"
+        max-file: "10"
 
     ports:
-      - '127.0.0.1:3000:3000/tcp'
+      - "127.0.0.1:3000:3000/tcp"
 
     volumes:
       # Store sessions in the .sessions folder (comment it if you're using MongoDB)
-      - './sessions:/app/.sessions'
+      - "./sessions:/app/.sessions"
 
       # Save media files
       # https://waha.devlike.pro/docs/how-to/storages/#save-media-files-between-the-container-restarts
-      - './media:/app/.media'
+      - "./media:/app/.media"
 
     env_file:
       - .env

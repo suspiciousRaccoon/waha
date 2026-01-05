@@ -8,7 +8,7 @@ FROM node:${NODE_IMAGE_TAG} AS build
 ENV PUPPETEER_SKIP_DOWNLOAD=True
 
 # git + build toolchain for git deps
-RUN apt-get update && apt-get install -y git python3 build-essential && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y git python3 build-essential
 
 # npm packages
 WORKDIR /git
@@ -31,11 +31,11 @@ RUN yarn build && find ./dist -name "*.d.ts" -delete
 #
 FROM node:${NODE_IMAGE_TAG} AS dashboard
 
-# jq to parse json
-RUN apt-get update && apt-get install -y jq && rm -rf /var/lib/apt/lists/*
+RUN apt-get update
 
+# jq to parse json
 # wget, unzip
-RUN apt-get update && apt-get install -y wget unzip && rm -rf /var/lib/apt/lists/*
+RUN apt-get install -y jq wget unzip
 
 COPY waha.config.json /tmp/waha.config.json
 RUN \
@@ -48,22 +48,19 @@ RUN \
     && rm -rf ${WAHA_DASHBOARD_SHA}.zip \
     && rm -rf /tmp/dashboard/dashboard-${WAHA_DASHBOARD_SHA}
 
+RUN rm -rf /var/lib/apt/lists/*
+
 #
 # GOWS
 #
 FROM golang:${GOLANG_IMAGE_TAG} AS gows
 
+RUN apt-get update
+
 # jq to parse json
-RUN apt-get update && apt-get install -y jq && rm -rf /var/lib/apt/lists/*
-
 # install protoc
-RUN apt-get update && \
-    apt-get install protobuf-compiler -y
-
 # Image processing for thumbnails
-RUN apt-get update  \
-    && apt-get install -y libvips-dev \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get install -y jq protobuf-compiler libvips-dev 
 
 COPY waha.config.json /tmp/waha.config.json
 WORKDIR /go/gows
@@ -78,6 +75,7 @@ RUN \
     wget -O /go/gows/bin/gows https://github.com/${GOWS_GITHUB_REPO}/releases/download/${GOWS_SHA}/gows-${ARCH} && \
     chmod +x /go/gows/bin/gows
 
+RUN rm -rf /var/lib/apt/lists/*
 
 #
 # Final
@@ -92,72 +90,60 @@ ARG WHATSAPP_DEFAULT_ENGINE
 
 RUN echo "USE_BROWSER=$USE_BROWSER"
 
-# Install ffmpeg to generate previews for videos
-RUN apt-get update && apt-get install -y ffmpeg --no-install-recommends && rm -rf /var/lib/apt/lists/*
+RUN apt-get update
 
-# Image processing for thumbnails
-RUN apt-get update  \
-    && apt-get install -y libvips \
-    && rm -rf /var/lib/apt/lists/*
+# Install ffmpeg to generate previews for videos
+RUN apt-get install -y ffmpeg --no-install-recommends
+
+RUN apt-get install -y libc6 
+
+RUN apt-get install -y tini
+
+# libvips Image processing for thumbnails
+# curl
+# libc6 GOWS requirement
+# Install tini for proper init process
+RUN apt-get install -y libvips curl  libc6 tini
 
 # Install zip and unzip - either for chromium or chrome
-RUN if [ "$USE_BROWSER" = "chromium" ] || [ "$USE_BROWSER" = "chrome" ]; then \
-    apt-get update  \
-    && apt-get install -y zip unzip \
-    && rm -rf /var/lib/apt/lists/*; \
-    fi
-
 # Install wget - either for chromium or chrome
 RUN if [ "$USE_BROWSER" = "chromium" ] || [ "$USE_BROWSER" = "chrome" ]; then \
-    apt-get update  \
-    && apt-get install -y wget \
-    && rm -rf /var/lib/apt/lists/*; \
-    fi
+    apt-get install -y zip unzip wget \
+    ; fi
 
 # Install fonts if using either chromium or chrome
 RUN if [ "$USE_BROWSER" = "chromium" ] || [ "$USE_BROWSER" = "chrome" ]; then \
-    apt-get update  \
-    && apt-get install -y \
-        fontconfig \
-        fonts-freefont-ttf \
-        fonts-gfs-neohellenic \
-        fonts-indic \
-        fonts-ipafont-gothic \
-        fonts-kacst \
-        fonts-liberation \
-        fonts-noto-cjk \
-        fonts-noto-color-emoji \
-        fonts-roboto \
-        fonts-thai-tlwg \
-        fonts-wqy-zenhei \
-        fonts-open-sans \
-      --no-install-recommends \
-    && rm -rf /var/lib/apt/lists/*; \
-    fi
-
-# Install xvfb, xauth
-RUN if [ "$USE_BROWSER" = "chromium" ] || [ "$USE_BROWSER" = "chrome" ]; then \
-    apt-get update && apt-get install -y --no-install-recommends \
-        xvfb \
-        xauth \
-        libnss3 \
-        libxss1 \
-        libasound2 \
-        libatk-bridge2.0-0 \
-        libgtk-3-0 \
-        libdrm2 \
-        ca-certificates \
-        && rm -rf /var/lib/apt/lists/*; \
-    fi
+    apt-get install -y \
+    fontconfig \
+    fonts-freefont-ttf \
+    fonts-gfs-neohellenic \
+    fonts-indic \
+    fonts-ipafont-gothic \
+    fonts-kacst \
+    fonts-liberation \
+    fonts-noto-cjk \
+    fonts-noto-color-emoji \
+    fonts-roboto \
+    fonts-thai-tlwg \
+    fonts-wqy-zenhei \
+    fonts-open-sans \
+    # Install xvfb, xauth
+    xvfb \
+    xauth \
+    libnss3 \
+    libxss1 \
+    libasound2 \
+    libatk-bridge2.0-0 \
+    libgtk-3-0 \
+    libdrm2 \
+    ca-certificates \
+    --no-install-recommends \
+    ; fi
 
 # Install Chromium
 RUN if [ "$USE_BROWSER" = "chromium" ]; then \
-        apt-get update  \
-        && apt-get update \
-        && apt-get install -y chromium \
-          --no-install-recommends \
-        && rm -rf /var/lib/apt/lists/*; \
-    fi
+    apt-get install -y chromium --no-install-recommends \
+    ; fi
 
 # Install Chrome
 # Available versions:
@@ -165,45 +151,29 @@ RUN if [ "$USE_BROWSER" = "chromium" ]; then \
 ARG CHROME_VERSION="140.0.7339.80-1"
 ARG OPUSTAGS_VERSION="1.10.1"
 RUN if [ "$USE_BROWSER" = "chrome" ]; then \
-        wget --no-verbose -O /tmp/chrome.deb https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb \
-          && apt-get update \
-          && apt install -y /tmp/chrome.deb \
-          && rm /tmp/chrome.deb \
-          && rm -rf /var/lib/apt/lists/*; \
-    fi
-
-# curl
-RUN apt-get update  \
-    && apt-get install -y curl \
-    && rm -rf /var/lib/apt/lists/*
+    wget --no-verbose -O /tmp/chrome.deb https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb \
+    && apt install -y /tmp/chrome.deb \
+    && rm /tmp/chrome.deb \
+    ; fi
 
 # Build and install opustags so audio metadata can be cleaned up inside the container
 RUN set -eux; \
     buildDeps='build-essential cmake pkg-config libogg-dev'; \
-    apt-get update; \
     apt-get install -y --no-install-recommends ${buildDeps}; \
     mkdir -p /tmp/opustags; \
     curl -L https://github.com/fmang/opustags/archive/refs/tags/${OPUSTAGS_VERSION}.tar.gz \
-      | tar -xz -C /tmp/opustags; \
+    | tar -xz -C /tmp/opustags; \
     cd /tmp/opustags/opustags-${OPUSTAGS_VERSION}; \
     cmake -S . -B build -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=Release; \
     cmake --build build --config Release; \
     cmake --install build; \
     rm -rf /tmp/opustags; \
-    apt-get purge -y --auto-remove ${buildDeps}; \
-    rm -rf /var/lib/apt/lists/*
-
-# GOWS requirements
-# libc6
-RUN  apt-get update \
-     && apt-get install -y libc6 \
-     && rm -rf /var/lib/apt/lists/*
-
-# Install tini for proper init process
-RUN apt-get update && apt-get install -y tini && rm -rf /var/lib/apt/lists/*
+    apt-get purge -y --auto-remove ${buildDeps};
 
 # Set the ENV for docker image
 ENV WHATSAPP_DEFAULT_ENGINE=$WHATSAPP_DEFAULT_ENGINE
+
+RUN rm -rf /var/lib/apt/lists/*
 
 # Attach sources, install packages
 WORKDIR /app
@@ -215,8 +185,8 @@ COPY --from=gows /go/gows/bin/gows /app/gows
 COPY .env.example ./.env.example
 COPY scripts/init-waha.js ./scripts/init-waha.js
 RUN chmod +x ./scripts/init-waha.js \
-  && printf '%s\n' '#!/bin/sh' 'exec node /app/scripts/init-waha.js "$@"' > /usr/local/bin/init-waha \
-  && chmod +x /usr/local/bin/init-waha
+    && printf '%s\n' '#!/bin/sh' 'exec node /app/scripts/init-waha.js "$@"' > /usr/local/bin/init-waha \
+    && chmod +x /usr/local/bin/init-waha
 ENV WAHA_GOWS_PATH=/app/gows
 ENV WAHA_GOWS_SOCKET=/tmp/gows.sock
 
