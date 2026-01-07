@@ -16,12 +16,6 @@ services:
       - 1.1.1.1
       - 8.8.8.8
 
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "100m"
-        max-file: "10"
-
     ports:
       - "127.0.0.1:3000:3000/tcp"
 
@@ -35,6 +29,14 @@ services:
 
     env_file:
       - .env
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /app/src/
+          initial_sync: true
+          ignore:
+            - node_modules/
 
 # NOTE: Only if you're using PostgreSQL to save sessions
 # https://waha.devlike.pro/docs/how-to/storages/#media---postgresql
