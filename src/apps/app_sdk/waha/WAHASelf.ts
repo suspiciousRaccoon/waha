@@ -146,6 +146,17 @@ export class WAHASelf {
       .then((response) => response.data);
   }
 
+  async getGroupParticipants(
+    session: string,
+    groupId: string,
+    opts?: RequestOptions,
+  ) {
+    const url = `/api/${session}/groups/${groupId}/participants/v2`;
+    return await this.client
+      .get(url, { signal: opts?.signal })
+      .then((response) => response.data);
+  }
+
   async getChannel(
     session: string,
     channelId: string,
@@ -369,6 +380,10 @@ export class WAHASessionAPI {
 
   getGroup(groupId: string, opts?: RequestOptions): Promise<any> {
     return this.api.getGroup(this.session, groupId, opts);
+  }
+
+  getGroupParticipants(groupId: string, opts?: RequestOptions): Promise<any> {
+    return this.api.getGroupParticipants(this.session, groupId, opts);
   }
 
   getChannel(channelId: string, opts?: RequestOptions): Promise<Channel> {
