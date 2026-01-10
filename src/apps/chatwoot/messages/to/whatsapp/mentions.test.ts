@@ -104,4 +104,12 @@ describe('parseMentionsFromText', () => {
       mentions: ['1231234@c.us', '5555555@c.us'],
     });
   });
+
+  it('parses @lid mentions without c.us suffix', () => {
+    const input = 'Notify @123123@lid now';
+    expect(parseMentionsFromText(input)).toEqual({
+      text: 'Notify @123123@lid now',
+      mentions: ['123123@lid'],
+    });
+  });
 });

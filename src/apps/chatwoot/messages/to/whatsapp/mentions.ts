@@ -30,10 +30,21 @@ export function parseMentionsFromText(text: string): ParsedMentions {
     content = content.replace(allRegexReplace, '$1').trim();
   }
 
+  const lidRegex = /(^|\s)@(\d{6,15})@lid\b/g;
+  const lidMatches = text.matchAll(lidRegex);
+
+  for (const match of lidMatches) {
+    const lidNumber = match[2];
+    const formattedLid = `${lidNumber}@lid`;
+    if (!mentions.includes(formattedLid)) {
+      mentions.push(formattedLid);
+    }
+  }
+
   // Regex to match @ followed by phone number
   // Matches: @558591203123, @5585991203123, etc.
   // Phone numbers: 7-15 digits (international format)
-  const phoneRegex = /(^|\s)@(\d{7,15})\b/g;
+  const phoneRegex = /(^|\s)@(\d{7,15})(?!@lid)\b/g;
   const phoneMatches = text.matchAll(phoneRegex);
 
   for (const match of phoneMatches) {
