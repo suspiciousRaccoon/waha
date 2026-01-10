@@ -474,4 +474,8 @@ export class WAHASessionAPI {
   findLIDByPN(pn: string, opts?: RequestOptions) {
     return this.api.findLIDByPN(this.session, pn, opts);
   }
+
+  getSessionInfo(opts?: RequestOptions) {
+    return this.api.get(this.session, opts);
+  }
 }
