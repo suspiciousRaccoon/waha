@@ -2910,6 +2910,12 @@ export function extractBody(message): string | null {
     // @ts-ignore - AudioMessage doesn't have caption field
     body = mediaContent?.caption;
   }
+  if (!body && content.protocolMessage?.editedMessage) {
+    body = extractBody(content.protocolMessage.editedMessage);
+  }
+  if (!body && content.associatedChildMessage?.message) {
+    body = extractBody(content.associatedChildMessage.message);
+  }
   // Response for buttons
   if (!body) {
     body = content.templateButtonReplyMessage?.selectedDisplayText;
