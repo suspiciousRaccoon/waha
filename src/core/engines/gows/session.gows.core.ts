@@ -764,15 +764,14 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
 
   async stop(): Promise<void> {
     this.cleanupPresenceTimeout();
-    if (this.client) {
-      const response = await promisify(this.client.StopSession)(this.session);
-      response.toObject();
-    }
     this.status = WAHASessionStatus.STOPPED;
     this.events?.stop();
     this.stopEvents();
-    this.client?.close();
     this.mediaManager.close();
+    if (this.client) {
+      await promisify(this.client.StopSession)(this.session);
+      this.client?.close();
+    }
   }
 
   public async requestCode(phoneNumber: string, method: string, params?: any) {
