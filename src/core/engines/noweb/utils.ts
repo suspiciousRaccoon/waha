@@ -10,6 +10,7 @@ export function extractMediaContent(
     content?.imageMessage ||
     content?.videoMessage ||
     content?.audioMessage ||
+    content?.ptvMessage ||
     content?.stickerMessage;
   if (mediaContent) {
     return mediaContent;
