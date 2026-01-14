@@ -9,6 +9,13 @@ describe('parseMentionsFromText', () => {
     });
   });
 
+  it('handles empty content safely', () => {
+    expect(parseMentionsFromText(null)).toEqual({
+      text: null,
+      mentions: null,
+    });
+  });
+
   it('parses @all and removes it from the text', () => {
     const input = 'Hello @all';
     expect(parseMentionsFromText(input)).toEqual({

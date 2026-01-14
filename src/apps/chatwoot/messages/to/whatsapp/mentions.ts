@@ -15,7 +15,15 @@ export interface ParsedMentions {
  * @param text - The message text
  * @returns Parsed mentions with cleaned text
  */
-export function parseMentionsFromText(text: string): ParsedMentions {
+export function parseMentionsFromText(
+  text: string | null | undefined,
+): ParsedMentions {
+  if (!text) {
+    return {
+      text: text,
+      mentions: null,
+    };
+  }
   const mentions: string[] = [];
   let content = text;
 
