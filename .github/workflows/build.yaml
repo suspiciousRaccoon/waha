@@ -117,13 +117,13 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Wait to retry build
-        if: steps.build1.outcome != 'success'
+        if: steps.build1.outcome == 'failure'
         run: |
           sleep 10
 
       - name: Build (attempt 2)
         id: build2
-        if: steps.build1.outcome != 'success'
+        if: steps.build1.outcome == 'failure'
         continue-on-error: true
         uses: docker/build-push-action@v4
         with:
@@ -139,12 +139,12 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Wait to retry build
-        if: steps.build2.outcome != 'success'
+        if: steps.build2.outcome == 'failure'
         run: |
           sleep 10
 
       - name: Build (attempt 3)
-        if: steps.build2.outcome != 'success'
+        if: steps.build2.outcome == 'failure'
         uses: docker/build-push-action@v4
         with:
           context: .

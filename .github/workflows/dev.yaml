@@ -91,7 +91,7 @@ jobs:
       - name: Wait to retry build
         if:
           ${{ steps.recent.outputs.has_recent == 'true' && steps.build1.outcome
-          != 'success' }}
+          == 'failure' }}
         run: |
           sleep 10
 
@@ -99,7 +99,7 @@ jobs:
         id: build2
         if:
           ${{ steps.recent.outputs.has_recent == 'true' && steps.build1.outcome
-          != 'success' }}
+          == 'failure' }}
         continue-on-error: true
         uses: docker/build-push-action@v4
         with:
@@ -117,14 +117,14 @@ jobs:
       - name: Wait to retry build
         if:
           ${{ steps.recent.outputs.has_recent == 'true' && steps.build2.outcome
-          != 'success' }}
+          == 'failure' }}
         run: |
           sleep 10
 
       - name: Build (attempt 3)
         if:
           ${{ steps.recent.outputs.has_recent == 'true' && steps.build2.outcome
-          != 'success' }}
+          == 'failure' }}
         uses: docker/build-push-action@v4
         with:
           context: .
