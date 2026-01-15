@@ -381,6 +381,7 @@ export abstract class WhatsappSession {
       '--disable-default-apps',
       '--disable-dev-shm-usage',
       '--disable-extensions',
+      '--disable-metrics',
       // '--disable-features=site-per-process', // COMMENTED to test WEBJS stability
       '--disable-gpu', // COMMENTED to test WEBJS stability
       '--disable-offer-store-unmasked-wallet-cards',
