@@ -81,6 +81,7 @@ export class SwaggerConfiguratorCore {
       .addTag('📢 Channels', 'Channels (newsletters) methods')
       .addTag('🟢 Status', 'Status (aka stories) methods')
       .addTag('💬 Chats', `Chats methods`)
+      .addTag('🔑 Api Keys', 'API Keys management')
       .addTag(
         '👤 Contacts',
         `Contacts methods.<br>

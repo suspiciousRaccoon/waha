@@ -1,3 +1,4 @@
+import { applyDecorators } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { App } from '@waha/apps/app_sdk/dto/app.dto';
 import { BooleanString } from '@waha/nestjs/validation/BooleanString';
@@ -307,19 +308,25 @@ export class SessionDetailedInfo extends SessionInfo {
 const DB_NAME_LIMIT = 64;
 const DB_NAME_MAX_PREFIX_LEN = 'waha_noweb'.length;
 
+export function SessionName() {
+  return applyDecorators(
+    IsString(),
+    MaxLength(DB_NAME_LIMIT - DB_NAME_MAX_PREFIX_LEN),
+    Matches(/^[a-zA-Z0-9_-]*$/, {
+      message:
+        'Session name can only contain alphanumeric characters, hyphens, and underscores (a-z, A-Z, 0-9, -, _) or be empty',
+    }),
+  );
+}
+
 export class SessionCreateRequest {
   @ApiProperty({
     example: 'default',
     description: 'Session name (id)',
     required: false,
   })
-  @IsString()
   @IsOptional()
-  @MaxLength(DB_NAME_LIMIT - DB_NAME_MAX_PREFIX_LEN)
-  @Matches(/^[a-zA-Z0-9_-]*$/, {
-    message:
-      'Session name can only contain alphanumeric characters, hyphens, and underscores (a-z, A-Z, 0-9, -, _) or be empty',
-  })
+  @SessionName()
   name: string | undefined;
 
   @ValidateNested()

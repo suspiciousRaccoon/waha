@@ -21,6 +21,8 @@ import { generatePrefixedId } from '@waha/utils/ids';
 import { IncomingMessage } from 'http';
 import * as url from 'url';
 import { Server } from 'ws';
+import { CaslAbilityFactory } from '@waha/core/auth/casl.ability';
+import { Action, session as SessionName } from '@waha/core/auth/casl.types';
 
 export enum WebSocketCloseCode {
   NORMAL = 1000,
@@ -54,6 +56,7 @@ export class WebsocketGatewayCore
   constructor(
     private manager: SessionManager,
     private auth: WebSocketAuth,
+    private readonly casl: CaslAbilityFactory,
   ) {
     this.logger = new Logger('WebsocketGateway');
     this.heartbeat = new WebsocketHeartbeatJob(
@@ -62,11 +65,16 @@ export class WebsocketGatewayCore
     );
   }
 
-  handleConnection(socket: WebSocket, request: IncomingMessage, ...args): any {
+  async handleConnection(
+    socket: WebSocket,
+    request: IncomingMessage,
+    ...args
+  ): Promise<any> {
     // wsc - websocket client
     socket.id = generatePrefixedId('wsc');
 
-    if (!this.auth.validateRequest(request)) {
+    const user = await this.auth.validateRequest(request);
+    if (!user) {
       // Not authorized - close connection
       socket.close(WebSocketCloseCode.POLICY_VIOLATION, 'Unauthorized');
       this.logger.debug(
@@ -75,9 +83,19 @@ export class WebsocketGatewayCore
       return;
     }
 
-    this.logger.debug(`New client connected: ${request.url} - ${socket.id}`);
     const params = this.getParams(request);
-    const session: string = params.session;
+    let session: string = params.session;
+    const ability = this.casl.createForUser(user);
+    if (session == '*' && !ability.can(Action.Use, 'all')) {
+      // Limit user to listen only the session events
+      session = user.session;
+    }
+
+    if (!ability.can(Action.Use, new SessionName(session))) {
+      socket.close(WebSocketCloseCode.POLICY_VIOLATION, 'Forbidden');
+    }
+
+    this.logger.debug(`New client connected: ${request.url} - ${socket.id}`);
     const events: WAHAEvents[] = params.events;
     this.logger.debug(
       `Client connected to session: '${session}', events: ${events}, ${socket.id}`,

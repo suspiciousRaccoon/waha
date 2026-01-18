@@ -1,22 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { IncomingMessage } from 'http';
 import * as url from 'url';
-
-import { IApiKeyAuth } from './auth';
+import { ApiKeyStrategy } from '@waha/core/auth/apiKey.strategy';
 
 @Injectable()
 export class WebSocketAuth {
-  constructor(private auth: IApiKeyAuth) {}
+  constructor(private strategy: ApiKeyStrategy) {}
 
-  validateRequest(request: IncomingMessage) {
-    if (this.auth.skipAuth()) {
-      return true;
-    }
-    const provided = this.getKeyFromQueryParams(request);
-    return this.auth.isValid(provided);
+  async validateRequest(request: IncomingMessage) {
+    const apikey = this.getKeyFromQueryParams('x-api-key', request);
+    return await this.strategy.user(apikey);
   }
 
-  private getKeyFromQueryParams(request: IncomingMessage) {
+  private getKeyFromQueryParams(name: string, request: IncomingMessage) {
     let query = url.parse(request.url, true).query;
     // case-insensitive query params
     query = Object.keys(query).reduce((acc, key) => {
@@ -24,7 +20,7 @@ export class WebSocketAuth {
       return acc;
     }, {});
 
-    const provided = query['x-api-key'];
+    const provided = query[name];
     // Check if it's array - return first
     if (Array.isArray(provided)) {
       return provided[0];
