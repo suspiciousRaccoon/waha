@@ -15,12 +15,23 @@ jobs:
     strategy:
       matrix:
         include:
+          # Chromium - x86
           - runner: 'buildjet-4vcpu-ubuntu-2204'
             tag: 'dev'
             platform: 'amd64'
             browser: 'chromium'
             engine: 'WEBJS'
             goss: 'goss-linux-amd64'
+
+          # Chrome - x86
+          - runner: 'buildjet-4vcpu-ubuntu-2204'
+            tag: 'dev-chrome'
+            platform: 'amd64'
+            browser: 'chrome'
+            engine: 'WEBJS'
+            goss: 'goss-linux-amd64'
+
+          # Chromium - ARM
           - runner: 'buildjet-4vcpu-ubuntu-2204-arm'
             tag: 'dev-arm'
             platform: 'linux/arm64'
