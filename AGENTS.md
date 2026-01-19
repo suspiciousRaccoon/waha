@@ -70,6 +70,7 @@ This guide summarizes how to explore, modify, and validate the WhatsApp HTTP API
   `src/utils/logging.ts`. `console.log` is blocked by pre-commit.
 - Respect path aliases (`@waha/...`) defined in `tsconfig.json`; keep imports
   consistent (use absolute aliases, not relative `../../../`).
+- Prefer named function declarations over `const` arrow functions when possible.
 - Avoid naming unused variables with a leading underscore; if a parameter is
   required by a signature, explicitly `void` it instead.
 - For configs, prefer runtime configurability over constants. Environment keys
