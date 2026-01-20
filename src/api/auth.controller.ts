@@ -27,7 +27,7 @@ import { Base64File } from '../structures/files.dto';
 
 @ApiSecurity('api_key')
 @Controller('api/:session/auth')
-@ApiTags('🔑 Auth')
+@ApiTags('📱 Pairing')
 class AuthController {
   constructor(private manager: SessionManager) {}
 
