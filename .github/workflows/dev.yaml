@@ -20,13 +20,16 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: yarn
 
       - name: Enable Corepack
-        run: corepack enable
+        run: |
+          corepack enable
+          corepack prepare yarn@4.9.2 --activate
 
       - name: Install dependencies
-        run: yarn install --immutable
+        run: |
+          unset GIT_CONFIG_PARAMETERS
+          yarn install --immutable
 
       - name: Run unit tests
         run: yarn test:unit
