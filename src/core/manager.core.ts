@@ -47,6 +47,7 @@ import { DOCS_URL } from './exceptions';
 import { getProxyConfig } from './helpers.proxy';
 import { MediaManager } from './media/MediaManager';
 import { LocalSessionAuthRepository } from './storage/LocalSessionAuthRepository';
+import { LocalSessionConfigRepository } from './storage/LocalSessionConfigRepository';
 import { LocalStoreCore } from './storage/LocalStoreCore';
 
 enum SessionState {
@@ -99,6 +100,7 @@ export class SessionManagerCore extends SessionManager implements OnModuleInit {
 
     this.store = new LocalStoreCore(engineName.toLowerCase());
     this.sessionAuthRepository = new LocalSessionAuthRepository(this.store);
+    this.sessionConfigRepository = new LocalSessionConfigRepository(this.store);
     this.clearStorage().catch((error) => {
       this.log.error({ error }, 'Error while clearing storage');
     });
@@ -146,8 +148,12 @@ export class SessionManagerCore extends SessionManager implements OnModuleInit {
   // API Methods
   //
   async exists(name: string): Promise<boolean> {
-      const hasSession = this.sessions.has(name);
-      return hasSession;
+    // Check in-memory first
+    if (this.sessions.has(name)) {
+      return true;
+    }
+    // Check disk for existing session
+    return await this.sessionConfigRepository.exists(name);
   }
 
   isRunning(name: string): boolean {
@@ -158,27 +164,52 @@ export class SessionManagerCore extends SessionManager implements OnModuleInit {
   async upsert(name: string, config?: SessionConfig): Promise<void> {
     const entry = this.sessions.get(name);
     
+    // Load config from disk if it exists and no config provided
+    let sessionConfig = config;
+    if (!sessionConfig && !entry) {
+      const diskConfig = await this.sessionConfigRepository.getConfig(name);
+      if (diskConfig) {
+        sessionConfig = diskConfig;
+      }
+    }
+    
     if (entry) {
       // Update existing session config
-      entry.config = config || {};
+      entry.config = sessionConfig || entry.config || {};
     } else {
       // Create new stopped session entry
       this.sessions.set(name, {
         session: null,
-        config: config || {},
+        config: sessionConfig || {},
         state: SessionState.STOPPED,
       });
     }
+    
+    // Persist config to disk
+    if (sessionConfig !== undefined) {
+      await this.sessionConfigRepository.saveConfig(name, sessionConfig);
+    }
   }
   async start(name: string): Promise<SessionDTO> {
-    const entry = this.sessions.get(name);
+    let entry = this.sessions.get(name);
+    
+    // If session doesn't exist in memory, try to load from disk
+    if (!entry) {
+      const exists = await this.exists(name);
+      if (exists) {
+        // Load from disk
+        await this.upsert(name);
+        entry = this.sessions.get(name);
+      } else {
+        throw new NotFoundException(`Session '${name}' does not exist.`);
+      }
+    }
     
     if (entry.state === SessionState.RUNNING) {
       throw new UnprocessableEntityException(
         `Session '${name}' is already started.`,
       );
     }
-
 
     const sessionConfig = entry?.config || {};
     
@@ -340,8 +371,15 @@ export class SessionManagerCore extends SessionManager implements OnModuleInit {
     }
     this.events2.delete(name);
     
-    // Remove session entirely
+    // Remove session from memory
     this.sessions.delete(name);
+    
+    // Remove session from disk
+    try {
+      await this.sessionConfigRepository.deleteConfig(name);
+    } catch (error) {
+      this.log.warn({ session: name, error }, 'Error while deleting session config from disk');
+    }
   }
 
   /**
@@ -472,5 +510,47 @@ export class SessionManagerCore extends SessionManager implements OnModuleInit {
     await this.store.init();
     const knex = this.store.getWAHADatabase();
     await this.appsService.migrate(knex);
+    
+    // Discover and load existing sessions from disk
+    await this.loadExistingSessions();
+  }
+
+  /**
+   * Discover and load existing sessions from disk into memory
+   */
+  private async loadExistingSessions(): Promise<void> {
+    try {
+      const sessionNames = await this.sessionConfigRepository.getAllConfigs();
+      this.log.info(
+        { count: sessionNames.length },
+        `Discovering existing sessions from disk...`,
+      );
+      
+      for (const sessionName of sessionNames) {
+        // Skip if already in memory
+        if (this.sessions.has(sessionName)) {
+          continue;
+        }
+        
+        // Load config from disk
+        const config = await this.sessionConfigRepository.getConfig(sessionName);
+        
+        // Add to in-memory map as stopped
+        this.sessions.set(sessionName, {
+          session: null,
+          config: config || {},
+          state: SessionState.STOPPED,
+        });
+        
+        this.log.debug({ session: sessionName }, 'Loaded existing session from disk');
+      }
+      
+      this.log.info(
+        { count: sessionNames.length },
+        `Loaded ${sessionNames.length} existing session(s) from disk`,
+      );
+    } catch (error) {
+      this.log.error({ error }, 'Error while loading existing sessions from disk');
+    }
   }
 }
