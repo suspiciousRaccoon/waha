@@ -19,7 +19,7 @@ import { WAHAEvents, WAHAEventsWild } from '@waha/structures/enums.dto';
 import { EventWildUnmask } from '@waha/utils/events';
 import { generatePrefixedId } from '@waha/utils/ids';
 import { IncomingMessage } from 'http';
-import * as url from 'url';
+import { URL } from 'url';
 import { Server } from 'ws';
 import { CaslAbilityFactory } from '@waha/core/auth/casl.ability';
 import { Action, session as SessionName } from '@waha/core/auth/casl.types';
@@ -124,14 +124,13 @@ export class WebsocketGatewayCore
   }
 
   private getParams(request: IncomingMessage) {
-    const query = url.parse(request.url, true).query;
-    const session = (query.session as string) || '*';
-    let paramsEvents = (query.events as string[]) || '*';
-    // if params events string - split by ","
-    if (typeof paramsEvents === 'string') {
-      paramsEvents = paramsEvents.split(',');
-    }
-    const events = this.eventUnmask.unmask(paramsEvents);
+    // We need only search params, so localhost is fine here
+    const query = new URL(request.url, 'http://localhost').searchParams;
+    const session = query.get('session') || '*';
+    const paramsEvents = query.getAll('events');
+    const eventsRaw = paramsEvents.length > 0 ? paramsEvents : ['*'];
+    const eventsList = eventsRaw.flatMap((value) => value.split(','));
+    const events = this.eventUnmask.unmask(eventsList);
     return { session, events };
   }
 

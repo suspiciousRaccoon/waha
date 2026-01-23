@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { IncomingMessage } from 'http';
-import * as url from 'url';
+import { URL } from 'url';
 import { ApiKeyStrategy } from '@waha/core/auth/apiKey.strategy';
 
 @Injectable()
@@ -13,18 +13,20 @@ export class WebSocketAuth {
   }
 
   private getKeyFromQueryParams(name: string, request: IncomingMessage) {
-    let query = url.parse(request.url, true).query;
-    // case-insensitive query params
-    query = Object.keys(query).reduce((acc, key) => {
-      acc[key.toLowerCase()] = query[key];
-      return acc;
-    }, {});
+    // Case-insensitive
+    name = name.toLowerCase();
+    const query = new URL(request.url || '', 'http://localhost').searchParams;
+    const matches: string[] = [];
 
-    const provided = query[name];
-    // Check if it's array - return first
-    if (Array.isArray(provided)) {
-      return provided[0];
+    for (const [key, value] of query.entries()) {
+      if (key.toLowerCase() === name) {
+        matches.push(value);
+      }
     }
-    return provided;
+
+    if (matches.length === 0) {
+      return undefined;
+    }
+    return matches[0];
   }
 }
