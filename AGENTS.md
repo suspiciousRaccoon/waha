@@ -3,6 +3,11 @@
 This guide summarizes how to explore, modify, and validate the WhatsApp HTTP API
 (WAHA) codebase when assisting as an automation or coding agent.
 
+- When you asked to refactor or "apply new lib" instead of current one - do not
+  change the behavior, make a minimum amount of changes possible. If you see
+  some edge case during that process that haven't been covered - tell it,
+  suggest fix, but don't change the code.
+
 ## Product & Variants
 
 - WAHA ships in **Core** and **Plus** editions. Core lives under `src/core` and
