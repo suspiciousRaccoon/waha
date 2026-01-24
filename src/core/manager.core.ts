@@ -37,6 +37,7 @@ import {
   SessionDTO,
   SessionInfo,
 } from '../structures/sessions.dto';
+import { WHATSAPP_DEFAULT_SESSION_NAME } from '../structures/base.dto';
 import { WebhookConfig } from '../structures/webhooks.config.dto';
 import { populateSessionInfo, SessionManager } from './abc/manager.abc';
 import { SessionParams, WhatsappSession } from './abc/session.abc';
@@ -133,7 +134,38 @@ export class SessionManagerCore extends SessionManager implements OnModuleInit {
 
   async onApplicationBootstrap() {
     await this.engineBootstrap.bootstrap();
+    this.startDiscoveredSessionsExceptDefault();
     this.startPredefinedSessions();
+  }
+
+  /**
+   * Auto-start all discovered sessions (from disk) except the default session.
+   * Runs on container restart/build so persisted sessions come back up automatically.
+   *
+   * Why we skip "default": LocalSessionConfigRepository.getAllConfigs() lists every
+   * directory under the engine store (e.g. .sessions/webjs/). The WebJS engine uses
+   * a fixed subdir "default" as its auth base (LocalAuth dataPath = .../webjs/default),
+   * with session-{name} folders inside. That "default" dir is not a real session—it
+   * gets discovered as one, which can cause it to be treated/remade incorrectly.
+   * We omit it from auto-start and leave its behaviour unchanged.
+   */
+  private startDiscoveredSessionsExceptDefault() {
+    for (const [name, entry] of this.sessions.entries()) {
+      if (name === WHATSAPP_DEFAULT_SESSION_NAME) {
+        continue;
+      }
+      if (entry.state === SessionState.RUNNING) {
+        continue;
+      }
+      this.withLock(name, async () => {
+        const log = this.log.logger.child({ session: name });
+        log.info('Auto-starting discovered session...');
+        await this.start(name).catch((error) => {
+          log.error(`Failed to auto-start discovered session: ${error}`);
+          log.error(error.stack);
+        });
+      });
+    }
   }
 
   private async clearStorage() {
@@ -549,6 +581,28 @@ export class SessionManagerCore extends SessionManager implements OnModuleInit {
         { count: sessionNames.length },
         `Loaded ${sessionNames.length} existing session(s) from disk`,
       );
+      
+      this.log.info("Starting sessions")
+
+      for (const [name, entry] of this.sessions.entries()) {
+      if (name === WHATSAPP_DEFAULT_SESSION_NAME) {
+        this.log.info("Skipping default session")
+        continue;
+      }
+      if (entry.state === SessionState.RUNNING) {
+        this.log.info(`Session ${name} already running, skipping`)
+        continue;
+      }
+      this.withLock(name, async () => {
+        const log = this.log.logger.child({ session: name });
+        log.info('Auto-starting discovered session...');
+        await this.start(name).catch((error) => {
+          log.error(`Failed to auto-start discovered session: ${error}`);
+          log.error(error.stack);
+        });
+      });
+    }
+
     } catch (error) {
       this.log.error({ error }, 'Error while loading existing sessions from disk');
     }
