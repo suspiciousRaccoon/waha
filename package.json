@@ -29,7 +29,7 @@
     "gows:proto": "yarn gows:proto:fetch && yarn gows:proto:build"
   },
   "dependencies": {
-    "@adiwajshing/baileys": "github:devlikeapro/Baileys#fork-master-2025-12-17",
+    "@adiwajshing/baileys": "github:devlikeapro/Baileys#fork-master-2026-01-25",
     "@adiwajshing/keyed-db": "^0.2.4",
     "@aws-sdk/client-s3": "^3.633.0",
     "@aws-sdk/s3-request-presigner": "^3.633.0",
