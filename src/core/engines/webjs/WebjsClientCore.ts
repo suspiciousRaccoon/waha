@@ -40,6 +40,10 @@ export class WebjsClientCore extends Client {
       await this.attachCustomEventListeners();
       await this.injectWaha();
     });
+    this.on(Events.READY, async () => {
+      await this.attachCustomEventListeners();
+      await this.injectWaha();
+    });
   }
 
   async initialize() {
