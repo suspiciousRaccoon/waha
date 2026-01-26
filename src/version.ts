@@ -29,6 +29,10 @@ export function getWAHAVersion(): WAHAVersion {
   return WAHAVersion.CORE;
 }
 
+export function getWorker() {
+  return { id: process.env.WAHA_WORKER_ID || null };
+}
+
 function getBrowser() {
   return getEngineName() === WAHAEngine.WEBJS
     ? getBrowserExecutablePath()
@@ -45,6 +49,7 @@ export const VERSION: WAHAEnvironment = {
   tier: getWAHAVersion(),
   browser: getBrowser(),
   platform: getPlatform(),
+  worker: getWorker(),
 };
 
 export const IsChrome = VERSION.browser?.includes('chrome');
