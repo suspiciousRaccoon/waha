@@ -128,6 +128,7 @@ export class WebjsClientCore extends Client {
   }
 
   async setPushName(name: string) {
+    await this.ensureWahaInjected();
     await this.pupPage.evaluate(async (pushName) => {
       return await window['WAHA'].WAWebSetPushnameConnAction.setPushname(
         pushName,
@@ -155,6 +156,7 @@ export class WebjsClientCore extends Client {
   }
 
   async createLabel(name: string, color: number): Promise<number> {
+    await this.ensureWahaInjected();
     const labelId: number = (await this.pupPage.evaluate(
       async (name, color) => {
         // @ts-ignore
@@ -170,6 +172,7 @@ export class WebjsClientCore extends Client {
   }
 
   async deleteLabel(label: Label) {
+    await this.ensureWahaInjected();
     return await this.pupPage.evaluate(async (label) => {
       // @ts-ignore
       return await window.WAHA.WAWebBizLabelEditingAction.labelDeleteAction(
@@ -181,6 +184,7 @@ export class WebjsClientCore extends Client {
   }
 
   async updateLabel(label: Label) {
+    await this.ensureWahaInjected();
     return await this.pupPage.evaluate(async (label) => {
       // @ts-ignore
       return await window.WAHA.WAWebBizLabelEditingAction.labelEditAction(
@@ -197,6 +201,8 @@ export class WebjsClientCore extends Client {
       return await super.getChats();
     }
 
+    await this.ensureWahaInjected();
+
     // Get paginated chats
     pagination.limit ||= Infinity;
     pagination.offset ||= 0;
@@ -211,6 +217,16 @@ export class WebjsClientCore extends Client {
     );
 
     return chats.map((chat) => ChatFactory.create(this, chat));
+  }
+
+  protected async ensureWahaInjected() {
+    const hasWaha = await this.pupPage.evaluate(() => {
+      // @ts-ignore
+      return Boolean(window.WAHA && window.WAHA.getChats);
+    });
+    if (!hasWaha) {
+      await this.injectWaha();
+    }
   }
 
   async sendTextStatus(status: TextStatus) {
