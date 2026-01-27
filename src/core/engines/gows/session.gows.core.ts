@@ -124,7 +124,11 @@ import {
   WAMessageReaction,
 } from '@waha/structures/responses.dto';
 import { CallData } from '@waha/structures/calls.dto';
-import { MeInfo, ProxyConfig } from '@waha/structures/sessions.dto';
+import {
+  MeInfo,
+  ProxyConfig,
+  SessionConfig,
+} from '@waha/structures/sessions.dto';
 import {
   BROADCAST_ID,
   DeleteStatusRequest,
@@ -187,6 +191,19 @@ import { TmpDir } from '@waha/utils/tmpdir';
 import * as path from 'path';
 import MessageServiceClient = messages.MessageServiceClient;
 import * as fsp from 'fs/promises';
+
+function getGowsStorageConfig(
+  sessionConfig?: SessionConfig,
+): messages.SessionStorageConfig {
+  const storeConfig = sessionConfig?.gows?.storage;
+  return new messages.SessionStorageConfig({
+    // Only explicit false disables; undefined/null defaults to enabled.
+    messages: storeConfig?.messages !== false,
+    groups: storeConfig?.groups !== false,
+    chats: storeConfig?.chats !== false,
+    labels: storeConfig?.labels !== false,
+  });
+}
 
 enum WhatsMeowEvent {
   CONNECTED = 'gows.ConnectedEventData',
@@ -271,6 +288,7 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
           address: auth.address(),
           dialect: auth.dialect(),
         }),
+        storage: getGowsStorageConfig(this.sessionConfig),
         log: new messages.SessionLogConfig({
           level: level ?? messages.LogLevel.INFO,
         }),

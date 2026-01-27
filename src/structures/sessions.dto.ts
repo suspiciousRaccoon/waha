@@ -113,6 +113,55 @@ export class NowebConfig {
   markOnline: boolean = true;
 }
 
+export class GowsStorageConfig {
+  @ApiProperty({
+    description:
+      'Store messages locally. Set to false to disable; omit or null to keep enabled.',
+    required: false,
+    example: true,
+  })
+  @IsBoolean()
+  @IsOptional()
+  messages?: boolean | null;
+
+  @ApiProperty({
+    description:
+      'Store groups locally. Set to false to disable; omit or null to keep enabled.',
+    required: false,
+    example: true,
+  })
+  @IsBoolean()
+  @IsOptional()
+  groups?: boolean | null;
+
+  @ApiProperty({
+    description:
+      'Store chats locally. Set to false to disable; omit or null to keep enabled.',
+    required: false,
+    example: true,
+  })
+  @IsBoolean()
+  @IsOptional()
+  chats?: boolean | null;
+
+  @ApiProperty({
+    description:
+      'Store labels locally. Set to false to disable; omit or null to keep enabled.',
+    required: false,
+    example: true,
+  })
+  @IsBoolean()
+  @IsOptional()
+  labels?: boolean | null;
+}
+
+export class GowsConfig {
+  @ValidateNested()
+  @Type(() => GowsStorageConfig)
+  @IsOptional()
+  storage?: GowsStorageConfig;
+}
+
 export class WebjsConfig {
   @ApiProperty({
     description:
@@ -240,6 +289,21 @@ export class SessionConfig {
   @Type(() => NowebConfig)
   @IsOptional()
   noweb?: NowebConfig;
+
+  @ApiProperty({
+    example: {
+      storage: {
+        messages: true,
+        groups: true,
+        chats: true,
+        labels: true,
+      },
+    },
+  })
+  @ValidateNested()
+  @Type(() => GowsConfig)
+  @IsOptional()
+  gows?: GowsConfig;
 
   @ApiProperty({
     description: 'WebJS-specific settings.',
