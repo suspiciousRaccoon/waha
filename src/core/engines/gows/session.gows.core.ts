@@ -216,6 +216,10 @@ enum WhatsMeowEvent {
   CALL_REJECT = 'events.CallReject',
   CALL_TERMINATE = 'events.CallTerminate',
   CALL_OFFER_NOTICE = 'events.CallOfferNotice',
+  // Other
+  APP_STATE = 'events.AppState',
+  HISTORY_SYNC = 'events.HistorySync',
+  CONTACT = 'events.Contact',
 }
 
 export interface GowsConfig {
@@ -313,7 +317,12 @@ export class WhatsappSessionGoWSCore extends WhatsappSession {
           this.engineConfig.connection,
           grpc.credentials.createInsecure(),
         );
-        const stream = client.StreamEvents(this.session);
+        const exclude = [];
+        const request = new messages.StreamEventsRequest({
+          session: this.session,
+          exclude: exclude,
+        });
+        const stream = client.StreamEvents(request);
         return { client, stream };
       },
     );
