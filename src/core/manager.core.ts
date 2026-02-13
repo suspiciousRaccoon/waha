@@ -50,6 +50,7 @@ import { MediaManager } from './media/MediaManager';
 import { LocalSessionAuthRepository } from './storage/LocalSessionAuthRepository';
 import { LocalSessionConfigRepository } from './storage/LocalSessionConfigRepository';
 import { LocalStoreCore } from './storage/LocalStoreCore';
+import { CoreApiKeyRepository } from './storage/CoreApiKeyRepository';
 
 enum SessionState {
   STOPPED = 'STOPPED',
@@ -133,6 +134,7 @@ export class SessionManagerCore extends SessionManager implements OnModuleInit {
   }
 
   async onApplicationBootstrap() {
+    this.apiKeyRepository = new CoreApiKeyRepository();
     await this.engineBootstrap.bootstrap();
     this.startDiscoveredSessionsExceptDefault();
     this.startPredefinedSessions();
