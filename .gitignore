@@ -21,6 +21,7 @@ test.js
 src/dashboard
 .eslintcache
 __pycache__
+media/**
 
 # compiled output
 /dist
