@@ -34,7 +34,7 @@ import {
   ChatLabelAssociation,
   LabelAssociationType,
 } from '@adiwajshing/baileys/lib/Types/LabelAssociation';
-import { MessageUserReceiptUpdate } from '@adiwajshing/baileys/lib/Types/Message';
+import { AnyMediaMessageContent, MessageUserReceiptUpdate, WAMediaUpload } from '@adiwajshing/baileys/lib/Types/Message';
 import { ILogger } from '@adiwajshing/baileys/lib/Utils/logger';
 import { isLidUser } from '@adiwajshing/baileys/lib/WABinary/jid-utils';
 import { UnprocessableEntityException } from '@nestjs/common';
@@ -116,6 +116,7 @@ import {
   MessageReplyRequest,
   MessageStarRequest,
   MessageTextRequest,
+  MessageVideoRequest,
   MessageVoiceRequest,
   SendSeenRequest,
   WANumberExistResult,
@@ -135,7 +136,7 @@ import {
   WAHASessionStatus,
   WAMessageAck,
 } from '@waha/structures/enums.dto';
-import { BinaryFile, RemoteFile } from '@waha/structures/files.dto';
+import { BinaryFile, RemoteFile, VideoBinaryFile, VideoRemoteFile, VoiceBinaryFile, VoiceRemoteFile } from '@waha/structures/files.dto';
 import {
   CreateGroupRequest,
   GroupParticipant,
@@ -1053,16 +1054,73 @@ export class WhatsappSessionNoWebCore extends WhatsappSession {
     return await this.sock.sendMessage(request.chatId, message, options);
   }
 
-  sendImage(request: MessageImageRequest) {
-    throw new AvailableInPlusVersion();
+  protected toMediaContent(
+    file: BinaryFile | RemoteFile | VoiceBinaryFile | VoiceRemoteFile | VideoBinaryFile | VideoRemoteFile,
+  ): Buffer | { url: string } {
+    if ('url' in file) {
+      return { url: file.url };
+    }
+    return Buffer.from(file.data, 'base64');
+  } 
+
+  protected toMediaUpload(
+    file: BinaryFile | RemoteFile | VoiceBinaryFile | VoiceRemoteFile | VideoBinaryFile | VideoRemoteFile,
+  ): WAMediaUpload {
+    if ('url' in file) {
+      return { url: file.url };
+    }
+    return Buffer.from(file.data, 'base64');
   }
 
-  sendFile(request: MessageFileRequest) {
-    throw new AvailableInPlusVersion();
+  @Activity()
+  async sendImage(request: MessageImageRequest): Promise<any> {
+    const chatId = toJID(this.ensureSuffix(request.chatId));
+    const message: AnyMediaMessageContent = {
+      image: this.toMediaUpload(request.file),
+      caption: request.caption,
+      mentions: request.mentions?.map(toJID),
+    };
+    const options = await this.getMessageOptions(request);
+    return this.sock.sendMessage(chatId, message, options);
   }
 
-  sendVoice(request: MessageVoiceRequest) {
-    throw new AvailableInPlusVersion();
+  @Activity()
+  async sendFile(request: MessageFileRequest): Promise<any> {
+    const chatId = toJID(this.ensureSuffix(request.chatId));
+    const message: AnyMediaMessageContent = {
+      document: this.toMediaUpload(request.file),
+      mimetype: request.file.mimetype,
+      fileName: request.file.filename,
+      caption: request.caption,
+      mentions: request.mentions?.map(toJID),
+    };
+    const options = await this.getMessageOptions(request);
+    return this.sock.sendMessage(chatId, message, options);
+  }
+
+  @Activity()
+  async sendVoice(request: MessageVoiceRequest): Promise<any> {
+    const chatId = toJID(this.ensureSuffix(request.chatId));
+    const message: AnyMediaMessageContent = {
+      audio: this.toMediaUpload(request.file),
+      mimetype: request.file.mimetype,
+      ptt: true,
+    };
+    const options = await this.getMessageOptions(request);
+    return this.sock.sendMessage(chatId, message, options);
+  }
+
+  @Activity()
+  async sendVideo(request: MessageVideoRequest): Promise<any> {
+    const chatId = toJID(this.ensureSuffix(request.chatId));
+    const message: AnyMediaMessageContent = {
+      video: this.toMediaUpload(request.file),
+      caption: request.caption,
+      mentions: request.mentions?.map(toJID),
+      ptv: request.asNote ?? false,
+    };
+    const options = await this.getMessageOptions(request);
+    return this.sock.sendMessage(chatId, message, options);
   }
 
   sendLinkCustomPreview(
