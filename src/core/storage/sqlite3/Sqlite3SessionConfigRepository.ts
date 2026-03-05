@@ -57,6 +57,15 @@ export class Sqlite3SessionConfigRepository
     await super.init();
   }
 
+  async getConfigBySessions(sessionNames: string[]): Promise<Map<string, SessionConfig | null>> {
+    const result = new Map<string, SessionConfig | null>();
+    for (const sessionName of sessionNames) {
+      const config = await this.getConfig(sessionName);
+      result.set(sessionName, config);
+    }
+    return result;
+  }
+
   protected async validateSchema() {
     const validation = new Sqlite3SchemaValidation(this.schema, this.knex);
     await validation.validate();
