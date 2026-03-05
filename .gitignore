@@ -1,6 +1,7 @@
 tmp/*
 src/core/engines/gows/proto
 .env
+.env.chat
 .envs/*
 *.heapsnapshot
 .yarn
