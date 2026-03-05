@@ -103,7 +103,7 @@ services:
 #        max-size: "100m"
 #        max-file: "10"
 
-volumes:
-  mongodb_data: {}
-  minio_data: {}
-  pg_data: {}
+# volumes:
+#   mongodb_data: {}
+#   minio_data: {}
+#   pg_data: {}
